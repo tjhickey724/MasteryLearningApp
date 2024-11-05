@@ -1,0 +1,33 @@
+<%- include('../bootheader') -%>
+<%- include('./menubar') -%>
+
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <% if (isAdmin) { %>
+      <h1 class="pb-2 border-bottom" 
+          style="background:#aaaaff; padding:1em; text-align:center">
+        Math Grades App
+      </h1>
+      <div class="p-2">
+          <a href="mathgrades/createCourse">
+            Create a new Course
+          </a>
+      </div>
+    <% } %>
+    <div>
+      <h3>List of Courses</h3>
+      <ul>
+      <% courses.map(course => {%>
+        <li>
+          <a href="/mathgrades/showCourse/<%= course._id %>">
+            <%= course.name %>
+          </a>
+        </li>
+      <% }) %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('../bootfooter') -%>
+<%- include('../htmlfoot') -%>

@@ -1,0 +1,97 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+
+    <% if (!course.ownerId.equals(user._id)) { %>
+    <div class="p-2">
+      You must own the course to edit the problems.</div>
+    <% } else { 
+      const isSelectedProblem = (x) => (x==problem.mimeType) ? 'selected' : '';
+      const isSelectedAnswer = (x) => (x==problem.answerMimeType) ? 'selected' : '';
+      %>
+
+    <h1 class="pb-2 border-bottom">Edit Problem</h1>
+    <div class="p-2">
+      <form method="post" action="/updateProblem/<%=problem.courseId%>/<%= problem._id %>">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" <% if (problem.visible) {%> checked <% }%> value='visible' name='visible' id="visible">
+          <label class="form-check-label" for="visible">
+            Visible: students can see the problem.
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name='answerable' id="answerable" <% if
+                    (problem.answerable) {%> checked <% }%> value='answerable'>
+          <label class="form-check-label" for="answerable">
+            Answerable: students can type in an answer to the problem and either
+            save it or submit it. </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name='submitable' id="submitable" <% if
+                    (problem.submitable) {%> checked <% }%> value='submitable'>
+          <label class="form-check-label" for="submitable">
+            Submitable: students can submit their answer (otherwise they can only save)
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name='peerReviewable' id="peerReviewable" <% if
+                    (problem.peerReviewable) {%> checked <% }%> value='peerReviewable'> <label class="form-check-label" for="peerReviewable">
+            Peer Reviewable: students who have submitted their answer can review the
+            answers of their peers in a doubly blind anonymous fashion
+          </label>
+        </div>
+        <hr>
+        <div class="mb-3 col-lg-4">
+          <label for="description" class="form-label">Problem Title</label>
+          <input type="text" class="form-control" name="description" id="description" value="<%= problem.description %>">
+        </div>
+        <div class="mb-3">
+          <label for="problemText" class="form-label">Problem Description</label>
+          <textarea name="problemText" class="form-control" cols="100" rows="10"><%= problem.problemText %></textarea>
+        </div>
+        <div class="mb-3 col-lg-4">
+          <label for="mimeType" class="form-label">mimeType</label>
+          <select name="mimeType" id="mimeType">
+            <option <%= isSelectedProblem('plain')%> > plain</option>
+            <option <%= isSelectedProblem('markdown')%> >markdown</option>
+            <option <%= isSelectedProblem('tex')%> >tex</option>
+          </select>
+        </div>
+        <div class="mb-3 col-lg-4"></div>
+          <label for="answerMimeType" class="form-label">answerMimeType</label>
+          <select name="answerMimeType" id="mimeType">
+            <option <%= isSelectedAnswer('text')%> > text</option>
+            <option <%= isSelectedAnswer('image')%> >image</option>
+          </select>
+        </div>
+        <b>Rubric:</b><br>
+       
+        <textarea class="form-control" name="rubric" cols="100" rows="10"><%= problem.rubric %></textarea>
+        <hr>
+        <h2>Skills required to fully solve this problem</h2>
+        Check all that apply.
+        <hr>
+        <% let skillIds=skills.map((x)=>x.id); console.log(skills);console.log(skillIds) %>
+        <% for(let i=0;i<allSkills.length;i++){%>
+        <div class="form-check">
+          <input class="form-check-input" 
+                 type="checkbox" 
+                 value="<%= allSkills[i].id %>" 
+                 name='skill' 
+                 id="check<%= allSkills[i].id %>" <% if
+                        (skillIds.includes(allSkills[i].id)) {%> checked <%}%>>
+                        <label class="form-check-label" for="check<%= allSkills[i].id %>">
+          <%= allSkills[i].name %>
+          </label>
+        </div>
+        <% } %>
+        <hr>
+        <input class="btn btn-lg btn-primary" type="submit">
+      </form>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

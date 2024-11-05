@@ -1,0 +1,99 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="pb-2 border-bottom">
+      Add Problem
+    </h1>
+    <a class="btn btn-sm btn-success" 
+    href="/showProblemLibrary/<%= courseId%>/<%= psetId %>">
+      Add Problem from Library
+ </a>
+<hr>OR<hr>
+ <a class="btn btn-sm btn-success" 
+ href="/uploadProblems/<%= courseId%>/<%= psetId %>">Upload Problems from a Folder</a>
+
+ <hr>OR<hr>
+   <h2>Create New Problem</h2>
+    <div class="p-2">
+      <form method="post" action="/saveProblem/<%= courseId%>/<%= psetId %>">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value='visible' name='visible' id="visible" checked>
+          <label class="form-check-label" for="visible">
+            Visible: students can see the problem.
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="answerable" name='answerable' id="answerable" checked>
+          <label class="form-check-label" for="answerable">
+            Answerable: students can type in an answer to the problem and either
+            save it or submit it. </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name='submitable' id="submitable" checked value='submitable'>
+          <label class="form-check-label" for="submitable">
+            Submitable: students can submit their answer (otherwise they can only save)
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name='peerReviewable' id="peerReviewable" checked value='peerReviewable'>
+          <label class="form-check-label" for="peerReviewable">
+            Peer Reviewable: students who have submitted their answer can review the
+            answers of their peers in a doubly blind anonymous fashion
+          </label>
+        </div>
+        <hr>
+        <div class="mb-3 col-lg-4">
+          <label for="description" class="form-label">Problem Title</label>
+          <input type="text" class="form-control" 
+                 name="description" id="description"
+                 value="<%= problem.description%>">
+        </div>
+        <div class="mb-3 col-lg-4">
+          <label for="mimeType" class="form-label">mimeType</label>
+          <select name="mimeType" id="mimeType">
+            <option>plain</option>
+            <option>markdown</option>
+            <option>tex</option>
+          </select>
+        </div>
+        <div class="mb-3 col-lg-4">
+          <label for="answerMimeType" class="form-label">
+            upload format for the answer
+          </label>
+          <select name="answerMimeType" id="answerMimeType">
+            <option>text</option>
+            <option>image</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="problemText" class="form-label">Problem Description</label>
+          <textarea name="problemText" class="form-control" 
+                  cols="100" rows="10"><%= problem.problemText %></textarea>
+        </div>
+        <b>Rubric:</b><br>
+        <textarea class="form-control" name="rubric" 
+              cols="100" rows="10"><%= problem.rubric %></textarea>
+        <hr>
+        <h2>Skills required to fully solve this problem</h2>
+        Check all that apply.
+        <hr>
+        <% for(let i=0; i<skills.length; i++){ %>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="skills" value="<%= skills[i].id %>" id="check<%= skills[i].id %>">
+          <label class="form-check-label" for="check<%= skills[i].id %>">
+            <%= skills[i].shortName %> :: <%= skills[i].name %>
+          </label>
+        </div>
+        <% } %>
+        <hr>
+        <input class="btn btn-lg btn-primary" type="submit">
+      </form>
+
+      <%= psetId %>
+    </div>
+  </div>
+</div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

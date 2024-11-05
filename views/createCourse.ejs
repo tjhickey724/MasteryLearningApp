@@ -1,0 +1,107 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="">Create a Course</h1>
+    <p class="border-bottom pb-2"> Enter a new course name, 
+      starting and ending dates,
+      and the type of assessment you want this app to support.
+
+     
+
+    </p>
+    <div class="p-2">
+
+      <form method="post" action="createNewCourse">
+        <div class="col-lg-8">
+          <div class="input-group mb-3">
+            <label class="input-group-text">Course Name</label>
+            <input type="text" name="courseName" class="form-control">
+          </div>
+        </div>
+        <br>
+        <% let now = new Date();
+           let in4months = new Date(now.getTime() + 1000*3600*24*120);
+          %>
+        starting date: <input type="text" name="startDate" 
+        value="<%= now.toISOString().slice(0,10) %>">
+        
+         <br>
+         ending date: <input type="text" name="stopDate" 
+         value="<%= in4months.toISOString().slice(0,10) %>">
+         
+         <br>
+         <br>
+        <h3>Type of Course</h3>
+        <h4>Mastery Learning Assessment (MLA):Proctored Skill-based Paper Exams</h4>
+          <input type="radio" name="courseType" value="mla0">
+          <b>Exam Generation and Grade Reporting (MLA0)</b>
+            You will give exams in class and grade them yourself.
+            Each exam question will test a particular skill or concept.
+            You will grade the exams and upload the grades to the app.
+            with a 1 for a correct answer and a 0 for an incorrect answer
+            The app will calculate the student's grade and report it to you 
+            and to the students.
+            The app will give you allow you
+            to import skills from a "Master Course" and let you generate exams for 
+            selected sets of skills using a large library of skill-based problems.
+            We currently have master courses for PreCalculus, Differential Calculus,
+            and Integral Calculus.  
+            <br>
+            <input type="radio" name="courseType" value="mla1">
+            <b>Exam Generation, Grade Reporting, and Exam Grading (MLA)</b>
+            In addition to generating exams, the app will provide an interface to allow
+            students to upload photos of their exams to the app, and an interface for 
+            graders to grade the exams with binary grading; and for students to see the feedback
+            the graders have provided.
+            <br>
+            <h4>Online Specification Grading Assessment</h4>
+            <input type="radio" name="courseType" value="sga">
+            <b>Online Assessment (SGA)</b>
+            The app will allow you to create questions 
+            on the fly (or in advance) using markdown (or plain text)
+            and display them to the students in class. 
+            Each question will test a particular skill or concept.
+            The students will be able to answer the questions using the app
+            and graders will be able to grade the answers using the app.
+            <br>
+            <h4>Online Peer Review Assessment (PRA)</h4>
+            <input type="radio" name="courseType" value="pra">
+            <b>Online in-class questions</b>
+            The app will allow you to create questions
+            on the fly (or in advance) using markdown (or plain text)
+            and display them to the students in class.
+            The students will be able to answer the questions using the app
+            and to anonymously peer grade the answers of their classmates.
+            The grading is by "Good Faith Effort" and the students will be able to
+            see the answers and the grades of their classmates after the grading is done.
+
+<br>
+         <hr>
+
+        <div class="form-check">
+          <input class="form-check-input" id="norobot" type="checkbox" name="norobot">
+          <label class="form-check-label" for="norobot">I am not a robot </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="robot" name="robot">
+          <label class="form-check-label" for="robot">I am a robot </label>
+        </div>
+        <input class="btn btn-md btn-danger" type="submit" value="Create the new course">
+      </form>
+      <hr>
+      <p>
+        Select a name which will easily identify your course.
+        For example: give the Course ID, section, and semester, e.g. COSI10a-02 Spr20
+        The course name will only be visible to you and the students who
+        register in your course.
+      </p>
+      <p> Students register using a 7 digit pin number which will be
+        created for you when you make this course.
+      </p>
+    </div>
+  </div>
+</div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

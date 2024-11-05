@@ -1,0 +1,63 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-lg-5 p-4 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1>Problem Search Page
+    </h1>
+    <a href="/showProblemSet/<%= courseId %>/<%= psetId %>"
+       class="btn btn-sm btn-info">
+      Back to Problem Set
+    </a>
+    <hr>
+    <% if (skill) { %>
+      <h2>Selected Skill: <b><%= skill.shortName %></b>::<%= skill.name %></h2>
+      <i><%= skill.description%> </i>
+    <h2>Problems for selected skill</h2>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr><th>problem</th><th>add to pset</th><th>createdAt</th><th>last use</th></tr>
+      </thead>
+      <tbody>
+        <% if (newProblems.length == 0) { %>
+          <tr><td>No problems found for this skill</td></tr>
+        <% } else {  newProblems.forEach(problem => { 
+          const now = new Date();
+          %>
+            <tr>
+                <td><a href="/showProblem/<%= courseId %>/<%= psetId%>/<%= problem._id %>"><%= problem.description %></a> </td>
+                <td>
+                <a href="/addProblemToPset/<%= courseId %>/<%= psetId %>/<%= problem._id %>/<%= skillId %>">Add to Problem Set</a></td>
+                <td><%= problem.createdAt.toISOString() %></td>
+                <td><%= ((now - psetMap[problem._id][0])/(1000*3600*24)).toFixed(6) %> days ago</td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                   <textarea readonly rows="4" cols="80"><%= problem.problemText %></textarea>
+                  <hr>
+                </td>
+            </tr>
+          <% }); %>  
+        <% } %>
+      </tbody>
+    </table>
+
+    <% } %>
+    
+    <h2>Select a Skill to see all problems for that skill</h2>
+    <ul>
+      <% if (skills.length > 0) { 
+        skills.forEach(skill => { %>
+        <li>
+            <a href="/showProblemsBySkill/<%= courseId %>/<%= psetId %>/<%= skill._id %>">
+              <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </a>
+        </li>
+      <% })}; %>
+    <ul>
+    <hr>
+   
+
+  </div>
+</div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

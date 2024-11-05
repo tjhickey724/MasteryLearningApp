@@ -1,0 +1,172 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="pb-2 border-bottom">
+      <%= problemSet.name.trim() || "Problem Set" %>
+      (<%= problemSet.status %>)
+    </h1>
+    <div>
+      <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+        Status: <select name="status">
+          <option value="active" 
+            <% if (problemSet.status=="active") { %> selected <% } %>>
+            Active
+          </option>
+          <option value="in-prep" 
+            <% if (problemSet.status=="in-prep") { %> selected <% } %>>
+            In Preparation
+          </option>
+          <option value="graded" 
+            <% if (problemSet.status=="graded") { %> selected <% } %>>
+            Graded
+          </option>
+          <option value="completed" 
+            <% if (problemSet.status=="completed") { %> selected <% } %>>
+            Completed
+          </option>
+        </select>
+        <input type="submit" value="Update Status">
+      </form>
+
+    </div>
+    <div class="p-2">
+      <h2>Problems
+        <% if (isOwner){%> 
+        <a href="/addProblem/<%= courseId%>/<%= psetId %>">
+          <i class='fas fa-plus' style='font-size:24px'></i> 
+        </a>
+        <a 
+        href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
+        <i class='fas fa-pen' style='font-size:24px'></i> 
+     </a>
+        <% } %>
+      </h2>
+      <ul>
+        <% for(i=0; i<problems.length; i++){ 
+          if (!problems[i].visible && !isOwner ) { %>
+          <li>Problem Hidden </li>
+          <% } else {%>
+          <li>
+
+
+
+
+         
+                <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                    <%= problems[i].description || "no name" %>
+                </a>
+                <% // the owner can remove the problem from the problem set
+                if (isOwner){ %>
+                 <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                   <i class='fas fa-xmark' style='font-size:24px'></i> 
+                 </a>
+
+
+             <% } %>
+
+
+
+          <% } %>
+        </li>
+        <% } %>
+      </ul>
+
+
+      <hr>
+      <% if (isOwner){ %>
+
+     
+
+
+      <a href="/downloadAsTexFile/<%=courseId%>/<%= psetId %>" 
+        class="btn btn-sm btn-info">
+        Download as .tex file
+      </a>
+
+      <a href="/downloadPersonalizedExamsAsTexFileMGA/<%=courseId%>/<%= psetId %>" 
+        class="btn btn-sm btn-info">
+        Download personalized exams
+      </a>
+
+  
+      <% if (problemSet.makeup)  { %>
+        <hr>
+        <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
+          class="btn btn-sm btn-warning">
+          Show Makeup Exam
+          </a>
+        <% } else  if (problemSet.makeupOf) { %>
+          <hr>
+          <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
+            class="btn btn-sm btn-warning">
+            Show Original Exam
+            </a>
+          <% } else { %>
+      <br><hr>
+      <form method="post"
+          action="/saveProblemSet/<%=courseId%>">
+        <input type="hidden" name="psetId" value="<%=psetId%>">
+        <input type="hidden" name="makeupOf" value="<%=psetId%>">
+        <input type="hidden" name="name" value="Makeup For <%=problemSet.name%>">
+        <input type="submit" value="Create Makeup Exam">
+      </form>
+      <% } %>
+<hr>
+<br>
+      <% }  // close if(is_owner) ...%>
+
+
+      <% if (isStaff) { %>
+        <h2>Grading</h2>
+        <% if (course.courseType!="mla0") {%>
+          <a class="btn btn-sm btn-danger" 
+            href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>">
+            Grade Problem Set
+          </a>
+
+          <a class="btn btn-sm btn-danger" 
+            href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>/json">
+            show JSON grades
+          </a>
+        <% } %>
+          <br>
+          <b>Upload Exam Grades:</b> 
+          <p>select a CSV file with columns name,email,S1,S2,...,Sk       
+          <br>where the S1,...,Sk are the short names of the skills tested
+            in this problem set.
+          </p>
+        
+          <form method="post" 
+            action="/uploadGrades/<%= courseId %>" 
+            enctype="multipart/form-data">
+
+          
+          
+        
+          
+          
+
+          Grades for <%= problemSet.name.trim() || "Problem Set" %>
+          <input type="hidden" 
+                 name="psetId" 
+                 value="<%= problemSet._id %>"             
+                 >
+
+          <input required class="mb-3" type="file" name="grades" >
+          <input class="btn btn-sm btn-primary" type="submit" value="upload grades file (csv)">
+
+      </form>
+<hr>
+      <% } %>
+          
+          <a href="/showCourse/<%= courseId %>" 
+            class="btn btn-sm btn-primary">
+            Back to List of Problem Sets</a>
+    </div>
+  </div>
+</div>
+
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

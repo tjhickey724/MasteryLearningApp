@@ -1,0 +1,139 @@
+<%- include('../bootheader') -%>
+<%- include('./menubar') -%>
+
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="pb-2 border-bottom">
+      MGA: <%= course.name %></h1>
+    <div class="p-2">
+        <%= course.description %>
+        <br>
+        Created at <%= course.createdAt %>
+        <br>
+        <a href="/mathgrades/showRoster/<%= course._id%>">Show Roster</a>
+        <br>
+        <%if (mlaCourse) {%>
+          Linked to MLA Course: 
+          <a href="/showCourse/<%= mlaCourse._id %>">
+             <%= mlaCourse.name %> 
+          </a>
+        <% } else {%>
+          No MLA Course linked
+        <% } %>
+
+    </div>
+
+      <div class="p-2">
+        <a href="/mathgrades/deleteCourse/<%= course._id %>">Delete Course</a>
+      </div>
+
+      
+      <h1>Exams</h1>
+      <ul>
+        <% for (let i = 0; i < exams.length; i++) { %>
+          <li>
+            <a href="/mathgrades/showExam/<%= course._id %>/<%= exams[i]._id %>">
+              <%= exams[i].name %>
+            </a>
+            <%= (exams[i].createdAt).toISOString().slice(0,10) %>
+            <a href="/mathgrades/deleteExam/<%= course._id %>/<%= exams[i]._id %>">
+              <span style="color:red">(Delete)</span>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+      </div>
+      <hr>
+
+      <div class="p-2">
+        <h2>Summary of Mastery</h2>
+        Show mastery of all students in the class: 
+        <a href="/mathgrades/showMastery/<%= course._id %>">as html</a> or
+        <a href="/mathgrades/showMastery/<%= course._id %>?csv=1">as CSV</a>
+      </div>
+
+      <div class="p-2">
+        <h2>Summary of Makeup Mastery</h2>
+        Shows the mastery for those students who missed the specified exam.
+        <ul>
+            <% for (let i = 0; i < exams.length; i++) { %>
+               <li> <%= exams[i].name %>
+                 <a href="/mathgrades/showMakeupMastery/<%= course._id %>/<%= exams[i]._id %>">
+                    as HTML
+                </a>
+                or
+                <a href="/mathgrades/showMakeupMastery/<%= course._id %>/<%= exams[i]._id %>?csv=1">
+                  as CSV
+              </a>
+
+
+              </li>
+            <% } %>
+        </ul>
+      </div>
+
+<hr>
+      <h2>Data Uploading</h2>
+      <div>
+          <b>Upload Exam Grades:</b>        
+        
+            <form method="post" 
+              action="/mathgrades/uploadGrades/<%= course._id %>" 
+              enctype="multipart/form-data">
+
+            
+            
+          
+            
+            
+            <input 
+            
+            type="text" 
+            name="examname" 
+            minlength="1"
+            size="20"
+            class="mb-3"
+            placeholder="Exam Name">
+
+            <input required class="mb-3" type="file" name="grades" >
+            <input class="btn btn-sm btn-primary" type="submit" value="upload grades file (csv)">
+
+        </form>
+
+      </div>
+<hr>
+      <div>
+        <b>Upload Section Data:</b>
+        <form method="post" 
+          action="/mathgrades/uploadSectionData/<%= course._id %>" 
+          enctype="multipart/form-data">
+        <input required  class="mb-3"
+              type="file" name="sections" >
+        <input class="btn btn-sm btn-primary" type="submit" value="upload section data file">
+
+        </form>
+      </div>
+<hr>
+      <div>
+        <b>Update Course Name:</b>
+        <form method="post" action="/mathgrades/renameCourse/<%= course._id %>">
+  
+          <input  
+                  type="text" 
+                  value="<%= course.name %>"
+                  name="courseName"
+                  size="60">
+          <input class="btn btn-sm btn-primary" type="submit" value="update course name">
+
+        </form>
+      </div>
+
+      
+
+
+
+  </div>
+</div>
+
+<%- include('../bootfooter') -%>
+<%- include('../htmlfoot') -%>
