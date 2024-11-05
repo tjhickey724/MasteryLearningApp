@@ -196,11 +196,11 @@
 ><%= rr.reason %>
           </pre><br>
               createAt:<%= rr.createdAt %><br>
-       <% if (userIsTA){%>
+       <% if (isStaff){%>
            <form method="post" action="/updateRegradeRequest/<%= rr.courseId%>/<%= rr._id%>">
 
                reply: <br>
-               <textarea name="reply"></textarea>
+               <textarea name="reply" cols="100%"></textarea>
                <hr>
                <input type="submit" value="send reply">
            </form>

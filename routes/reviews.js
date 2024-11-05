@@ -203,7 +203,6 @@ const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isAdmin, authorize}
           res.redirect("/showReviewsOfAnswer/"+courseId+"/"+ psetId+"/"+answer._id);
         } else {
           // this is the case where there is nothing left for the user to review
-          res.locals.routeName = " nothingToReview";
           // Here we set up the local variables we'll need for rendering:
           res.locals.problem = problem;
           res.render('nothingToReview');
@@ -510,7 +509,6 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       res.locals.allSkills = await Skill.find({courseId: answer.courseId});
       res.locals.regradeRequests = await RegradeRequest.find({answerId: answerId});
   
-      res.locals.routeName = " showReviewsOfAnswer";
       if (res.locals.isStaff) {
         res.render("showReviewsOfAnswer");
       } else {
@@ -543,7 +541,6 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
     res.locals.allReviews = await Review.find({problemId: probId});
     const answerIds = res.locals.usersReviews.map((r) => r.answerId);
     res.locals.usersReviewedAnswers = await Answer.find({_id: {$in: answerIds}});
-    res.locals.routeName = " showReviewsByUser";
     res.render("showReviewsByUser");
   });
   

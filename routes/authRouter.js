@@ -34,12 +34,10 @@ app.use(async (req, res, next) => {
   });
 
 app.get("/loginerror", function (req, res) {
-    res.locals.routeName = " loginerror";
     res.render("loginerror", {}); 
   });
   
   app.get("/login", function (req, res) {
-    res.locals.routeName = " login";
     res.locals.allow_local_login = (false || process.env.ALLOW_LOCAL_LOGIN);
     console.log('in /login: allow_local_login = '+res.locals.allow_local_login);
     res.render("login", {});
@@ -71,7 +69,6 @@ app.get("/loginerror", function (req, res) {
   );
   
   app.get("/login/local", async (req, res, next) => {
-    res.locals.routeName = " login";
     res.render("localLogin");
   });
   

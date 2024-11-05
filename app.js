@@ -361,7 +361,6 @@ app.get("/mla_home/:show", isLoggedIn,
 
   //const coursesTAing = await Course.find({_id: {$in: req.user.taFor}});
   const title = "PRA";
-  const routeName = " index";
   const show = (req.params.show=="showAll")?'showAll':'currentOnly';
   console.log(`show is ${show}`);
 
@@ -369,7 +368,6 @@ app.get("/mla_home/:show", isLoggedIn,
     ...res.locals,
     user,
     title,
-    routeName,
     coursesOwned,coursesTAing,coursesTaken,
     show,
   };
@@ -381,7 +379,6 @@ app.get("/mla_home/:show", isLoggedIn,
 
 app.get("/about", isLoggedIn,
   (req, res, next) => {
-  res.locals.routeName = " about";
   res.render("about");
 });
 
@@ -390,14 +387,12 @@ app.get("/profile", isLoggedIn,
   if (res.locals.entryNum == undefined) {
     res.locals.entryNum = "all";
   }
-  res.locals.routeName = " profile";
   res.render("showProfile");
 });
 
 app.post("/profile", isLoggedIn,
   async (req, res, next) => {
   res.locals.entryNum = req.body.enNum;
-  res.locals.routeName = " profile";
   res.render("showProfile");
 });
 
@@ -415,7 +410,6 @@ app.get("/stats", isLoggedIn,
   } else {
     googleemail = "";
   }
-  res.locals.routeName = " stats";
   res.render("stats.ejs", {courseCount, userCount, problemCount, answerCount, reviewCount, courses, googleemail});
 });
 
@@ -545,7 +539,6 @@ app.get("/showRoster/:courseId", authorize, hasStaffAccess,
     res.locals.members = members;//await User.find({_id: {$in: memberIds}});
     res.locals.memberList = memberList;
 
-    res.locals.routeName = " showRoster";
     res.render("showRoster");
   } catch (e) {
     next(e);
@@ -1186,7 +1179,6 @@ app.get("/editSkill/:courseId/:skillId", authorize, isOwner,
     res.locals.courseId = req.params.courseId;
     res.locals.skillId = id;
     res.locals.skill = await Skill.findOne({_id: id});
-    res.locals.routeName = " editSkill";
     res.render("editSkill");
   } catch (e) {
     next(e);
@@ -1227,7 +1219,6 @@ app.get("/importSkills/:courseId", authorize, isOwner,
     res.locals.courses = await Course.find({}).sort({name: 1});
 
 
-    res.locals.routeName = " importSkills";
     res.render("importSkills");
 });
 
@@ -1238,7 +1229,6 @@ app.get("/showSkillsToImport/:courseId/:otherCourseId", authorize, isOwner,
     res.locals.otherCourse = await Course.findOne({_id: req.params.otherCourseId});
 
     res.locals.skills = await Skill.find({courseId: req.params.otherCourseId});
-    res.locals.routeName = " showSkillsToImport";
     res.render('showSkillsToImport');
 });
 
@@ -1352,7 +1342,6 @@ app.get("/editProblemSet/:courseId/:psetId", authorize, isOwner,
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
   res.locals.problems = await Problem.find({psetId: psetId});
   res.locals.courseInfo = await Course.findOne({_id: res.locals.problemSet.courseId}, "ownerId");
-  res.locals.routeName = " editProblemSet";
   res.render("editProblemSet");
 });
 
@@ -1734,7 +1723,6 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   let userIsOwner = req.user._id.equals(res.locals.courseInfo.ownerId);
 
   if (userIsOwner || taIds.filter((x) => x.equals(req.user._id)).length > 0) {
-    res.locals.routeName = " gradeProblemSet";
     res.render("gradeProblemSet");
   } else {
     res.send("You are not allowed to grade problem sets.");
@@ -2198,7 +2186,6 @@ app.get("/addProblem/:courseId/:psetId", authorize, isOwner,
     res.locals.psetId = req.params.psetId;
     res.locals.courseId = req.params.courseId;
     res.locals.skills = await Skill.find({courseId: pset.courseId});
-    res.locals.routeName = " addProblem";
     res.locals.problem={description:"",problemText:"",points:0,rubric:"",skills:[],visible:true,submitable:true,answerable:true,peerReviewable:true};
     res.render("addProblem");
   } catch (e) {
@@ -2390,7 +2377,6 @@ app.get("/stopProblem/:courseId/:probId", authorize, isOwner,
 
 app.get('/showProblemLibrary/:courseId/:psetId', authorize, hasCourseAccess,
   async (req,res,next) => {
-    res.locals.routeName=" showProblemLibrary";
     res.locals.courseId = req.params.courseId;
     res.locals.psetId = req.params.psetId;
     res.locals.problems = [];
@@ -2421,7 +2407,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
       Eventually, we will narrow this search to the problems
       used in a set of courses, or in an organization...
     */
-    const routeName=" showProblem";
     const courseId = req.params.courseId;
     const psetId = req.params.psetId;
     const skillId = req.params.skillId;
@@ -2512,7 +2497,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
 
     res.locals = 
       {...res.locals, 
-        routeName, 
         courseId, psetId, skillId, 
         problems, newProblems, 
         psetMap,
@@ -2603,13 +2587,12 @@ app.get("/showAllAnswers/:courseId/:probId", authorize, hasCourseAccess,
     const isTA = req.user.taFor && req.user.taFor.includes(course._id);
     let taList = await User.find({taFor: courseId});
     taList = taList.map((x) => x._id);
-    const routeName = " showAllAnswers";
     res.locals = {
       ...res.locals,
       courseId,probId,psetId, 
       problem,course,
       allSkills,getSkill,
-      numReviews,canView,answers,reviews,isTA,taList,routeName
+      numReviews,canView,answers,reviews,isTA,taList,
     }
     //res.json(res.locals);
     res.render("showAllAnswers");
@@ -2626,7 +2609,6 @@ app.get("/editProblem/:courseId/:probId", authorize, isOwner,
   res.locals.course = await Course.findOne({_id: res.locals.problem.courseId}, "ownerId");
   res.locals.skills = await Skill.find({_id: {$in: res.locals.problem.skills}});
   res.locals.allSkills = await Skill.find({courseId: res.locals.problem.courseId});
-  res.locals.routeName = " editProblem";
   res.render("editProblem");
 });
 
@@ -2855,7 +2837,6 @@ app.get("/showRegradeRequests/:courseId", authorize, hasStaffAccess,
     const regradeRequests = await RegradeRequest.find({courseId: req.params.courseId});
     res.locals.regradeRequests = regradeRequests;
     res.locals.courseId = req.params.courseId;
-    res.locals.routeName = " showRegradeRequests";
     res.render("showRegradeRequests");
     //res.json([req.params.courseId,regradeRequests])
   } catch (e) {
@@ -2976,7 +2957,6 @@ app.get("/showTheStudentInfo/:courseId/:option", authorize, hasStaffAccess,
 
     res.locals.gradeSheet = gradeSheet;
 
-    res.locals.routeName = " showTheStudentInfo";
 
     if (req.params.option == "csv") {
       res.render("showStudentInfoCSV");
@@ -3026,7 +3006,6 @@ app.get("/showOneStudentInfo/:courseId/:studentId", authorize, hasCourseAccess,
       const gradeSheet = createGradeSheet(res.locals.studentsInfo, res.locals.problems, res.locals.answers, res.locals.reviews);
 
       res.locals.gradeSheet = gradeSheet;
-      res.locals.routeName = " showOneStudentInfo";
       //res.json(res.locals);
       res.render("showOneStudentInfo");
     }
@@ -3443,7 +3422,6 @@ app.get("/mastery2/:courseId", authorize, isOwner,
     data.push(a);
   }
   data = data.sort((x, y) => (x["total"] < y["total"] ? 1 : -1));
-  res.locals.routeName = " summarizeSkills";
 
   res.render("summarizeSkills", {courseId, data, mastery, studentIds, students, studentmap, studentSkillCounts, skillIds, skillmap, skills});
 
@@ -3467,7 +3445,6 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.locals.routeName = " error";
   res.locals.user= req.user||{}
   res.render("error");
 });
