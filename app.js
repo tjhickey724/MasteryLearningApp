@@ -92,7 +92,6 @@ const unlinkAsync = promisify(fs.unlink)
 const reviews = require('./routes/reviews');
 const auth = require('./routes/authRouter');
 const similarity = require('./routes/similarity');
-const mathgrades = require('./routes/mathgrades');
 const updates = require('./routes/updates');
 
 
@@ -107,10 +106,7 @@ const User = require("./models/User");
 const CourseMember = require("./models/CourseMember");
 const Skill = require("./models/Skill");
 const RegradeRequest = require("./models/RegradeRequest");
-const MathCourse = require("./models/MathCourse");
-const MathExam = require("./models/MathExam");
 const PostedGrades = require("./models/PostedGrades.js");
-const MathSection = require("./models/MathSection");
 const Instructor = require("./models/Instructor");
 const ejsLint = require("ejs-lint");
 
@@ -235,13 +231,6 @@ app.use(updates);
 
 
 
-/*
-The main page of this app "/" provides access to multiple
-apps that are part of the Mastery Learning Project. Currently
-we have access to
-  - the Math Grades App
-  - the Mastery Learning App 
-*/
 
 
 
@@ -316,12 +305,6 @@ app.post("/addInstructor", isAdmin,
   }
 )
 
-app.get('/mga_home', (req, res) => {
-  res.redirect('/mathgrades');
-});
-
-
-app.use('/mathgrades',mathgrades);
 
 //const approvedLogins = ["tjhickey724@gmail.com", "csjbs2018@gmail.com"];
 
@@ -423,11 +406,7 @@ app.get("/createCourse", isLoggedIn, isInstructor,
 
 // rename this to /createCourse and update the ejs form
 /*
-  This creates a new course and if it is a nonGrading course,
-  then it also creates the corresponding Math course and links them
-  together. The /showCourse route checks to see what the courseType is
-  and if it is an exam_generation or exam_reporting course, then it
-  will redirect to the MathCourse route.
+  This creates a new course and if it is a nonGrading course.
 */
 app.post("/createNewCourse", isLoggedIn,
   async (req, res, next) => {
@@ -465,19 +444,6 @@ app.post("/createNewCourse", isLoggedIn,
     let cm = new CourseMember(registration);
     await cm.save();
 
-    if (theCourse.nonGrading){
-      // create an MGA course and link it to this course.
-      let newMathCourse = new MathCourse({
-        name: req.body.courseName,
-        ownerId: req.user._id,
-        coursePinMLA: theCourse.coursePin,
-        courseId: theCourse._id,
-        createdAt: new Date(),
-      });
-      let theMathCourse = await newMathCourse.save();
-      newCourse.mathCourseId = theMathCourse._id;
-      await newCourse.save();
-      }
     res.redirect("/mla_home");
   } catch (e) {
     next(e);
@@ -596,8 +562,7 @@ app.post("/addStudents/:courseId", authorize, isOwner,
 const updateCourseMembers = async (sectionDocuments) => {
   /*
     for each student in the section, update the courseMember collection.
-    First lookup their user id in the User collection, then 
-    use the mathcourseId to lookup their MLA courseId in the Course collection.
+    First lookup their user id in the User collection.
     Then update the courseMember collection with the new section and role.
     and generate a list of their userIds. 
     Finally, change the role of all students in the course
@@ -709,8 +674,6 @@ app.post("/uploadRoster/:courseId",
 
 
         });
-        //await MathSection.deleteMany({courseId:courseId});
-        //await MathSection.insertMany(documents); 
         await updateCourseMembers(documents); // use section Data to update CourseMembers
         //res.json({ rowCount, dataFromRows });
         res.redirect(`/showRoster/${courseId}`);
@@ -897,10 +860,7 @@ the number of students who have been graded for the course.
 */
 const getClassGrades = async (req,res,next) => {
   const courseId = req.params.courseId;
-  // const examId = req.params.examId;
   const grades = await PostedGrades.find({courseId:courseId});
-  //const sections = await MathSection.find({courseId:courseId,section:{$ne:""}});
-  //const enrolledStudents = sections.map(section => section.email);
 
   /*
     create a dictionary which gives the number of students
@@ -1488,22 +1448,7 @@ app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
   //const allPsets = await ProblemSet.find({courseId: courseId});
   //res.locals.makeupSets = allPsets.filter((x) => x._id!=psetId).concat({name: "None", _id: null});  
   
-  /*
-  if the course is associated to a mathCourse,
-  then we can use the mathCourse to get the exams
-  of that course and pass them to the view
-  as makeupSets
-  */
-  // const course = await Course.findOne({_id: courseId});
-  // if (course.mathCourseId) {
-  //   const mathCourse = await MathCourse({_id: course.mathCourseId});
-  //   const exams = await MathExam.find({courseId: mathCourse._id});
-  //   res.locals.makeupSets = exams.concat({name: "None", _id: null});
-  // }else {
-  //   res.locals.makeupSets = [];
-  // }
-  // res.locals.skillsMastered = await getStudentSkills(courseId,req.user._id);
-
+  
   res.locals.skills = await Skill.find({courseId: courseId});
   
   res.render("showProblemSetToStaff");
@@ -1534,23 +1479,9 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
     }
     x.problemId.toString(); 
   });
-  //const allPsets = await ProblemSet.find({courseId: courseId});
-  //res.locals.makeupSets = allPsets.filter((x) => x._id!=psetId).concat({name: "None", _id: null});  
-  
-  /*
-  if the course is associated to a mathCourse,
-  then we can use the mathCourse to get the exams
-  of that course and pass them to the view
-  as makeupSets
-  */
+
   const course = await Course.findOne({_id: courseId});
-  if (course.mathCourseId) {
-    const mathCourse = await MathCourse({_id: course.mathCourseId});
-    const exams = await MathExam.find({courseId: mathCourse._id});
-    res.locals.makeupSets = exams.concat({name: "None", _id: null});
-  }else {
-    res.locals.makeupSets = [];
-  }
+
   res.locals.skillsMastered = await getStudentSkills(courseId,req.user._id);
 
   res.locals.skills = await Skill.find({courseId: courseId});
@@ -1601,11 +1532,13 @@ const trimSkillString = (skill) => {
 }
 
 const processSkills = (grades) => {
+  // this has been customized to work with the way grades are downloaded
+  // from Becci and Keith's math classes on GradeScope
     const skillsMastered = [];
     const skillsSkipped = [];
     for (let key in grades) {
         if (
-                 (grades[key] === "1.0")  
+                 ((grades[key] === "1.0") || (grades[key] === "1")) 
               && (!key.includes("points"))
               && (!key.includes("Honor Pledge"))
               && (!key.includes("Total Score"))
@@ -1613,7 +1546,8 @@ const processSkills = (grades) => {
               && (!key.includes("Count"))
             ) {
             skillsMastered.push(trimSkillString(key));
-        } else if ((grades[key] === "0.0") 
+        } else if (
+                  ((grades[key] === "0.0") || (grades[key] === "0"))
                   && trimSkillString(key) != "" 
                   && (!key.includes("Honor Pledge")) 
                   && (!key.includes("Total Score"))) {
@@ -1769,7 +1703,7 @@ const generateTex = (problems) => {
       tex += '\\begin{markdown}\n'
     }
     
-    tex += p.description+"\n";
+    tex += "\begin{verbatim}\n"+p.description+"\n\end{verbatim}\n";
     
 
     tex += p.problemText + "\n";
@@ -1795,147 +1729,11 @@ const generateTex = (problems) => {
 
 
 
-app.get("/downloadPersonalizedExamsAsTexFile/:courseId/:psetId", 
-  authorize, hasStaffAccess,
-  /* this route will generate a large latex file with a personalized exam
-     for the specified problemset in the specified course with one exam for
-     each student in the course. Also each exam has questions only for those skills
-     that that particular students has not yet mastered at this point in the course.
-
-     Currently the latex file requires a few additional tex files:
-     preamble.tex  - a latex file importing all necessary packages 
-     title.tex - a file containing the first explanation page(s) for the exam,
-        for example, the honesty pledge, the instructions, the grading policy, etc. 
-        This needs to be customized for each class.   
-
-  */
-  async (req, res, next) => {
-    const courseId = req.params.courseId;
-    const psetId = req.params.psetId;
-    const problemSet = await ProblemSet.findOne({_id: psetId });
-    const problems 
-        = await Problem.find({psetId: psetId});
-
-    const courseMembers = await CourseMember.find({courseId}).populate('studentId');
-    const studentIds = courseMembers.map((x) => x.studentId._id);
-    const mastery = 
-      await Answer.find({courseId, studentId: {$in: studentIds}});
-
-
-
-    let skillDict = {};
-    /* 
-       skillMap(studentId) = [skillId1, skillId2, ...]
-       shows the skills that the student has mastered.
-    */
-    for (let m of mastery) {
-      let skills = m.skills;
-      let studentId = m.studentId;
-      let skillIds = skills.map((x) => x._id);
-      let skillList = skillDict[studentId];
-      skillList = skillList ? skillList.concat(skillIds) : skillIds;
-      skillDict[studentId]= skillList;
-    }
-
-
-
-    /* create a dictionary problemDict indexed by skills which
-       maps each skill to the list of problems containing that skill
-       In practice each skill will correspond to exactly one problem,
-       but we can make this code a little more general.
-    */
-   let problemDict = {};
-   for (let p of problems){
-    if (p.skills.length!=1){
-      continue; // this shouldn't happen
-    } else {
-      problemDict[p.skills[0]] = p;
-    }
-   }
-
-          /*
-       This exam might be a makeup of another exam. If so, we need to
-       find the students who have already taken the original exam
-       and not include them in the makeup exam.
-       So studentsWhoCanTakeExam is initially all enrolled students,
-       but if this is a makeup exam, then it will be the students
-       who skipped the original exam.
-       */
-
-       let studentsWhoCanTakeExam = enrolledStudents;
-       let tookExamEmails=[];
-       if (pset.makeupOf) { 
-         const makeupOf = pset.makeupOf; // the id of the MathExam that this exam is a makeup for
-         tookExamEmails
-             = (await PostedGrades
-                      .find({examId: makeupOf}))
-                      .sort({email:1})
-                      .map((x) => x.email);
-         studentsWhoCanTakeExam 
-            = enrolledStudents.filter(x => !(tookExamEmails.includes(x)));
-        }
-
-   let studentsWithFullMastery = [];
-   let result = "";
-    for (let s of courseMembers){
-      /* generate a personalized exam for student s with only
-         the problems for skills that s has not yet mastered,
-         as determined by the skillList.
-      */
-     const studentId = s.studentId._id;
-     
-     const studentSkills = 
-         skillDict[studentId]?skillDict[studentId].map((x)=> x+""): [];
-
-     let testProblems = [];
-     for (let p of problems){
-      
-      if (studentSkills.includes(p.skills[0]+"")) {
-      } else {
-        testProblems = testProblems.concat(p);
-      }
-
-     }
-     
-
-     const exam =  
-        personalizedPreamble(
-              s.studentId.googleemail,
-              problemSet.name,        
-              new Date())
-        + generateTex(testProblems);
-     
-     if (testProblems.length>0) {
-        result += exam;
-     } else {
-        studentsWithFullMastery.push(s.studentId.googleemail);
-     }
-     
-     
-
-    }
-    const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
-    const endTex = '\\end{document}\n';
-    res.setHeader('Content-type', 'text/plain');
-    res.send(startTex+result+endTex);
-
-
-
-
-
-
-
-
-  });
-
-
   /*
     This asynchronous function returns a dictionary: masteredSkills
     which maps each studentEmail to a list of skillIds that the student has mastered
   */
-  const getSkillsMastered = async (mathCourseId) => {
-    //console.log("in getClassMastery")
-    const courseId = mathCourseId;
+  const getSkillsMastered = async (courseId) => {
     const grades = await PostedGrades.find({courseId:courseId});
     const sections 
       = await CourseMember.find({courseId,role:'student'}).populate('studentId');
@@ -2011,7 +1809,7 @@ app.get("/downloadPersonalizedExamsAsTexFile/:courseId/:psetId",
   }
 
 
-  app.get("/downloadPersonalizedExamsAsTexFileMGA/:courseId/:psetId", authorize, hasStaffAccess,
+  app.get("/downloadPersonalizedExamsAsTexFile/:courseId/:psetId", authorize, hasStaffAccess,
     /* this route will generate a large latex file with a personalized exam
        for the specified problemset in the specified course with one exam for
        each student in the course. Also each exam has questions only for those skills
@@ -2176,6 +1974,7 @@ app.get("/downloadPersonalizedExamsAsTexFile/:courseId/:psetId",
         res.setHeader('Content-type', 'text/plain');
         res.send(startTex+result+fullMasteryReport + endTex);
     });
+
 
 app.get('/downloadAsTexFile/:courseId/:psetId', authorize, hasStaffAccess,
   async (req, res, next) => {
@@ -3278,45 +3077,7 @@ app.get("/showMastery/:courseId",
   }
 })
 
-/*
-this shows the mastery table but restricted to those students who didn't
-take the specified exam.
-*/
-app.get("/showMakeupMastery/:courseId/:examId", 
-  authorize, hasStaffAccess, 
-  getClassGrades,
-  async (req,res,next) => {
-    const courseId = req.params.courseId;
-    const examId = req.params.examId;
-    const csv = req.query.csv;
 
-    const grades = 
-      await PostedGrades
-          .find({examId:examId,skillsMastered:[],skillsSkipped:[]}); 
-    const course = await MathCourse.findOne({_id:courseId});
-    const exam = await MathExam.findOne({_id:examId});
-      
-    const sections = await MathSection.find({courseId:courseId});
-    const sectionDict = {};
-    for (let section of sections) {
-      sectionDict[section.email] = section.section;
-    }
-    res.locals.course = course;
-    res.locals.exam = exam;
-    res.locals.grades = grades;
-    res.locals.sectionDict = sectionDict;
-    [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades); 
-    
-    if (csv){ 
-      res.set('Content-Type', 'text/csv');
-      res.send(ejs.render(masteryCSVtemplate,res.locals));
-    } else {
-      //res.json(grades);
-      res.render('showMastery');
-    }
- })
-
- 
 
 
 const ObjectId = mongoose.Types.ObjectId;

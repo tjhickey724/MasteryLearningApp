@@ -12,13 +12,6 @@
     </h1>
     <div class="p-2">
       studentPin: <%= courseInfo.coursePin %>
-      <br>
-      <% if (courseInfo.mathCourseId) { %>
-        Linked to 
-                <a href="/mathgrades/showCourse/<%= courseInfo.mathCourseId %>">
-                  an MGA course
-                </a>
-      <% } %>
       <hr>
 
       <% if (isTA || isOwner) { %>
