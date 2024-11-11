@@ -51,6 +51,7 @@
             <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
                 <%= problemSets[i].name.trim() || "problem set" %>
             </a>
+            (<%= problemSets[i].status %>)
 
 
         </li>
@@ -85,16 +86,16 @@
     </ul>
 
   
-
+    <h2>Teaching Assistants</h2>
+    <ul><li>
+    <a href="/showTAs/<%= courseInfo._id %>" >
+      Show TAs
+    </a>
+    </li></ul>
       
       <hr>
       <% if (course.courseType != 'mla0') { %>
-      <h2>Teaching Assistants</h2>
-      <ul><li>
-      <a href="/showTAs/<%= courseInfo._id %>" >
-        Show TAs
-      </a>
-      </li></ul>
+
 
      
         <hr>

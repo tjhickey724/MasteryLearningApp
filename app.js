@@ -1279,6 +1279,8 @@ app.get("/addProblemSet/:courseId", authorize, isOwner,
 
 app.post("/saveProblemSet/:courseId", authorize, isOwner,
   async (req, res, next) => {
+    console.log('in saveProblemSet');
+    console.dir(req.body);
   try {
     const id = req.params.courseId;
     let newProblemSet = new ProblemSet({
@@ -1289,6 +1291,8 @@ app.post("/saveProblemSet/:courseId", authorize, isOwner,
       pendingReviews: [],
       makeupOf: req.body.makeupOf,
     });
+    console.log('in saveProblemSet');
+    console.dir(newProblemSet);
 
     await newProblemSet.save();
 
@@ -2834,13 +2838,6 @@ app.post("/addTA/:courseId", authorize, isOwner,
   async (req, res, next) => {
   try {
     let ta = await User.findOne({googleemail: req.body.email});
-    if (ta) {
-      ta.taFor = ta.taFor || [];
-      ta.taFor.push(req.params.courseId);
-      ta.markModified("taFor");
-
-      await ta.save();
-    }
     // add the TA to the CourseMember collection with role TA
     let courseMember = new CourseMember({
       courseId: req.params.courseId,
@@ -2848,6 +2845,9 @@ app.post("/addTA/:courseId", authorize, isOwner,
       role: "ta",
       createdAt: new Date(),
     });
+    // remove their other roles ....
+    // a user can have at most one role in a course....
+    await CourseMember.remove({courseId: req.params.courseId, studentId: ta._id});
     await courseMember.save();
 
     res.redirect("/showTAs/" + req.params.courseId);

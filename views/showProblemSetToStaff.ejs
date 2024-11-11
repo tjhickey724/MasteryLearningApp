@@ -7,37 +7,52 @@
       (<%= problemSet.status %>)
     </h1>
     <div>
-      <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-        Status: <select name="status">
-          <option value="active" 
-            <% if (problemSet.status=="active") { %> selected <% } %>>
-            Active
-          </option>
-          <option value="in-prep" 
-            <% if (problemSet.status=="in-prep") { %> selected <% } %>>
-            In Preparation
-          </option>
-          <option value="graded" 
-            <% if (problemSet.status=="graded") { %> selected <% } %>>
-            Graded
-          </option>
-          <option value="completed" 
-            <% if (problemSet.status=="completed") { %> selected <% } %>>
-            Completed
-          </option>
-        </select>
-        <input type="submit" value="Update Status">
-      </form>
+      <% if (problemSet.status=="in-prep") { %>
+        <p>
+          This problem set is still in preparation. 
+          It is not visible to students. You can now add problems to it.
+          When you are done adding problems, you can release it to students
+          by clicking the "Release" button below. You will then be able to
+          print personalized exams for students, and if you have enabled 
+          in-app grading, students will be able to upload their answers to
+          the site.
+        </p>
+       <% } else if (problemSet.status=="active") {%>
+        <p>
+
+          <b>This problem set is active. </b>
+          You can now print personalized exams for students, and if you have enabled
+          in-app grading, students will be able to upload their answers to the site.
+          When the exam has been completed, you can grade it by clicking the "Grade"
+          button below.
+
+         
+        </p>
+
+        <% } else if (problemSet.status=="completed") {%>
+          <p>
+            The problem set can now be graded. When you have completed the grading,
+            you can change the status to "graded" by clicking the "Post Grades" button below.
+
+          </p>
+
+
+        <% } else if (problemSet.status=="graded") {%>
+          The problem set has been graded. 
+          If you are not done grading then click the "Return to grading" button below.
+          <% } %>
 
     </div>
     <div class="p-2">
       <h2>Problems
         <% if (isOwner){%> 
-        <a href="/addProblem/<%= courseId%>/<%= psetId %>">
-          <i class='fas fa-plus' style='font-size:24px'></i> 
-        </a>
-        <a 
-        href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
+          <% if (problemSet.status=='in-prep') { %>
+
+            <a href="/addProblem/<%= courseId%>/<%= psetId %>">
+              <i class='fas fa-plus' style='font-size:24px'></i> 
+            </a>
+           <% } %>
+        <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
         <i class='fas fa-pen' style='font-size:24px'></i> 
      </a>
         <% } %>
@@ -74,7 +89,7 @@
 
 
       <hr>
-      <% if (isOwner){ %>
+      <% if (isOwner && (problemSet.status=='active')){ %>
 
      
 
@@ -88,6 +103,8 @@
         class="btn btn-sm btn-info">
         Download personalized exams
       </a>
+      <% } %>
+      <% if (isOwner) { %>
 
   
       <% if (problemSet.makeup)  { %>
@@ -102,22 +119,33 @@
             class="btn btn-sm btn-warning">
             Show Original Exam
             </a>
-          <% } else { %>
-      <br><hr>
-      <form method="post"
-          action="/saveProblemSet/<%=courseId%>">
-        <input type="hidden" name="psetId" value="<%=psetId%>">
-        <input type="hidden" name="makeupOf" value="<%=psetId%>">
-        <input type="hidden" name="name" value="Makeup For <%=problemSet.name%>">
-        <input type="submit" value="Create Makeup Exam">
-      </form>
-      <% } %>
+          <% } %> 
 <hr>
 <br>
-      <% }  // close if(is_owner) ...%>
+      <% } %>
+            
+      <% if (isOwner 
+            && (problemSet.status=='graded')
+            && !(problemSet.makeup || problemSet.makeupOf)
+            ) { %>
+        <h3>Makeup Exams</h3>
+        If you want to create a makeup exam for this problem set, click the button below.
+        It will let you create a new problem set, but when you print 
+        the personalized exams, it will only create exams for those students
+        who missed this (the original) exam.
+        <br>
+        <form method="post"
+            action="/saveProblemSet/<%=courseId%>">
+          <input type="hidden" name="psetId" value="<%=psetId%>">
+          <input type="hidden" name="makeupOf" value="<%=psetId%>">
+          <input type="hidden" name="name" value="Makeup For <%=problemSet.name%>">
+          <input type="submit" value="Create Makeup Exam">
+        </form>
+        <br><hr><br>
+        <% } %>
 
 
-      <% if (isStaff) { %>
+      <% if (isStaff && problemSet.status=='grading') { %>
         <h2>Grading</h2>
         <% if (course.courseType!="mla0") {%>
           <a class="btn btn-sm btn-danger" 
@@ -129,7 +157,7 @@
             href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>/json">
             show JSON grades
           </a>
-        <% } %>
+        <% } else { %>
           <br>
           <b>Upload Exam Grades:</b> 
           <p>select a CSV file with columns name,email,S1,S2,...,Sk       
@@ -157,7 +185,60 @@
           <input class="btn btn-sm btn-primary" type="submit" value="upload grades file (csv)">
 
       </form>
+      <% } %>
 <hr>
+      <% } %>
+
+      <% if (isOwner) { %>
+      <div>
+        <% if (problemSet.status=="in-prep") { %>
+          <p>
+
+            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+              <input type="hidden" name="status" value="released">
+              <input type="submit" value="Release">
+            </form>
+          </p>
+         <% } else if (problemSet.status=="released") {%>
+          <p>
+  
+
+            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+              <input type="hidden" name="status" value="grading">
+              <input type="submit" value="Start Grading">
+            </form>
+            or  
+            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+              <input type="hidden" name="status" value="in-prep">
+              <input type="submit" value="Go back and add more problems">
+            </form>
+           
+          </p>
+  
+          <% } else if (problemSet.status=="grading") {%>
+            <p>
+
+              <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+                <input type="hidden" name="status" value="graded">
+                <input type="submit" value="Post Grades">
+                </form>
+              or 
+              <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+                <input type="hidden" name="status" value="released">
+                <input type="submit" value="Go back to printing personalized exams">
+              </form>
+            </p>
+  
+  
+          <% } else  {%>
+
+            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+              <input type="hidden" name="status" value="grading">
+              <input type="submit" value="Return to grading">
+              </form>
+            <% } %>
+  
+      </div>
       <% } %>
           
           <a href="/showCourse/<%= courseId %>" 
