@@ -1703,7 +1703,7 @@ const generateTex = (problems) => {
       tex += '\\begin{markdown}\n'
     }
     
-    tex += "\begin{verbatim}\n"+p.description+"\n\end{verbatim}\n";
+    tex += "\\begin{verbatim}\n"+p.description+"\n\\end{verbatim}\n";
     
 
     tex += p.problemText + "\n";
@@ -1715,7 +1715,7 @@ const generateTex = (problems) => {
 
     tex += `
  \\vfill
-{\\small Outcome F1:}
+{\\small Outcome ${p.skills[0]['shortName']}:${p.skills[0]['name']}}
 
  
 \\hfill Show all your work!
@@ -1868,7 +1868,7 @@ const generateTex = (problems) => {
         */
         const psetId = req.params.psetId;
         const pset = await ProblemSet.findOne({_id: psetId});
-        const problems = await Problem.find({psetId: psetId});
+        const problems = await Problem.find({psetId: psetId}).populate('skills');
     
 
     
@@ -1882,7 +1882,7 @@ const generateTex = (problems) => {
         if (p.skills.length!=1){
           continue; // this shouldn't happen
         } else {
-          problemDict[p.skills[0]] = p;
+          problemDict[p.skills[0]['_id']] = p;
         }
        }
     
@@ -1940,7 +1940,7 @@ const generateTex = (problems) => {
          console.dir(`studentSkills:${JSON.stringify(studentSkills)}`);
          let testProblems = [];
          for (let p of problems){
-          if (studentSkills.includes(p.skills[0]+"")) {
+          if (studentSkills.includes(p.skills[0]['_id']+"")) {
             // skip the problem if they have mastered it
           } else {
             testProblems = testProblems.concat(p);
@@ -1949,7 +1949,7 @@ const generateTex = (problems) => {
       
   
        const exam =  
-          personalizedPreamble(studentEmail,'CourseName','ExamDate')
+          personalizedPreamble(studentEmail,course.name,(new Date()).toISOString().slice(0,10))
           + generateTex(testProblems);
        
        if (testProblems.length>0) {
@@ -1971,8 +1971,12 @@ const generateTex = (problems) => {
         + studentsWithFullMastery.map((x) => `\\item ${x}`).join("\n") 
         + "\\end{itemize}\n\\newpage\n";
 
+        if (studentsWithFullMastery.length>0) {
+          result += fullMasteryReport;
+        }
+
         res.setHeader('Content-type', 'text/plain');
-        res.send(startTex+result+fullMasteryReport + endTex);
+        res.send(startTex+result+ endTex);
     });
 
 
