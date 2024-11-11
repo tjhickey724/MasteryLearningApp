@@ -4,11 +4,14 @@
   <div class="container-fluid ">
 
     <h3 class="pb-2 border-bottom">
-      <%= problem.description %>
+      <%= problem.description %> (<%= problemSet.status %>)!!
     </h3>
     <div class="p-2">
 
-      
+      <pre>
+        Show Problem to Student 
+        <%= JSON.stringify(problemSet, null, 2) %>
+      </pre>
 
       <% if (!course.courseType.startsWith("mla") || isOwner) {
                 // show the problem text 
@@ -74,11 +77,15 @@
 
 
  
+      <pre><%= JSON.stringify(problemSet,null,5) %> </pre>
 
-      <% if ((status=='closed')  && !isStaff){%>
+      <% if (status!='released'){%>
       <h1>You may not submit answers at this time
       </h1>
-      <% } else if (( usersAnswers.length==0 || status=='open') && !isStaff) { 
+      <% } else if (
+           (problemSet.status=='released')
+           && ( usersAnswers.length==0 || status=='open') 
+           && !isStaff) { 
         // show the form to input the answer if the user has not answered the question
         // or if it is in save mode not submit mode
         // but staff don't ever answer questions, so they don't see this

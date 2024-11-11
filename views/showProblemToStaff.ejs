@@ -7,6 +7,9 @@
       <%= problem.description %>
     </h3>
     <div class="p-2">
+      <pre>
+        <%= JSON.stringify(problemSet, null, 2) %>
+      </pre>
 
       <% //The owner sees all the details for the problem
          if (isOwner) {        
@@ -161,7 +164,10 @@
       <% if ((status=='closed')  && !isStaff){%>
       <h1>You may not submit answers at this time
       </h1>
-      <% } else if (( usersAnswers.length==0 || status=='open') && !isStaff) { 
+      <% } else if (
+              (problemSet.status=='released')'
+              && ( usersAnswers.length==0 || status=='open')
+              && !isStaff) { 
         // show the form to input the answer if the user has not answered the question
         // or if it is in save mode not submit mode
         // but staff don't ever answer questions, so they don't see this

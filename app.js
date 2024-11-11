@@ -1462,6 +1462,7 @@ app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
 
 app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess,
   async (req, res, next) => {
+    console.log("in showProblemSetToStudent");
 
   const psetId = req.params.psetId;
   const courseId = req.params.courseId;
@@ -2099,6 +2100,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
     const probId = req.params.probId;
     const userId = req.user._id;
     
+    const problemSet = await ProblemSet.findOne({_id: psetId});
     const problem = await Problem.findOne({_id: probId});
     const course = await Course.findOne({_id: courseId});
 
@@ -2155,7 +2157,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
     res.locals = 
        {...res.locals, 
         status,courseId,psetId,probId,
-        problem,course,
+        problem,problemSet,course,
         markdownText,
         answerCount,allAnswers,usersAnswers,theAnswer,
         skills,skillsMastered,
@@ -2169,7 +2171,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
     else if (!res.locals.isStaff) {
       res.render("showProblemToStudent");
     } else {
-      res.render("showProblem");
+      res.render("showProblemToStaff");
     }
     
   } catch (e) {
