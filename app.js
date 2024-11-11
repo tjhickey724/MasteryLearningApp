@@ -189,7 +189,7 @@ Every route that requires authentication for access to a course
 should start with the authorize middleware and then will have those
 functions available in res.locals.
 */
-const {isLoggedIn, hasMGAStudentAccess, hasCourseAccess, hasStaffAccess, isOwner, isInstructor, isAdmin, authorize} = require('./routes/authFunctions.js');
+const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isInstructor, isAdmin, authorize} = require('./routes/authFunctions.js');
 
 
 // view engine setup

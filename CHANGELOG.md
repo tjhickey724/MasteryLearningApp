@@ -30,7 +30,7 @@ Changes that will be included in upcoming releases are added here.
 - no security-specific changes and fixes
 - no vulnerability patches
 
-## [1.0.0-alpha] - 2024-10-01
+## [1.0.0-alpha] - 2024-11-05
 ### Added
 - Initial release of the software
 - Copied from the [SpecsGradingApp repository](https://github.com/tjhickey724/SpecsGradingApp)

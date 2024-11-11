@@ -60,21 +60,21 @@ const isLoggedIn = async (req, res, next) => {
         res.locals.courseInfo = course; 
         
         res.locals.course = course;
+
+        res.locals.isAdmin = req.user.googleemail == adminEmail;
+
         const member = 
           await CourseMember.findOne(
               {studentId: req.user._id, 
                 courseId: res.locals.courseInfo._id});
          
-        res.locals.isAdmin = req.user.googleemail == adminEmail;
+        
+
         if (!member){
             // these should all be false for new courses
-            // but we want to be backward compatible so ...
-            res.locals.isOwner = 
-                res.locals.isAdmin 
-                || res.locals.courseInfo.ownerId == req.user._id+"";
-            res.locals.isMgaStudent = false;
+            res.locals.isOwner = false;
             res.locals.isEnrolled = false;
-            res.locals.isTA = req.user.taFor && req.user.taFor.includes(res.locals.courseInfo._id);
+            res.locals.isTA = false;
         } else {
             res.locals.isOwner 
               = member.role=='owner' 
@@ -82,16 +82,18 @@ const isLoggedIn = async (req, res, next) => {
                 || res.locals.courseInfo.ownerId == req.user._id+"";
             res.locals.isEnrolled = member.role=='student';         
             res.locals.isTA = member.role=='ta';
-            res.locals.isMgaStudent = res.locals.courseInfo.nonGrading; 
         }
 
         res.locals.hasCourseAccess 
             = res.locals.isEnrolled 
               || res.locals.isTA 
-              || res.locals.isOwner;
+              || res.locals.isOwner
+              || res.locals.isAdmin;
+              
         res.locals.isStaff 
             = res.locals.isTA 
-              || res.locals.isOwner;
+              || res.locals.isOwner
+              || res.locals.isAdmin;
 
         // give Admin access to all courses ...
         //res.locals.isOwner ||= res.locals.isAdmin;
@@ -103,21 +105,7 @@ const isLoggedIn = async (req, res, next) => {
     }
   }
 
-  const hasMGAStudentAccess = async (req, res, next) => {
-    // students, TAs, and owners have access to the course
-    try {
-      if (res.locals.isMgaStudent 
-          || res.locals.isEnrolled
-          || res.locals.isTA 
-          || res.locals.isOwner) {
-        next();
-      } else {
-        res.send("You do not have access to this course.");
-      }
-    } catch (e) {
-      next(e);
-    }
-  }
+
   
   const hasCourseAccess = async (req, res, next) => {
     // students, TAs, and owners have access to the course
@@ -196,7 +184,6 @@ const isLoggedIn = async (req, res, next) => {
     module.exports = {
         authorize,
         isLoggedIn,
-        hasMGAStudentAccess,
         hasCourseAccess,
         hasStaffAccess,
         isOwner,
