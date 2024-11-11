@@ -8,12 +8,11 @@
 
         Welcome <i><%= name%> (<%= email%>) </i>
        
-        <% if (allSkills.length>0) { %>
         <h3> Skills mastered so far:  
-
-            <%= skillsMastered.length %>/<%= allSkills.length %> = 
-            <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
-
+            <% if (allSkills.length>0) { %>
+                <%= skillsMastered.length %>/<%= allSkills.length %> = 
+                <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
+            <% } %>
         </h3>
         <ul>
             <li>
@@ -24,6 +23,7 @@
             </li>
         </ul>
 
+        <% if (allSkills.length>0) { %>
         <h3>Skill Mastery Details</h3>
         <i>The percentage of the class who have mastered each skill
         is in parentheses. </i>
@@ -60,10 +60,11 @@
             <% } %>
           </ul>
           
-        <% } %>
         
         </div>
+        <% } %>
 
+        
         <% if (problemSets.length>0) { %>
         <div>
             <h3>Exam Details</h3>
