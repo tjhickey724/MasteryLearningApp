@@ -13,7 +13,7 @@ the user must be logged in to access any of route except "/login"
 const Course = require("../models/Course");
 const CourseMember = require("../models/CourseMember");
 const Instructor = require("../models/Instructor");
-const adminEmail = "tjhickey@brandeis.edu"; // the admin email
+const adminEmail = process.env.ADMIN_EMAIL; // "tjhickey@brandeis.edu"; // the admin email
 
 
 // route middleware to make sure a user is logged in
@@ -24,6 +24,7 @@ const isLoggedIn = async (req, res, next) => {
       let instructor = await Instructor.findOne({userId: req.user._id});
       res.locals.isInstructor = (instructor && instructor.status == "active")
       res.locals.isAdmin = req.user.googleemail == adminEmail;
+      res.locals.admin_email = adminEmail;
       let courseTaMember 
         = await CourseMember.findOne({studentId: req.user._id, role: "ta"});
       res.locals.isTA = courseTaMember != null;

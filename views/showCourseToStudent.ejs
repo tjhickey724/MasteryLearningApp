@@ -3,14 +3,18 @@
 
 <div class="p-3 mb-4 bg-light">
     <div class="container-fluid ">
-        <h3>
-          Course: <%= course.name %></h3>
+        <h1>
+          <%= course.name %></h1>
 
-        <h3>Student: <%= name%>/<%= email%> </h3>
-        
-        <h3> Skills mastered:  <%= skillsMastered.length %>/<%= allSkills.length %> = 
+        Welcome <i><%= name%> (<%= email%>) </i>
+       
+        <% if (allSkills.length>0) { %>
+        <h3> Skills mastered so far:  
+
+            <%= skillsMastered.length %>/<%= allSkills.length %> = 
             <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
 
+        </h3>
         <ul>
             <li>
                 <%= numFskills %> Fundamental skills mastered
@@ -19,12 +23,11 @@
                 <%= numGskills %> General skills mastered
             </li>
         </ul>
-  
 
         <h3>Skill Mastery Details</h3>
         <i>The percentage of the class who have mastered each skill
         is in parentheses. </i>
-        
+   
 
         
         <div class="p-2">
@@ -57,19 +60,11 @@
             <% } %>
           </ul>
           
-        <!-- 
-        <br>
-        The color of the percentage is based on the percentage.
-        <br>
-        <span style="color:red">Red means most of the class have already mastered it. </span>
-
-        <br>
-        <span style="color:blue">Blue means few of the class have mastered it yet.</span>
-        <br>
-        <span style="color:green">Green means you have mastered the skill.</span>
-        <br>
--->
+        <% } %>
+        
         </div>
+
+        <% if (problemSets.length>0) { %>
         <div>
             <h3>Exam Details</h3>
             <ol>
@@ -83,6 +78,7 @@
             <% } %>
             </ol>
         </div>
+        <% } %>
 
     </div>
 </div>

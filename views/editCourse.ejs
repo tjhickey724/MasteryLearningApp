@@ -1,0 +1,52 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+    <div class="p-3 mb-4 bg-light">
+      <div class="container-fluid ">
+        <div class="p-2">
+            <% if ( isOwner) { %>
+                <h2>Settings</h2>
+                <form method="post" action ="/changeCourseName/<%= courseInfo._id %>">
+                   course name: <input type="text" name="newName" 
+                          class="form-control w-50"
+                          value="<%= courseInfo.name %>">
+                   <br>
+                   <input type="text" name="startDate" 
+                     value="<%= courseInfo.startDate.toISOString().slice(0,10) %>">
+                    startDate
+                    <br>
+                    <input type="text" name="stopDate" 
+                      value="<%= courseInfo.stopDate.toISOString().slice(0,10) %>">
+                    stopDate
+                    <br>
+                    <select name="courseType">
+                      <option value="mla0" 
+                              <%= courseInfo.courseType=="mla0"?"selected":"" %>
+                        >
+                        Exam Generation and Reporting
+                      </option>
+                      <option value="mla1" 
+                              <%= courseInfo.courseType=="mla1"?"selected":"" %>
+                        >
+                        Exam Grading, Generation, and Reporting
+                      </option>
+                      <option value="sga" 
+                              <%= courseInfo.courseType=="sga"?"selected":"" %>
+                        >
+                        Online Quizzes
+                      </option>
+                      <option value="pra" 
+                              <%= courseInfo.courseType=="pra"?"selected":"" %>
+                        >
+                        Peer Reviewed InClass Questions
+                      </option>
+                    </select> type of the course
+                    <br><br><br>
+                    
+                    
+                   <button type="submit" class="btn btn-sm btn-danger">Update Course Info</button>
+               <% } %>
+        </div>
+      </div>
+    </div>
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

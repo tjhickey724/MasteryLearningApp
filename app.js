@@ -875,6 +875,19 @@ app.get("/showCourseToStaff/:courseId", authorize, hasStaffAccess,
   }
 });
 
+app.get("/editCourse/:courseId", authorize, isOwner,
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.find({_id: courseId});
+      res.render("editCourse", {course});
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+    
+
 
 /*
 This middleware creates res.locals.skillCounts, which is a dictionary
