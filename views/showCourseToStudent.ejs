@@ -5,16 +5,20 @@
     <div class="container-fluid ">
         <h1>
           <%= course.name %></h1>
+<pre><%= JSON.stringify(grades,null,5)%></pre>          
 
         Welcome <i><%= name%> (<%= email%>) </i>
-       
-        <h3> Skills mastered so far:  
-            <% if (allSkills.length>0) { %>
-                <%= skillsMastered.length %>/<%= allSkills.length %> = 
-                <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
-            <% } %>
-        </h3>
+       <hr>
+        <h3> Summary of Skills Mastered so far:  </h3>
+            
+
         <ul>
+            <li> total skills mastered
+                <% if (allSkills.length>0) { %>
+                    <%= skillsMastered.length %>/<%= allSkills.length %> = 
+                    <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
+                <% } %>
+            </li>
             <li>
                 <%= numFskills %> Fundamental skills mastered
             </li>
@@ -24,7 +28,9 @@
         </ul>
 
         <% if (allSkills.length>0) { %>
-        <h3>Skill Mastery Details</h3>
+
+
+        <h3>Mastery by Exam</h3>
         <i>The percentage of the class who have mastered each skill
         is in parentheses. </i>
    
@@ -75,6 +81,7 @@
                         <%= problemSets[i].name %> -- <%= problemSets[i].status %>
                     </a> 
                     Skills mastered: <%= problemSets[i].skillsMastered %> ....
+<pre><%= JSON.stringify(problemSets[i],null,5)%></pre>                
                 </li>
             <% } %>
             </ol>
