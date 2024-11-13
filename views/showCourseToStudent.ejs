@@ -5,7 +5,7 @@
     <div class="container-fluid ">
         <h1>
           <%= course.name %></h1>
-<pre><%= JSON.stringify(grades,null,5)%></pre>          
+       
 
         Welcome <i><%= name%> (<%= email%>) </i>
        <hr>
@@ -30,7 +30,7 @@
         <% if (allSkills.length>0) { %>
 
 
-        <h3>Mastery by Exam</h3>
+        <h3>Details on Skill Mastery</h3>
         <i>The percentage of the class who have mastered each skill
         is in parentheses. </i>
    
@@ -71,17 +71,18 @@
         <% } %>
 
         
-        <% if (problemSets.length>0) { %>
+        <% if (grades.length>0) { %>
         <div>
-            <h3>Exam Details</h3>
+            <h3>Mastery by each Exam taken</h3>
             <ol>
-            <% for (let i = 0; i < problemSets.length; i++) { %>
+            <% for (let i = 0; i < grades.length; i++) { %>
                 <li>
-                    <a href="/showProblemSetToStudent/<%= course._id%>/<%= problemSets[i]._id%>">
-                        <%= problemSets[i].name %> -- <%= problemSets[i].status %>
-                    </a> 
-                    Skills mastered: <%= problemSets[i].skillsMastered %> ....
-<pre><%= JSON.stringify(problemSets[i],null,5)%></pre>                
+                    <aa href="/showProblemSetToStudent/<%= course._id%>/<%= grades[i].examId._id%>">
+                        <%= grades[i].examId.name %> -- 
+                           <i><%= grades[i].examId.status %></i>
+                    </aa> 
+                    <b>Skills mastered:</b> <%= grades[i].skillsMastered %> ....
+            
                 </li>
             <% } %>
             </ol>
