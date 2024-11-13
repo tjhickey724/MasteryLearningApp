@@ -8,11 +8,6 @@
     </h3>
     <div class="p-2">
 
-      <pre>
-        Show Problem to Student 
-        <%= JSON.stringify(problemSet, null, 2) %>
-      </pre>
-
       <% if (!course.courseType.startsWith("mla") || isOwner) {
                 // show the problem text 
                 if (problem.mimeType=='markdown') { 
@@ -24,13 +19,19 @@
             ><%= 
                   problem.problemText %>
             </div>
+            <h3>Plagiarism detection:on</h3>
+
+
             <% }} else { 
+              // if the course is MLA, don't show the problem text
+              // instead show a message that the problem is hidden
+  
             %><div>MLA problems are hidden from users. Only the owner can see them.</div>
               </div><% } %>
       </div>
 
       <hr>
-      <h3>Plagiarism detection:on</h3>
+      
      
 
 
@@ -77,11 +78,11 @@
 
 
  
-      <pre><%= JSON.stringify(problemSet,null,5) %> </pre>
+
 
       <% if (status!='released'){%>
-      <h1>You may not submit answers at this time
-      </h1>
+      <h3>You may not submit answers at this time
+      </h3>
       <% } else if (
            (problemSet.status=='released')
            && ( usersAnswers.length==0 || status=='open') 

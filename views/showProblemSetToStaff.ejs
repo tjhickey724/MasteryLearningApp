@@ -5,6 +5,9 @@
     <h1 class="pb-2 border-bottom">
       <%= problemSet.name.trim() || "Problem Set" %>
       (<%= problemSet.status %>)
+      <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
+        <i class='fas fa-pen' style='font-size:24px'></i> 
+     </a>
     </h1>
     <div>
       <% if (problemSet.status=="in-prep") { %>
@@ -17,10 +20,10 @@
           in-app grading, students will be able to upload their answers to
           the site.
         </p>
-       <% } else if (problemSet.status=="active") {%>
+       <% } else if (problemSet.status=="released") {%>
         <p>
 
-          <b>This problem set is active. </b>
+          <b>This problem set has been released. </b>
           You can now print personalized exams for students, and if you have enabled
           in-app grading, students will be able to upload their answers to the site.
           When the exam has been completed, you can grade it by clicking the "Grade"
@@ -29,11 +32,12 @@
          
         </p>
 
-        <% } else if (problemSet.status=="completed") {%>
-          <p>
+        <% } else if (problemSet.status=="grading") {%>
+          <p><i>
             The problem set can now be graded. When you have completed the grading,
             you can change the status to "graded" by clicking the "Post Grades" button below.
-
+            Students will then be able to see their grades on this exam.
+          </i>
           </p>
 
 
@@ -52,9 +56,6 @@
               <i class='fas fa-plus' style='font-size:24px'></i> 
             </a>
            <% } %>
-        <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
-        <i class='fas fa-pen' style='font-size:24px'></i> 
-     </a>
         <% } %>
       </h2>
       <ul>
@@ -89,7 +90,7 @@
 
 
       <hr>
-      <% if (isOwner && (problemSet.status=='active')){ %>
+      <% if (isOwner && (problemSet.status=='released')){ %>
 
      
 
@@ -125,7 +126,7 @@
       <% } %>
             
       <% if (isOwner 
-            && (problemSet.status=='graded')
+            && (problemSet.status=="graded")
             && !(problemSet.makeup || problemSet.makeupOf)
             ) { %>
         <h3>Makeup Exams</h3>
@@ -185,6 +186,7 @@
           <input class="btn btn-sm btn-primary" type="submit" value="upload grades file (csv)">
 
       </form>
+         
       <% } %>
 <hr>
       <% } %>

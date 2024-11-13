@@ -9,14 +9,15 @@
     href="/showProblemLibrary/<%= courseId%>/<%= psetId %>">
       Add Problem from Library
  </a>
-<hr>OR<hr>
+OR 
  <a class="btn btn-sm btn-success" 
  href="/uploadProblems/<%= courseId%>/<%= psetId %>">Upload Problems from a Folder</a>
 
- <hr>OR<hr>
+ OR<hr>
    <h2>Create New Problem</h2>
     <div class="p-2">
       <form method="post" action="/saveProblem/<%= courseId%>/<%= psetId %>">
+       <!-- 
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value='visible' name='visible' id="visible" checked>
           <label class="form-check-label" for="visible">
@@ -43,6 +44,8 @@
           </label>
         </div>
         <hr>
+        -->
+        
         <div class="mb-3 col-lg-4">
           <label for="description" class="form-label">Problem Title</label>
           <input type="text" class="form-control" 

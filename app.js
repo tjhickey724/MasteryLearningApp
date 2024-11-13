@@ -1702,13 +1702,15 @@ const generateTex = (problems) => {
   let tex = "\\begin{enumerate}\n";
   for (let p of problems) {
     tex += "\\item\n"
+    tex += "\\begin{verbatim}\n"+p.description+"\n\\end{verbatim}\n";
+
     if (p.mimeType=='plain'){
       tex += '\\begin{verbatim}\n'
     } else if (p.mimeType=='markdown'){
       tex += '\\begin{markdown}\n'
     }
     
-    tex += "\\begin{verbatim}\n"+p.description+"\n\\end{verbatim}\n";
+    
     
 
     tex += p.problemText + "\n";
@@ -1990,7 +1992,7 @@ app.get('/downloadAsTexFile/:courseId/:psetId', authorize, hasStaffAccess,
     const psetId = req.params.psetId;
     const problemSet = await ProblemSet.findOne({_id: psetId});
     //const problems = await Problem.find({psetId: psetId});
-    let problems = await Problem.find({psetId: psetId});  
+    let problems = await Problem.find({psetId: psetId}).populate('skills');  
     //res.setHeader('Content-disposition', 'attachment; filename=problems.tex');
     res.setHeader('Content-type', 'text/plain');
     const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
@@ -2039,10 +2041,10 @@ app.post("/saveProblem/:courseId/:psetId", authorize, isOwner,
       skills: skills,
       pendingReviews: [],
       allowAnswers: true,
-      visible: req.body.visible == "visible",
-      submitable: req.body.submitable == "submitable",
-      answerable: req.body.answerable == "answerable",
-      peerReviewable: req.body.peerReviewable == "peerReviewable",
+      visible: false,//req.body.visible == "visible",
+      submitable: false,//req.body.submitable == "submitable",
+      answerable: false,//req.body.answerable == "answerable",
+      peerReviewable: false,//req.body.peerReviewable == "peerReviewable",
       parentProblemId: null,
       variant: false,
       createdAt: new Date(),
@@ -2163,7 +2165,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         skills,skillsMastered,
         reviews, reviewCount, averageReview,
         };
-
+    console.dir(res.locals);
 
     if (false){
       res.json(res.locals);

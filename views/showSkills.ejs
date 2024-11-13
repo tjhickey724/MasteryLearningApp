@@ -39,7 +39,8 @@
       <h6 class="pb-2 border-bottom fw-bold"> Skills created in this class!
       </h6>
       <ul>
-        <% for(i=0; i<=skills.length-1; i++){ %>
+        <% for(i=0; i<=skills.length-1; i++){
+            if (!skills[i].original) { %>
         <li>
 
           <a href="/showSkill/<%= courseId %>/<%= skills[i]._id %>">
@@ -47,7 +48,7 @@
           </a>
 
         </li>
-        <% } %>
+        <% }} %>
       </ul>
       <hr>
     </div>

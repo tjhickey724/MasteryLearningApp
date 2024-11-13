@@ -3,18 +3,19 @@
     <div class="p-3 mb-4 bg-light">
       <div class="container-fluid ">
         <div class="p-2">
-          <% if (isOwner) { %>
-            <a href="/editSkill/<%= skill.courseId %>/<%= skill._id %>" class="btn btn-sm btn-info">
-              Edit
-            </a>
 
-            <% } %>
-
+            <h1 class="pb-2 border-bottom">
+              <%= skill.name %>
+              <% if (isOwner) { %>
+              <a href="/editSkill/<%= skill.courseId %>/<%= skill._id %>" >
+                <i class='fas fa-pen' style='font-size:24px'></i> 
+             </a>
+             <% } %>
+            </h1>
              
               <h2>Skill Short Name: <%= skill.shortName %>
               </h2>
-              <h2>Skill Name: <%= skill.name %>
-              </h2>
+
               <h3>Skill Level (Fundamental or General): <%= skill.level %> </h3>
               <h3>Skill Description:</h3>
               <pre class="bg-default"

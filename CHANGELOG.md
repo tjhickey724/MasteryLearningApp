@@ -9,6 +9,7 @@ Changes that will be included in upcoming releases are added here.
 
 ### Added
 - Staff can respond to regrade requests
+- Problems go through a life cycle: in-prep, released, grading, graded
 
 ### Changed
 - routeName has been removed from code

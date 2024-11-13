@@ -5,11 +5,12 @@
 
     <h3 class="pb-2 border-bottom">
       <%= problem.description %>
+      <a href="/editProblem/<%= problem.courseId%>/<%= problem._id %>">
+        <i class='fas fa-pen' style='font-size:24px'></i> 
+     </a>
     </h3>
     <div class="p-2">
-      <pre>
-        <%= JSON.stringify(problemSet, null, 2) %>
-      </pre>
+
 
       <% //The owner sees all the details for the problem
          if (isOwner) {        
@@ -42,11 +43,7 @@
                 = <%= averageReview.toFixed(2) %>/<%= problem.points %><% } else { %><span class="text-muted fst-italic">No reviews yet!</span>
                 <% } %>
               </div>
-              <div class="col-md text-right">
-                <a href="/editProblem/<%= problem.courseId%>/<%= problem._id %>" class="btn btn-sm btn-info">
-                  Edit
-                </a>
-              </div>
+
             </div>
     <% } %>
 
@@ -165,7 +162,7 @@
       <h1>You may not submit answers at this time
       </h1>
       <% } else if (
-              (problemSet.status=='released')'
+              (problemSet.status=='released')
               && ( usersAnswers.length==0 || status=='open')
               && !isStaff) { 
         // show the form to input the answer if the user has not answered the question
