@@ -15,15 +15,20 @@
       <hr>
 
       <% if (isTA || isOwner) { %>
-        <h2>Students</h2>
+        <h2>Students and Teaching Staff</h2>
           <ul><li>
         <a  href="/showRoster/<%= courseInfo._id %>">
           Show/Update Roster
         </a>
       </li><li>
+        <a href="/showTAs/<%= courseInfo._id %>" >
+          Show/Update TAs
+        </a>
+      </li><li>
         <a  href="/showMastery/<%= courseInfo._id %>">
           Show Mastery
         </a>
+   
       </li></ul>
   
   
@@ -86,12 +91,7 @@
     </ul>
 
   
-    <h2>Teaching Assistants</h2>
-    <ul><li>
-    <a href="/showTAs/<%= courseInfo._id %>" >
-      Show TAs
-    </a>
-    </li></ul>
+
       
       <hr>
       <% if (course.courseType != 'mla0') { %>

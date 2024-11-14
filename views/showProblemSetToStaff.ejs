@@ -5,9 +5,11 @@
     <h1 class="pb-2 border-bottom">
       <%= problemSet.name.trim() || "Problem Set" %>
       (<%= problemSet.status %>)
+      <% if (isOwner){%> 
       <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
         <i class='fas fa-pen' style='font-size:24px'></i> 
      </a>
+     <% } %>
     </h1>
     <div>
       <% if (problemSet.status=="in-prep") { %>
@@ -16,9 +18,7 @@
           It is not visible to students. You can now add problems to it.
           When you are done adding problems, you can release it to students
           by clicking the "Release" button below. You will then be able to
-          print personalized exams for students, and if you have enabled 
-          in-app grading, students will be able to upload their answers to
-          the site.
+          print personalized exams for students.
         </p>
        <% } else if (problemSet.status=="released") {%>
         <p>
@@ -105,26 +105,7 @@
         Download personalized exams
       </a>
       <% } %>
-      <% if (isOwner) { %>
-
-  
-      <% if (problemSet.makeup)  { %>
-        <hr>
-        <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
-          class="btn btn-sm btn-warning">
-          Show Makeup Exam
-          </a>
-        <% } else  if (problemSet.makeupOf) { %>
-          <hr>
-          <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
-            class="btn btn-sm btn-warning">
-            Show Original Exam
-            </a>
-          <% } %> 
-<hr>
-<br>
-      <% } %>
-            
+     
       <% if (isOwner 
             && (problemSet.status=="graded")
             && !(problemSet.makeup || problemSet.makeupOf)
@@ -159,11 +140,15 @@
             show JSON grades
           </a>
         <% } else { %>
-          <br>
-          <b>Upload Exam Grades:</b> 
-          <p>select a CSV file with columns name,email,S1,S2,...,Sk       
-          <br>where the S1,...,Sk are the short names of the skills tested
-            in this problem set.
+          <p>Select a CSV file containing the grades
+          <br> The first row should be the column names: <b>name,email,S1,S2,...,Sk</b>
+          <br> where the S1,...,Sk are the short names of the skills tested
+            in this problem set
+            <br> the values in the rows should be 
+            1 (or 1.0) if they mastered the skill, 
+            0 (or 0.0) if they did not master the skill on this exam 
+            (but may have mastered it in the past),
+            Every column must have a 1 or a 0 in it.
           </p>
         
           <form method="post" 
@@ -242,6 +227,27 @@
   
       </div>
       <% } %>
+
+      <% if (isOwner) { %>
+
+  
+        <% if (problemSet.makeup)  { %>
+          <hr>
+          <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
+            class="btn btn-sm btn-warning">
+            Show Makeup Exam
+            </a>
+          <% } else  if (problemSet.makeupOf) { %>
+            <hr>
+            <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
+              class="btn btn-sm btn-warning">
+              Show Original Exam
+              </a>
+            <% } %> 
+  <hr>
+  <br>
+        <% } %>
+              
           
           <a href="/showCourse/<%= courseId %>" 
             class="btn btn-sm btn-primary">

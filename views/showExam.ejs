@@ -1,0 +1,30 @@
+<%- include('./bootheader') -%>
+<%- include('./menubar') -%>
+
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="pb-2 border-bottom">
+     Mastery Summary for <%= exam.name %> in <%= course.name %></h1>
+
+      <hr>
+      <h2>Mastery Results for each student by Exam</h2>
+      <table class="table table-bordered table-striped">
+        <thead>
+            <tr><th>name</th><th>email</th><th>Skills Mastered</th></tr>
+        </thead>
+        <tbody>
+      <% for (let grade of grades) {%>
+        <tr>
+            <td><%= grade.name%></td>
+            <td><%= grade.email%> </td> 
+            <td> <%= grade.skillsMastered%> </td>
+        </tr>
+      <% }%>
+        </tbody>
+     </table>
+    </div>
+
+</div>
+
+<%- include('./bootfooter') -%>
+<%- include('./htmlfoot') -%>

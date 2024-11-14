@@ -6,7 +6,15 @@
 
 
     <div class="p-2">
-      <h6 class="pb-2 border-bottom fw-bold"> Skills required this class!
+      <div>
+
+        <a href="/showCourse/<%= courseId %>" class="btn btn-sm btn-danger">
+          Return Home
+        </a>
+        <hr>
+      </div>
+
+      <h6 class="pb-2 border-bottom fw-bold"> Skills for this class!
       </h6>
       <ul>
         <% for(i=0; i<=courseSkills.length-1; i++){ %>
@@ -54,13 +62,7 @@
     </div>
     <% } %>
 
-    <div>
 
-      <a href="/showCourse/<%= courseId %>" class="btn btn-sm btn-danger">
-        Return Home
-      </a>
-
-    </div>
   </div>
 </div>
 <%- include('bootfooter') -%>

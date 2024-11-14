@@ -21,8 +21,7 @@
         Created at <%= course.createdAt %>
         
     </div>
-<pre><%= JSON.stringify(course,null,5)%></pre>
-<pre><%= JSON.stringify(grades,null,5)%></pre>
+
 
         <a href="?csv=1">Download as CSV file</a>
         <br>
@@ -32,19 +31,20 @@
             <tr>
                 <th  class="header" scope="col">Name</th>
                 <th class="header" scope="col">Email</th>
-                <th class="header" scope="col">Section</th>
-                <th class="header" scope="col">Fskills</th>
-                <th class="header" scope="col">Gskills</th>
+                <th class="header js-sort-number" scope="col">Section</th>
+                <th class="header js-sort-number" scope="col">Fskills</th>
+                <th class="header js-sort-number" scope="col">Gskills</th>
                 <% for (let skill of skillSet) { 
                      if (!skillCounts[skill]) skillCounts[skill]=0; %>
                     <th  class="header" scope="col"
                        <% if (skillCounts[skill]==studentCount){ %> 
-                            class="bg-warning"
+                            class="bg-warning  js-sort-number"
                        <% } else { 
                             let cm = 100*skillCounts[skill] / studentCount;
                             let b = 255 - cm*2.55;
                             let r = cm*2.55;
                            %> 
+                           class="js-sort-number"
                            style="font-weight:bold;color:rgb(<%= r %>,0,<%= b %>)"
                         <% } %>
                        >
@@ -64,9 +64,9 @@
                     "bg-warning" %>"
 
                         ><%= email %></td>
-                    <td><%= sectionDict[email] %></td>
-                    <td><%= mastery[email]['Fskills'] %></td>
-                    <td><%= mastery[email]['Gskills'] %></td>
+                    <td><%= parseInt(sectionDict[email]||"0") %></td>
+                    <td><%= parseInt(mastery[email]['Fskills']) %></td>
+                    <td><%= parseInt(mastery[email]['Gskills']) %></td>
                     <% for (let skill of skillSet) { 
                         let m =mastery[email][skill];
                         if (m === undefined) {
@@ -96,7 +96,18 @@
                  
         </tbody>
       </table>
-  </div>
+      <hr>
+      <h2>Mastery Results by Exam</h2>
+      <ul>
+        <% for (exam of exams){
+            if (exam.status=='graded') {%>
+          <li><a href="/showExam/<%= course._id%>/<%= exam._id %>"><%= exam.name %></a></li>
+          <%} else {%>
+            <li><%= exam.name %> (<%= exam.status%> -- not yet graded)</li>
+        <% }}%>
+      </ul>
+     
+    </div>
 
 </div>
 

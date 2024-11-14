@@ -76,14 +76,30 @@ const isLoggedIn = async (req, res, next) => {
             res.locals.isOwner = false;
             res.locals.isEnrolled = false;
             res.locals.isTA = false;
+            if (res.locals.courseInfo.ownerId == req.user._id+"" ){
+              // this shouldn't happen unless the owner is accidentally
+              // removed from the course, if so then we add them back in!
+                res.locals.isOwner = true;
+                let registration = {
+                  studentId: req.user._id,
+                  courseId: course._id,
+                  role: "owner",
+                  createdAt: new Date(),
+                };
+                let cm = new CourseMember(registration);
+                await cm.save();
+            }
         } else {
             res.locals.isOwner 
-              = member.role=='owner' 
-                || res.locals.isAdmin 
-                || res.locals.courseInfo.ownerId == req.user._id+"";
+              = member.role=='owner';
             res.locals.isEnrolled = member.role=='student';         
             res.locals.isTA = member.role=='ta';
         }
+
+        res.locals.isOwner 
+                 = res.locals.isOwner
+                || res.locals.isAdmin 
+                || res.locals.courseInfo.ownerId == req.user._id+"";
 
         res.locals.hasCourseAccess 
             = res.locals.isEnrolled 
@@ -98,7 +114,7 @@ const isLoggedIn = async (req, res, next) => {
 
         // give Admin access to all courses ...
         //res.locals.isOwner ||= res.locals.isAdmin;
-
+        console.dir(res.locals);
         next()
       }
     } catch (e) {
