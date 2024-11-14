@@ -52,14 +52,16 @@
       <% } %>
 
       <h1>Roster</h1>
-      <table class="table table-bordered table-striped  js-sort-table">
-        <thead>
+
+
+      <table class="table table-bordered table-striped js-sort-table" id="table1">
+        <thead style="position: sticky;top: 0">
           <tr>
-            <th class="header js-sort-string" scope="col">Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th class="js-sort-number">Section</th>
-            <th>LastUpdate</th>
+            <th class="header" scope="col">Name</th>
+            <th class="header" scope="col">Email</th>
+            <th class="header" scope="col">Role</th>
+            <th class="header" scope="col">Section</th>
+            <th class="header" scope="col">LastUpdate</th>
           </tr>
         </thead>
         <tbody>

@@ -29,7 +29,7 @@
       <table class="table table-bordered table-striped js-sort-table">
         <thead style="position: sticky;top: 0" >
             <tr>
-                <th  class="header" scope="col">Name</th>
+                <th class="header" scope="col">Name</th>
                 <th class="header" scope="col">Email</th>
                 <th class="header js-sort-number" scope="col">Section</th>
                 <th class="header js-sort-number" scope="col">Fskills</th>
@@ -38,13 +38,13 @@
                      if (!skillCounts[skill]) skillCounts[skill]=0; %>
                     <th  class="header" scope="col"
                        <% if (skillCounts[skill]==studentCount){ %> 
-                            class="bg-warning  js-sort-number"
+                            class="bg-warning"
                        <% } else { 
                             let cm = 100*skillCounts[skill] / studentCount;
                             let b = 255 - cm*2.55;
                             let r = cm*2.55;
                            %> 
-                           class="js-sort-number"
+                           
                            style="font-weight:bold;color:rgb(<%= r %>,0,<%= b %>)"
                         <% } %>
                        >
