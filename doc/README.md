@@ -80,14 +80,24 @@ You can either create a new problem (where you will be prompted for the problem 
 The problems can be written in plain text, or markdown, or LaTeX. When searching for problems for a particular skill, they are ordered chronologically according to their last use in a course you have access to. This allows you to attempt to avoid problems that have been used in the recent past. 
 
 #### Creating and administering a personalized exam
-Once you have linked your MLA course with an MGA course, you can press the "create a personalized exam"
-button which will determine the set of skills each student in the MGA class has mastered and will then
+Once you create an exam, you can release it and then you can press the "create a personalized exam"
+button which will determine the set of skills each student in theclass has mastered and will then
 generate a LaTeX file with one exam for each student (and their name/email is at the top of the first page).
-You can turn this into a pdf by downloading it and running the pdflatex command. It requires a few additional files: (preamble.tex, title.tex) which provide information about the policies for the exam that are copied into each student's exam.
+You can turn this into a pdf by downloading it and running the pdflatex command below. It requires a few additional files: (preamble.tex, title.tex) which provide information about the policies for the exam that are copied into each student's exam.
 
 If the personalized exam contains markdown questions you need to use the following command to generate the pdf
 ``` bash
-latexmk -cd -pdf -shell-escape -silent MARKDOWN-TEX-FILENAME.tex
+pdflatex -shell-escape FILE.tex
+```
+Your preamble.tex file must contain the following
+``` latex
+% Required packages                                                                                 \
+\usepackage[hybrid]{markdown}
+\usepackage{amsmath}
+
+% Configure markdown to properly handle math delimiters                                             \
+\def\markdownRendererInlineMath#1{$#1$}
+\def\markdownRendererDisplayMath#1{\[#1\]}
 ```
 You can read more about converting markdown to pdf in latex at
 [Markdown Package Manual](https://mirror.las.iastate.edu/tex-archive/macros/generic/markdown/markdown.html)
