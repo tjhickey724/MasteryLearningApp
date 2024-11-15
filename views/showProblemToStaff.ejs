@@ -48,7 +48,7 @@
     <% } %>
 
 
-      <% if (!course.courseType.startsWith("mla") || isOwner) {
+      <% if (!course.courseType.startsWith("mla") ) {
                 // show the problem text 
                 if (problem.mimeType=='markdown') { 
             %><div class="bg-default border border-dark rounded border-2 p-3"><%- 
@@ -64,6 +64,7 @@
               </div><% } %>
       </div>
 
+    <% if (!course.courseType.startsWith("mla") ) {%>
       <hr>
       <h3>Plagiarism detection:on</h3>
       <% // the owner can download the answers to check for similarity
@@ -96,7 +97,7 @@
 
         
       <% } %>
-
+             
       <% // if the user has answered the question, 
          // and the problem is peer-reviewable, then they can review others.
          // Also if they are staff, they can review others, without having answered the question
@@ -131,9 +132,6 @@
 
        <% } %>
 
-          <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
-             class="btn btn-small btn-primary">
-             Back to the Problem Set</a>
 
           
         
@@ -247,6 +245,10 @@
 
         <% }%>
       </ul>
+<% } %>
+      <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
+        class="btn btn-small btn-primary">
+        Back to the Problem Set</a>
 
 
     </div>
