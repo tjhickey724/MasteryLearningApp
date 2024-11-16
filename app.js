@@ -1014,7 +1014,11 @@ app.get("/showCourseToStudent/:courseId",
       res.locals.grades = [];
 
     }
-    res.render("showCourseToStudent");  
+    if (course.courseType == "mla0") {
+      res.render("showCourseToStudentMLA0");  
+    } else {
+      res.render("showCourseToStudentMLA1");
+    }
   } catch (e) {
     next(e);
   }

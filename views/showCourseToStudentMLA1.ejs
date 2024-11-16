@@ -1,0 +1,96 @@
+<%- include('./bootheader') -%>
+<%- include('./menubar') -%>
+
+<div class="p-3 mb-4 bg-light">
+    <div class="container-fluid ">
+        <h1>
+          <%= course.name %></h1>
+       MLA1
+
+        Welcome <i><%= name%> (<%= email%>) </i>
+       <hr>
+        <h3> Summary of Skills Mastered so far:  </h3>
+            
+
+        <ul>
+            <li> total skills mastered
+                <% if (allSkills.length>0) { %>
+                    <%= skillsMastered.length %>/<%= allSkills.length %> = 
+                    <%= (skillsMastered.length/allSkills.length*100).toFixed(1) %>%</h3>
+                <% } %>
+            </li>
+            <li>
+                <%= numFskills %> Fundamental skills mastered
+            </li>
+            <li>
+                <%= numGskills %> General skills mastered
+            </li>
+        </ul>
+
+        <% if (allSkills.length>0) { %>
+
+
+        <h3>Details on Skill Mastery</h3>
+        <i>The percentage of the class who have mastered each skill
+        is in parentheses. </i>
+   
+
+        
+        <div class="p-2">
+            <ul>
+            <% for (let i = 0; i < allSkills.length; i++) { 
+                if (!skillCounts[allSkills[i]]) skillCounts[allSkills[i]] = 0;
+                %>
+                <li>
+                    
+                    <% let cm = 100*skillCounts[allSkills[i]] /
+                    studentCount;
+                        let b = 255 - cm*2.55;
+                        let r = cm*2.55;
+                    %>
+                    <%= allSkills[i] %> 
+                    <% if (skillsMastered.includes(allSkills[i])) { %>
+                        <span style="color:green">
+                            
+                            (<%= (cm).toFixed(0) %>%) 
+                        Mastered</span>
+                    <% } else { %>
+                        <span style="font-weight:bold;color:rgb(<%= r %>,0,<%= b %>)"> 
+                            
+                            (<%= (cm).toFixed(0) %>%)
+                        </span> 
+                    <% } %>
+                    = <%= skillCounts[allSkills[i]] %>/<%= studentCount %>
+                    
+                </li>
+            <% } %>
+          </ul>
+          
+        
+        </div>
+        <% } %>
+
+        
+        <% if (grades.length>0) { %>
+        <div>
+            <h3>Mastery by each Exam taken</h3>
+            <ol>
+            <% for (let i = 0; i < grades.length; i++) { %>
+                <li>
+                    <aa href="/showProblemSetToStudent/<%= course._id%>/<%= grades[i].examId._id%>">
+                        <%= grades[i].examId.name %> -- 
+                           <i><%= grades[i].examId.status %></i>
+                    </aa> 
+                    <b>Skills mastered:</b> <%= grades[i].skillsMastered %> ....
+            
+                </li>
+            <% } %>
+            </ol>
+        </div>
+        <% } %>
+
+    </div>
+</div>
+
+<%- include('./bootfooter') -%>
+<%- include('./htmlfoot') -%>
