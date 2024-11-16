@@ -974,7 +974,8 @@ app.get("/showCourseToStudent/:courseId",
                 .sort({'examId.name': 1});
     //res.json(grades);
 
-    if ((req.user.googleemail == grade.email) || (instructors.includes(req.user.googleemail))) {
+    if (req.user.googleemail == grade.email) {
+      // if the user has been graded in the course
       res.locals.course = course;
       //res.locals.exam = exam;
       //res.locals.grade = grade;
@@ -1602,6 +1603,27 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
       const problemSet = await ProblemSet.findOne({_id: psetId});
       problemSet.status = req.body.status;
       await problemSet.save();
+      if (problemSet.status == "in-prep") {
+        // set the status of all problems in the problem set to "in-prep"
+        // visible=false, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: false, submitable: false, answerable: false, peerReviewable: false});
+      } else if (problemSet.status == "released") {
+        // set the status of all problems in the problem set to "released"
+        // visible=true, submitable=true, answerable=true, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: true, answerable: true, peerReviewable: false});
+      } else if (problemSet.status == "grading") {
+        // set the status of all problems in the problem set to "grading"
+        // visible=true, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: false, answerable: false, peerReviewable: false});
+      } else if (problemSet.status == "graded") {
+        // set the status of all problems in the problem set to "graded"
+        // visible=true, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: false, answerable: false, peerReviewable:false});
+      }
       res.redirect("/showProblemSet/"+req.params.courseId+"/"+psetId);
     }
     catch (e) {

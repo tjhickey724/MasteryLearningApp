@@ -5,7 +5,6 @@
     <div class="container-fluid ">
         <h1>
           <%= course.name %></h1>
-       MLA1
 
         Welcome <i><%= name%> (<%= email%>) </i>
        <hr>
@@ -88,6 +87,18 @@
             </ol>
         </div>
         <% } %>
+
+        <h3>Exams</h3>
+        <% for (exam of problemSets) { %>
+            <a href="/showProblemSetToStudent/<%= course._id%>/<%= exam._id%>">
+                <%= exam.name %></a> 
+            <i><%= exam.status %></i>
+            <br>
+            <% if (exam.status == "active") { %>
+                <a href="/takeExam/<%= course._id%>/<%= exam._id%>">Take Exam</a>
+            <% } %>
+        <% } %>
+<pre><%= JSON.stringify(problemSets,null,5)%></pre>
 
     </div>
 </div>

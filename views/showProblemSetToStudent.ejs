@@ -4,14 +4,11 @@
   <div class="container-fluid ">
     <h1 class="pb-2 border-bottom">
       <%= problemSet.name.trim() || "Problem Set" %>
+      (<%= problemSet.status %>)
     </h1>
     <div class="p-2">
       <h2>Problems
-        <% if (isOwner){%> 
-        <a href="/addProblem/<%= courseId%>/<%= psetId %>">
-          <i class='fas fa-plus' style='font-size:24px'></i> 
-        </a>
-        <% } %>
+      
       </h2>
       <ul>
         <% for(i=0; i<problems.length; i++){ 
@@ -44,6 +41,7 @@
                     <%= problems[i].description || "no name" %>
                     all skills in this problem have been mastered
                   </span>
+
                 </a>
 
           <% } else { %>
@@ -67,74 +65,14 @@
 
 
       <hr>
-      <% if (isOwner){ %>
-        <a class="btn btn-sm btn-warning"
-        href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
-        Edit Problem Set
-     </a>
-     
-      <a class="btn btn-sm btn-success" 
-         href="/addProblem/<%= courseId%>/<%= psetId %>">Create New Problem</a>
-      <a class="btn btn-sm btn-success" 
-         href="/showProblemLibrary/<%= courseId%>/<%= psetId %>">
-           Add Problem from Library
-      </a>
+   
 
-      <a class="btn btn-sm btn-success" 
-      href="/uploadProblems/<%= courseId%>/<%= psetId %>">Upload Problems from a Folder</a>
-
-      
-
-
-      <a href="/downloadAsTexFile/<%=courseId%>/<%= psetId %>" 
-        class="btn btn-sm btn-info">
-        Download as .tex file
-      </a>
-
-      <a href="/downloadPersonalizedExamsAsTexFileMGA/<%=courseId%>/<%= psetId %>" 
-        class="btn btn-sm btn-info">
-        Download personalized exams
-      </a>
-<br>
-<br>
-<form method="post" action="/setAsMakeup/<%=courseId%>/<%= psetId %>">
-  If this is a makeup of another problem set, select the problem set here:
-  <select name="makeupSet">
-    <% for (let i=0; i<makeupSets.length; i++){ %>
-      <option 
-        <%= (makeupSets[i]._id == problemSet.makeupOf) ? "selected" : "" %>
-        value="<%= makeupSets[i]._id %>">
-        <%= makeupSets[i].name %>
-      </option>
-    <% } %>
-    </select>
-    
-  <input type="submit" value="Set as Makeup" class="btn btn-sm btn-info">
-</form>
-<br>
-
-<br>
-      <% }  // close if(is_owner) ...%>
-
-
-      <% if (isStaff) { %>
-         
-          <a class="btn btn-sm btn-danger" 
-            href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>">
-            Grade Problem Set
-          </a>
-
-          <a class="btn btn-sm btn-danger" 
-            href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>/json">
-            show JSON grades
-          </a>
-
-      <% } %>
           
           <a href="/showCourse/<%= courseId %>" 
             class="btn btn-sm btn-primary">
             Back to List of Problem Sets</a>
     </div>
+<pre><%= JSON.stringify(problems,null,5)%></pre>
   </div>
 </div>
 

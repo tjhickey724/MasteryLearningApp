@@ -8,7 +8,8 @@
     </h3>
     <div class="p-2">
 
-      <% if (!course.courseType.startsWith("mla") || isOwner) {
+
+      <% if (!course.courseType.startsWith("mla")) {
                 // show the problem text 
                 if (problem.mimeType=='markdown') { 
             %><div class="bg-default border border-dark rounded border-2 p-3"><%- 
@@ -26,9 +27,10 @@
               // if the course is MLA, don't show the problem text
               // instead show a message that the problem is hidden
   
-            %><div>MLA problems are hidden from users. Only the owner can see them.</div>
-              </div><% } %>
-      </div>
+            %>
+              </div>
+      <% } %>
+    </div>
 
       <hr>
       
@@ -69,9 +71,7 @@
 
     
 
-          <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
-             class="btn btn-small btn-primary">
-             Back to the Problem Set</a>
+          
 
           
         
@@ -80,8 +80,9 @@
  
 
 
-      <% if (status!='released'){%>
-      <h3>You may not submit answers at this time
+      <% if (problemSet.status!='released'){%>
+      <h3>You may not submit answers at this time because the problem status is 
+        <%= problemSet.status%> 
       </h3>
       <% } else if (
            (problemSet.status=='released')
@@ -98,8 +99,10 @@
                 <form method="post" action="/saveAnswer/<%= courseId%>/<%= psetId%>/<%= problem._id %>">
                   <div class="form-group">
                     <label for="answer">Enter your answer below:</label>
-                    <textarea class="form-control rounded-0" id="answer" name="answer" rows="10" style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px">
-<%=theAnswer.answer%></textarea>
+                    <textarea class="form-control rounded-0" 
+                            id="answer" name="answer" rows="10" 
+                            style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"
+                            ><%=theAnswer.answer%></textarea>
                   </div>
                   <br>
                  
@@ -171,7 +174,14 @@
       </ul>
 
 
+      <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
+        class="btn btn-small btn-primary">
+        Back to the Problem Set</a>
+        
     </div>
+
+
+
   </div>
 </div>
 <%- include('bootfooter') -%>
