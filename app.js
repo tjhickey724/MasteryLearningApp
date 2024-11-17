@@ -342,7 +342,6 @@ app.get("/mla_home/:show", isLoggedIn,
   const taRegisteredCourses = taRegistrations.map((x) => x.courseId);
   const coursesTAing = await Course.find({_id: {$in: taRegisteredCourses}});
 
-  //const coursesTAing = await Course.find({_id: {$in: req.user.taFor}});
   const title = "PRA";
   const show = (req.params.show=="showAll")?'showAll':'currentOnly';
   console.log(`show is ${show}`);
@@ -758,75 +757,7 @@ app.get("/showCourseToStaff/:courseId", authorize, hasStaffAccess,
     // next we create maps to find the number of problems and user's answers
     // in each problem set so the user will know if they have finished a problemset
     let problems = await Problem.find({courseId: res.locals.courseInfo._id});
-    //let myAnswers = await Answer.find({courseId: res.locals.courseInfo._id, studentId: req.user._id});
-
-    //let problemMap = new Map(); // counts the number or problems in each problemset
-    //let answerMap = new Map(); // counts the number of the user's answers to problems in each problemset 
-    // for (let problem of problems) {
-    //   let count = problemMap.get(problem.psetId.toString());
-    //   if (count) {
-    //     problemMap.set(problem.psetId.toString(), count + 1);
-    //   } else {
-    //     problemMap.set(problem.psetId.toString(), 1);
-    //   }
-    // }
-    // for (let answer of myAnswers) {
-    //   let count = answerMap.get(answer.psetId.toString());
-    //   if (count) {
-    //     answerMap.set(answer.psetId.toString(), count + 1);
-    //   } else {
-    //     answerMap.set(answer.psetId.toString(), 1);
-    //   }
-    // }
-    // res.locals.problemMap = problemMap;
-    // res.locals.answerMap = answerMap;
-
-    // Count the number of thumbs up and thumbs down for the user's reviews
-    // and send the user's reviews to the page
-    // let myReviews = await Review.find({courseId: res.locals.courseInfo._id, studentId: req.user._id});
-    // res.locals.myReviews = myReviews;
-    // let thumbsUp = 0;
-    // let thumbsDown = 0;
-    // for (let r of myReviews) {
-    //   thumbsUp += r.upvoters.length;
-    //   thumbsDown += r.downvoters.length;
-    // }
-    // res.locals.thumbsUp = thumbsUp;
-    // res.locals.thumbsDown = thumbsDown;
-
-    // check to see if the user is a TA for this course
-    // and send it to the page
-    //res.locals.isTA = req.user.taFor && req.user.taFor.includes(res.locals.courseInfo._id);
-
-
-    /* 
-       Find the number of times, skillCount[s] 
-       that the user has mastered each skill s
-       in the course...
-    */
-
-    // get the list of the student's answers for this course
-    //let usersAnswers = await Answer.find({studentId: req.user._id, courseId: courseId});
-    // get the ides of all of the students answers for this course
-    // let answerIds = usersAnswers.map((x) => x._id);
-    // get the ids of the TAs for this course
-    //let taIds = (await User.find({taFor: id})).map((x) => x._id);
-    // get the reviews of the students answers that have been reviewed by TAs
-    //let reviews = await Review.find({answerId: {$in: answers}, reviewerId: {$in: taIds}});
-
-    // get the lists of skill ids for all problems the student mastered
-    // let skillLists = usersAnswers.map((x) => x.skills);
-    // let skillCount = {};
-    // for (slist of skillLists) {
-    //   if (!slist) continue;
-    //   for (s of slist) {
-    //     skillCount[s] = (skillCount[s] || 0) + 1;
-    //   }
-    // }
-    // res.locals.skillCount = skillCount;
-
-    //let skillIds = Array.from(new Set(flatten(skillLists)));
-    //res.locals.skills = await Skill.find({_id: {$in: skillIds}});
+    
     let courseSkills = await CourseSkill.find({courseId}).populate('skillId');
     courseSkills.sort((x,y) => compareCourseSkills(x,y)); 
     res.locals.allSkills = courseSkills.map((x) => x.skillId);
@@ -1207,12 +1138,7 @@ app.post("/editSkill/:courseId/:skillId", authorize, isOwner,
 app.get("/importSkills/:courseId", authorize, isOwner,
   async (req, res, next) => {
     res.locals.courseId = req.params.courseId;
-    // find courses that the user has staff access to
-    const taCourses = req.user.taFor || [];
-    const ownedCourses = await Course.find({ownerId: req.user._id});
-    const visibleCourses = taCourses.concat(ownedCourses.map((x) => x._id));
 
-    //res.locals.courses = await Course.find({_id:{$in:visibleCourses}}).sort({name: 1});
     // for now we will let the user see all of the courses..
     // this is not scalable though!!
     res.locals.courses = await Course.find({}).sort({name: 1});
@@ -1490,7 +1416,7 @@ app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
   
   
   res.locals.skills = await Skill.find({courseId: courseId});
-  
+
   res.render("showProblemSetToStaff");
 });
 
@@ -1719,17 +1645,17 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   res.locals.problems = problems;
   res.locals.answers = await Answer.find({psetId: psetId});
   res.locals.courseInfo = await Course.findOne({_id: res.locals.problemSet.courseId}, "ownerId");
-  const memberList = await CourseMember.find({courseId: res.locals.courseInfo._id});
+  const memberList = await CourseMember.find({courseId: res.locals.courseInfo._id,role:'student'});
   res.locals.students = memberList.map((x) => x.studentId);
   res.locals.studentsInfo = await User.find({_id: {$in: res.locals.students}}, {}, {sort: {googleemail: 1}});
-  const taList = await User.find({taFor: res.locals.courseInfo._id});
-  const taIds = taList.map((x) => x._id);
+
+  const taList = await CourseMember.find({courseId: res.locals.courseInfo._id, role: "ta"}).populate('studentId');
+  const taIds = taList.map((x) => x.studentId._id+"");
   const taReviews = await Review.find({psetId: psetId, reviewerId: {$in: taIds}});
 
   res.locals.taReviews = taReviews;
   let userIsOwner = req.user._id.equals(res.locals.courseInfo.ownerId);
-
-  if (userIsOwner || taIds.filter((x) => x.equals(req.user._id)).length > 0) {
+  if (userIsOwner || taIds.includes(req.user.id+"")){//taIds.filter((x) => x.equals(req.user._id)).length > 0) {
     res.render("gradeProblemSet");
   } else {
     res.send("You are not allowed to grade problem sets.");
@@ -2216,10 +2142,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         reviews, reviewCount, averageReview,
         };
 
-    if (false){
-      res.json(res.locals);
-    }
-    else if (!res.locals.isStaff) {
+    if (!res.locals.isStaff) {
       res.render("showProblemToStudent");
     } else {
       res.render("showProblemToStaff");
@@ -2298,9 +2221,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     const variantIds = variants.map((x) => x._id);
 
 
-    const taCourses = req.user.taFor || [];
-    const ownedCourses = await Course.find({ownerId: req.user._id});
-    const visibleCourses = taCourses.concat(ownedCourses.map((x) => x._id));
 
     // get the problems that have that skill in their list of skills
     // and for which the user is the owner or is a TA
@@ -2453,15 +2373,14 @@ app.get("/showAllAnswers/:courseId/:probId", authorize, hasCourseAccess,
       answers = await Answer.find({problemId: probId}).collation({locale: "en", strength: 2}).sort({answer: 1});
       reviews = await Review.find({problemId: probId});
     }
-    const isTA = req.user.taFor && req.user.taFor.includes(course._id);
-    let taList = await User.find({taFor: courseId});
-    taList = taList.map((x) => x._id);
+    let taList = await CourseMember.find({courseId: courseId, role: "ta"}).populate('studentId'); 
+    taList = taList.map((x) => x.studentId._id);
     res.locals = {
       ...res.locals,
       courseId,probId,psetId, 
       problem,course,
       allSkills,getSkill,
-      numReviews,canView,answers,reviews,isTA,taList,
+      numReviews,canView,answers,reviews,taList,
     }
     //res.json(res.locals);
     res.render("showAllAnswers");
@@ -2786,7 +2705,6 @@ app.get("/showTheStudentInfo/:courseId/:option", authorize, hasStaffAccess,
     // get the courseInfo
     res.locals.courseInfo = await Course.findOne({_id: id}, "name ownerId");
 
-    const isTA = req.user.taFor && req.user.taFor.includes(res.locals.courseInfo._id);
     const isOwner = req.user._id.equals(res.locals.courseInfo.ownerId);
 
     if (!(isOwner || isTA)) {
@@ -2915,11 +2833,9 @@ app.post("/removeTAs/:courseId", authorize, isOwner,
     if (req.body.ta == null) {
       // do nothing
     } else if (typeof req.body.ta == "string") {
-      await User.update({_id: req.body.ta}, {$set: {taFor: []}});
       await CourseMember.deleteOne({courseId: req.params.courseId, studentId: req.body.ta});
     } else {
       req.body.ta.forEach(async (x) => {
-        await User.update({_id: x}, {$set: {taFor: []}});
         await CourseMember.deleteOne({courseId: req.params.courseId, studentId: x});
       });
     }

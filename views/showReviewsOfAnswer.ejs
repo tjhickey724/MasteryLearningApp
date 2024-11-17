@@ -6,7 +6,7 @@
 <script type="text/javascript" src="/js/clickThumb.js"></script>
     <hr>
     <h3 class="bg-danger">
-    <% let userIsTA = true && user.taFor && (user.taFor).indexOf(problem.courseId)>=0
+    <% let userIsTA = isTA;
        let userIsOwner = user._id.equals(courseInfo.ownerId);
        if (userIsTA) {
            %>

@@ -357,7 +357,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
   
         // if the user is a TA, then make their review
         // the official review
-        if (userIsOwner || req.user.taFor.includes(courseId)) {
+        if (userIsOwner || res.locals.isTA) {
     
           
           await Answer.findByIdAndUpdate(answer._id,
@@ -500,8 +500,8 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       res.locals.problem = problem;
       res.locals.student = await User.findOne({_id: answer.studentId});
       res.locals.reviews = await Review.find({answerId: answerId}).populate('reviewerId').populate('skills').sort({points: "asc", review: "asc"});
-      const taList = await User.find({taFor: courseId});
-      res.locals.taList = taList.map((x) => x._id);
+      const taList = await CourseMember.find({courseId: courseId, role: "ta"});
+      res.locals.taList = taList.map((x) => x.studentId._id);
   
 
   

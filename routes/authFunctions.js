@@ -114,7 +114,6 @@ const isLoggedIn = async (req, res, next) => {
 
         // give Admin access to all courses ...
         //res.locals.isOwner ||= res.locals.isAdmin;
-        console.dir(res.locals);
         next()
       }
     } catch (e) {
