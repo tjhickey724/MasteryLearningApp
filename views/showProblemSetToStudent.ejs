@@ -3,20 +3,21 @@
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
     <h1 class="pb-2 border-bottom">
+      <%= course.name.trim() || "Course" %>: 
       <%= problemSet.name.trim() || "Problem Set" %>
       (<%= problemSet.status %>)
     </h1>
     <div class="p-2">
-      <h2>Problems
-      
-      </h2>
-      <ul>
-        <% for(i=0; i<problems.length; i++){ 
-          if (!problems[i].visible && !isOwner ) { %>
-          <li>Problem Hidden </li>
-          <% } else {%>
-          <li>
+      <% if (problemSet.status=="released"){ %>
+        Upload your solutions to the problem below
+        <%} else {%>
+        Problems
+          <% } %>
 
+      <ul>
+        <% for(i=0; i<problems.length; i++){ %>
+
+          
 
           <% // find the problem skills that have not yet been mastered
              // in this problem...
@@ -27,39 +28,20 @@
                            !skillsMastered.includes(skill.toString())
                        ).length
                                         %>
-          <% // consider first the case where all skills have been mastered
-             if (numSkillsToMaster==0){ %>
-                <% // the owner can remove the problem from the problem set
-                   if (isOwner){ %>
-                    <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                      <span style="color:red"> X</span>
-                    </a>
-                <% } %>
-         
-                <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                  <span style="color:green">
-                    <%= problems[i].description || "no name" %>
-                    all skills in this problem have been mastered
-                  </span>
-
-                </a>
-
-          <% } else { %>
-            <% // process problems that have not been fully mastered
-              if (isOwner){ %>
-                <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                    <span style="color:red"> X</span>
-                </a>
-            <% } %>
-
-          <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-            <%= problems[i].description || "no name" %>
-          </a>
-
-          <%= numSkillsToMaster %>/<%= problems[i].skills.length %> 
-              skills left to master<br>
-          <% } %>
-        </li>
+          <% if (
+                  (problemSet.status=="released" && numSkillsToMaster>0)
+                  // if the problem set is released, only show problems they have not mastered
+                  ||
+                  (problemSet.status!="released") 
+                    && problemsAnswered.includes(problems[i]._id.toString())
+                  // if the problem set is not released, only show problems they have answered
+              ) 
+           { %> 
+            <li>
+              <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                <%= problems[i].description || "no name" %>
+              </a>
+            </li>
         <% }} %>
       </ul>
 
@@ -70,9 +52,9 @@
           
           <a href="/showCourse/<%= courseId %>" 
             class="btn btn-sm btn-primary">
-            Back to List of Problem Sets</a>
+            Back to Course</a>
     </div>
-<pre><%= JSON.stringify(problems,null,5)%></pre>
+
   </div>
 </div>
 

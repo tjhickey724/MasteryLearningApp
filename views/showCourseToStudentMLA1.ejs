@@ -72,33 +72,39 @@
         
         <% if (grades.length>0) { %>
         <div>
-            <h3>Mastery by each Exam taken</h3>
-            <ol>
+            <h3>Graded Exams</h3>
+            <ul>
             <% for (let i = 0; i < grades.length; i++) { %>
                 <li>
-                    <aa href="/showProblemSetToStudent/<%= course._id%>/<%= grades[i].examId._id%>">
-                        <%= grades[i].examId.name %> -- 
-                           <i><%= grades[i].examId.status %></i>
-                    </aa> 
+                    <a href="/showProblemSetToStudent/<%= course._id%>/<%= grades[i].examId._id%>">
+                        <%= grades[i].examId.name %> 
+                    </a> 
                     <b>Skills mastered:</b> <%= grades[i].skillsMastered %> ....
             
                 </li>
             <% } %>
-            </ol>
+            </ul>
         </div>
         <% } %>
 
-        <h3>Exams</h3>
+        <h3>Currently Active Exams</h3>
+        <ul>
         <% for (exam of problemSets) { %>
-            <a href="/showProblemSetToStudent/<%= course._id%>/<%= exam._id%>">
+            <% if (exam.status == "grading") {%>
+            <li>
+                <a href="/showProblemSetToStudent/<%= course._id%>/<%= exam._id%>">
                 <%= exam.name %></a> 
-            <i><%= exam.status %></i>
-            <br>
-            <% if (exam.status == "active") { %>
-                <a href="/takeExam/<%= course._id%>/<%= exam._id%>">Take Exam</a>
+            is being graded
+            </li>
+            <% } else %>
+            <% if (exam.status == "released") { %>
+                <li>
+                  <a href="/showProblemSetToStudent/<%= course._id%>/<%= exam._id%>">
+                    Upload answers for <%= exam.name %></a>
+                </li>
             <% } %>
         <% } %>
-<pre><%= JSON.stringify(problemSets,null,5)%></pre>
+        </ul>
 
     </div>
 </div>

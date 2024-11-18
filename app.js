@@ -471,9 +471,11 @@ app.use(reviews);
 
 app.post("/changeCourseName/:courseId", authorize, isOwner,
   async (req, res) => {
+    // better to use Course.findOneAndUpdate ...
     const name = req.body.newName;
     const startDate = req.body.startDate;
     const stopDate = req.body.stopDate;
+    const courseType = req.body.courseType;
     const nonGrading = req.body.nonGrading == "true";
     console.log(`req.body=${JSON.stringify(req.body)}`);
     const course = await Course.findOne({_id:req.params.courseId});
@@ -481,7 +483,7 @@ app.post("/changeCourseName/:courseId", authorize, isOwner,
     course.startDate = new Date(startDate);
     course.stopDate = new Date(stopDate);
     course.nonGrading = nonGrading;
-    course.courseType = req.body.courseType;
+    course.courseType = courseType;
     await course.save();
     res.redirect("/showCourse/"+req.params.courseId);
 });
@@ -1449,9 +1451,9 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
   const course = await Course.findOne({_id: courseId});
 
   res.locals.skillsMastered = await getStudentSkills(courseId,req.user._id);
+  res.locals.problemsAnswered = res.locals.myAnswers.map((x) => x.problemId.toString());
 
   res.locals.skills = await Skill.find({courseId: courseId});
-  console.dir(JSON.stringify(res.locals.skills));
   
   res.render("showProblemSetToStudent");
 });
@@ -1526,9 +1528,13 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
   async (req, res, next) => {
     try {
       const psetId = req.params.psetId;
-      const problemSet = await ProblemSet.findOne({_id: psetId});
-      problemSet.status = req.body.status;
-      await problemSet.save();
+      // update the status of the problem set, this will return the old pset    
+      await ProblemSet.findOneAndUpdate({_id:psetId},{status:req.body.status});
+      // lookup the new pset
+      const problemSet = await ProblemSet.findOne({_id:psetId});
+
+
+      // update the status of all problems in the problem set
       if (problemSet.status == "in-prep") {
         // set the status of all problems in the problem set to "in-prep"
         // visible=false, submitable=false, answerable=false, peerReviewable=false
@@ -1550,6 +1556,7 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
         await Problem.updateMany({psetId: psetId}, 
           {visible: true, submitable: false, answerable: false, peerReviewable:false});
       }
+      
       res.redirect("/showProblemSet/"+req.params.courseId+"/"+psetId);
     }
     catch (e) {
@@ -1637,6 +1644,7 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
 app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   async (req, res, next) => {
   const psetId = req.params.psetId;
+  const json = req.query.json;
   res.locals.psetId = psetId;
   res.locals.courseId = req.params.courseId;
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
@@ -2143,9 +2151,9 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         };
 
     if (!res.locals.isStaff) {
-      res.render("showProblemToStudent");
+      res.render("showProblemToStudentMLA");
     } else {
-      res.render("showProblemToStaff");
+      res.render("showProblemToStaffMLA");
     }
     
   } catch (e) {
@@ -2977,7 +2985,6 @@ app.get("/postGrades/:courseId/:psetId", authorize, hasStaffAccess,
     multiple times by a student on an exam... Once we have this grades object
     we can easily create the PostedGrades object.
     */
-   console.dir(['answers',answers]);
    let gradesDict = {};
    let studentDict = {}
     for (let answer of answers) {
@@ -2989,8 +2996,7 @@ app.get("/postGrades/:courseId/:psetId", authorize, hasStaffAccess,
         gradesDict[answer.studentId._id].skillsMastered.push(skill);
       }
     }
-    console.dir(['studentDict',studentDict]);
-    console.dir(['gradesDict',gradesDict]);
+
     /*
     for each student in the gradesDict, we create a PostedGrades document
     once we have all of the PostedGrades documents, we insert them into the
@@ -3010,9 +3016,12 @@ app.get("/postGrades/:courseId/:psetId", authorize, hasStaffAccess,
       };
       postedGrades.push(pg);
     }
-    console.dir(['postedGrades',postedGrades]);
+   
     await PostedGrades.deleteMany({courseId,examId:psetId});
     await PostedGrades.insertMany(postedGrades);
+    // finally update the probemSet status to "graded"
+    await ProblemSet.findOneAndUpdate({_id:psetId},{status:'graded'});
+
     //res.json([answers,gradesDict,postedGrades])
     res.redirect("/showMastery/" + courseId);
   } catch (e) {

@@ -4,33 +4,10 @@
   <div class="container-fluid ">
 
     <h3 class="pb-2 border-bottom">
+      <%= course.name %><br>
       <%= problem.description %> (<%= problemSet.status %>)!!
     </h3>
-    <div class="p-2">
-
-
-      <% if (!course.courseType.startsWith("mla")) {
-                // show the problem text 
-                if (problem.mimeType=='markdown') { 
-            %><div class="bg-default border border-dark rounded border-2 p-3"><%- 
-                  markdownText
-            %></div><% } else {
-            %><div class="bg-default border border-dark rounded border-2" 
-            style="white-space: pre-wrap; font-family:monospace; padding:10px"
-            ><%= 
-                  problem.problemText %>
-            </div>
-            <h3>Plagiarism detection:on</h3>
-
-
-            <% }} else { 
-              // if the course is MLA, don't show the problem text
-              // instead show a message that the problem is hidden
-  
-            %>
-              </div>
-      <% } %>
-    </div>
+   
 
       <hr>
       

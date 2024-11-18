@@ -3,6 +3,7 @@
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
     <h1 class="pb-2 border-bottom">
+      <%= course.name.trim() || "Course" %>: 
       <%= problemSet.name.trim() || "Problem Set" %>
       (<%= problemSet.status %>)
       <% if (isOwner){%> 
@@ -17,18 +18,41 @@
         <p>
           This problem set is still in preparation. 
           It is not visible to students. You can now add problems to it.
-          When you are done adding problems, you can release it to students
-          by clicking the "Release" button below. You will then be able to
-          print personalized exams for students.
+          </p><p>
+          You can preview the exam by clicking the "Download as .tex file" button below.
+          Store it in a folder which contains (customized versions of) the 
+          <a href="/latex/preamble.tex">preamble.tex</a> 
+          and <a href="/latex/title.tex">title.tex</a> files.
+          You can download the <a href="/latex.zip">latex.zip</a> 
+          file which contains these files.
+        </p><p>
+          Compile the .tex file to see what the exam 
+          will look like using the following command:
+<pre>pdflatex -shell-escape FILE.tex</pre>
+</p><p> 
+          If you are satisfied with the exam, you can download the Personalized Exams,
+          print and compile them as above, then give proctor the exam.
+        </p><p>
+          When you are ready to release the exam to the students,
+          release it by clicking the "Release" button below. 
+          You can then proceed to grading the exam!
+
         </p>
        <% } else if (problemSet.status=="released") {%>
         <p>
-
+          <br>
           <b>This problem set has been released. </b>
-          You can now print personalized exams for students, and if you have enabled
-          in-app grading, students will be able to upload their answers to the site.
-          When the exam has been completed, you can grade it by clicking the "Grade"
-          button below.
+          <% if (course.courseType=="mla0") {%>      
+            When the exam has been completed, you can grade it by clicking the "Grade"
+            button below.
+          <% } else if (course.courseType=="mla1"){ %>
+            Students can now upload their answers.  
+            When the exam has been completed and all answers have been uploaded,
+            you can grade it by clicking the "Grade" button below. Students will not
+            be able to upload answers once you click the "Grade" button.
+          <% }  else {%>
+            ???
+            <% } %>
 
          
         </p>
@@ -60,51 +84,44 @@
         <% } %>
       </h2>
       <ul>
-        <% for(i=0; i<problems.length; i++){ 
-          if (!problems[i].visible && !isOwner ) { %>
-          <li>Problem Hidden </li>
-          <% } else {%>
+        <% for(i=0; i<problems.length; i++){  %>
           <li>
 
-
-
-
-         
                 <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                    <%= problems[i].description || "no name" %>
+                    <%= problems[i].description || "no name" %> 
+                    <% if (isOwner && (problemSet.status=='in-prep')) { %>
+                      <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                        <i class='fas fa-trash' style='font-size:24px'></i>
+                        </a>
+                    <% } %>
+
                 </a>
-                <% // the owner can remove the problem from the problem set
-                if (isOwner){ %>
-                 <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                   <i class='fas fa-xmark' style='font-size:24px'></i> 
-                 </a>
-
-
-             <% } %>
-
-
-
-          <% } %>
         </li>
         <% } %>
       </ul>
 
 
       <hr>
+      <% if (isOwner && (problemSet.status=='in-prep')){ %>
+        <h3>Download Exams</h3>
+        <a href="/downloadAsTexFile/<%=courseId%>/<%= psetId %>" 
+         class="btn btn-sm btn-info">
+         Download as .tex file
+       </a>
+ 
+       <a href="/downloadPersonalizedExamsAsTexFile/<%=courseId%>/<%= psetId %>" 
+         class="btn btn-sm btn-info">
+         Download personalized exams
+       </a>
+ 
+       <% } %>
+
       <% if (isOwner && (problemSet.status=='released')){ %>
 
-     
+       The exam has been released and student can now upload their answers.
 
+ 
 
-      <a href="/downloadAsTexFile/<%=courseId%>/<%= psetId %>" 
-        class="btn btn-sm btn-info">
-        Download as .tex file
-      </a>
-
-      <a href="/downloadPersonalizedExamsAsTexFile/<%=courseId%>/<%= psetId %>" 
-        class="btn btn-sm btn-info">
-        Download personalized exams
-      </a>
       <% } %>
      
       <% if (isOwner 
@@ -129,18 +146,18 @@
 
 
       <% if (isStaff && problemSet.status=='grading') { %>
-        <h2>Grading</h2>
+        
         <% if (course.courseType!="mla0") {%>
+          
           <a class="btn btn-sm btn-danger" 
             href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>">
             Grade Problem Set
           </a>
+          
 
-          <a class="btn btn-sm btn-danger" 
-            href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>/json">
-            show JSON grades
-          </a>
+
         <% } else { %>
+          <h2>Upload Grades</h2>
           <p>Select a CSV file containing the grades
           <br> The first row should be the column names: <b>name,email,S1,S2,...,Sk</b>
           <br> where the S1,...,Sk are the short names of the skills tested
@@ -156,12 +173,6 @@
             action="/uploadGrades/<%= courseId %>" 
             enctype="multipart/form-data">
 
-          
-          
-        
-          
-          
-
           Grades for <%= problemSet.name.trim() || "Problem Set" %>
           <input type="hidden" 
                  name="psetId" 
@@ -169,6 +180,7 @@
                  >
 
           <input required class="mb-3" type="file" name="grades" >
+          <hr>
           <input class="btn btn-sm btn-primary" type="submit" value="upload grades file (csv)">
 
       </form>
@@ -184,7 +196,7 @@
 
             <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
               <input type="hidden" name="status" value="released">
-              <input type="submit" value="Release">
+              <input type="submit" value="Release for Grading">
             </form>
           </p>
          <% } else if (problemSet.status=="released") {%>
@@ -196,29 +208,34 @@
               <input type="submit" value="Start Grading">
             </form>
             or  
-            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+            <form method="post" 
+                  action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
               <input type="hidden" name="status" value="in-prep">
-              <input type="submit" value="Go back and add more problems">
+              <input type="submit" value="Go back and add/delete problems">
+              (Obviously, don't do this if students have already started the exam!)
             </form>
            
           </p>
   
           <% } else if (problemSet.status=="grading") {%>
             <p>
-
+<!--
               <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
                 <input type="hidden" name="status" value="graded">
                 <input type="submit" value="Post Grades">
                 </form>
               or 
-              <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+-->
+              <form method="post" 
+              action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
                 <input type="hidden" name="status" value="released">
-                <input type="submit" value="Go back to printing personalized exams">
+                <input type="submit" value="Go back to allow students to continue submitting answers">
               </form>
             </p>
   
   
-          <% } else  {%>
+          <% } else if (problemSet.status=="graded")  {%>
+
 
             <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
               <input type="hidden" name="status" value="grading">
@@ -252,8 +269,9 @@
           
           <a href="/showCourse/<%= courseId %>" 
             class="btn btn-sm btn-primary">
-            Back to List of Problem Sets</a>
+            Back to Course page</a>
     </div>
+
   </div>
 </div>
 

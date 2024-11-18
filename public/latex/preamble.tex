@@ -1,0 +1,58 @@
+
+\documentclass[12pt]{article} 
+
+% Required packages                                                                                 \
+\usepackage[hybrid]{markdown}
+\usepackage{amsmath}
+
+% Configure markdown to properly handle math delimiters                                             \
+\def\markdownRendererInlineMath#1{$#1$}
+\def\markdownRendererDisplayMath#1{\[#1\]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BEGIN: set margins
+
+%\addtolength{\oddsidemargin}{-.875in}
+%\addtolength{\evensidemargin}{-.875in}
+%\addtolength{\textwidth}{1.75in}
+
+%\addtolength{\topmargin}{-.875in}
+%\addtolength{\textheight}{1.75in}
+\setlength{\textwidth}{6.75in}
+\setlength{\textheight}{9.75in}
+\setlength{\headheight}{0.0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\oddsidemargin}{-0.1in}
+\setlength{\evensidemargin}{-0.1in}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{12pt} %Skip a line between paragraphs
+
+% END: set margins
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{Mastery Learning App exam}
+\fancyhead[R]{page \thepage}
+\cfoot{}
+
+\newcommand{\PI}{PI} 
+\newcommand{\EULER}{EULER} 
+\newcommand{\ValueOf}[1]{  
+\ifx \PI#1 3.14159 %
+  \else 
+    \ifx \EULER#1 2.71828 % 
+      \else 1 %
+    \fi
+\fi}  
+
+%% headers
+\pagestyle{fancy}
+\lhead[\thepage]{Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad MLA course, F24}      
+\lfoot{}
+\rhead[Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad MLA course, Fall2024 ]%{page \thepage \, of \pageref{LastPage}}
+\rfoot{}
+
+
+
+
