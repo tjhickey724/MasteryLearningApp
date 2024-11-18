@@ -1454,6 +1454,7 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
   res.locals.problemsAnswered = res.locals.myAnswers.map((x) => x.problemId.toString());
 
   res.locals.skills = await Skill.find({courseId: courseId});
+
   
   res.render("showProblemSetToStudent");
 });

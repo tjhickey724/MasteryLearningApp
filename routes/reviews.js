@@ -61,6 +61,8 @@ object to store the pendingReviews and not the problem object.
 
 const express = require("express");
 const app = express.Router();
+const showdown  = require('showdown');
+const converter = new showdown.Converter();
 
 // Models!
 
@@ -503,7 +505,27 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       const taList = await CourseMember.find({courseId: courseId, role: "ta"});
       res.locals.taList = taList.map((x) => x.studentId._id);
   
+          
+    let markdownText = problem.problemText;
+    if (problem.mimeType == 'markdown') {
+      markdownText = converter.makeHtml(markdownText);
+      const mathjaxScript = 
+      `<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    },
+  });
+</script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>`;
+      markdownText = mathjaxScript + markdownText;
 
+    }
+
+    res.locals.markdownText = markdownText;
   
       res.locals.skills = await Skill.find({_id: {$in: problem.skills}});
       res.locals.allSkills = await Skill.find({courseId: answer.courseId});

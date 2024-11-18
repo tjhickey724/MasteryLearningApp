@@ -4,27 +4,46 @@
   <div class="container-fluid ">
 
     <h3 class="pb-2 border-bottom">
-      <%= course.name %><br>
+      <%= course.name %>:
       <%= problem.description %> (<%= problemSet.status %>)!!
     </h3>
    
 
+
       <hr>
-      
+      <%= skills.length	%>
+      Skills:
+      <ul>
+        <% for(let i=0;i<skills.length;i++){%>
+        <%if (skillsMastered.includes(skills[i]._id.toString())){%>
+        <li style="color:blue">
+          <%= skills[i].shortName %>::<%= skills[i].name%>
+          --
+          mastered!
+        </li>
+        <%} else{%>
+        <li style="color:red">
+          <%= skills[i].shortName %>::<%= skills[i].name%>
+          -- not yet mastered
+        </li>
+        <% }%>
+
+        <% }%>
+      </ul>
+
+      <hr>
      
 
 
 
       <% // if the user answered the question, show the answer
-         if ( usersAnswers.length> 0 && status == 'submitable') { %>
+         if ( usersAnswers.length> 0 && problemSet.status == 'graded') { %>
             <h2>Your Answer</h2>
             <small>Submission time and date:<%= problem.createdAt %>
             </small>
             <% if (problem.answerMimeType!='image') { %>
-                <h3>Text answer</h3>
                 <pre class="bg-warning"><%=  usersAnswers[0].answer %></pre>
             <% } else { %>
-                <h3>Image answer</h3>
                 <img src="<%= usersAnswers[0].imageFilePath %>" 
                 alt="answer picture" 
                 class="img-fluid">
@@ -57,11 +76,7 @@
  
 
 
-      <% if (problemSet.status!='released'){%>
-      <h3>You may not submit answers at this time because the problem status is 
-        <%= problemSet.status%> 
-      </h3>
-      <% } else if (
+      <%  if (
            (problemSet.status=='released')
            && ( usersAnswers.length==0 || status=='open') 
            && !isStaff) { 
@@ -129,34 +144,12 @@
      
       <hr>
       <% }%>
-      <hr>
-      <%= skills.length	%>
-      Skills:
-      <ul>
-        <% for(let i=0;i<skills.length;i++){%>
-        <%if (skillsMastered.includes(skills[i]._id.toString())){%>
-        <li style="color:blue">
-          <%= skills[i].shortName %>::<%= skills[i].name%>
-          --
-          mastered!
-        </li>
-        <%} else{%>
-        <li style="color:red">
-          <%= skills[i].shortName %>::<%= skills[i].name%>
-          -- not yet mastered
-        </li>
-        <% }%>
-
-        <% }%>
-      </ul>
-
-
+     
       <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
         class="btn btn-small btn-primary">
-        Back to the Problem Set</a>
+        Back to the Exam</a>
         
     </div>
-
 
 
   </div>

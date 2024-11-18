@@ -9,40 +9,53 @@
     </h1>
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
-        Upload your solutions to the problem below
+        The problems below are the ones from this problem set on skills
+        that you have not yet mastered. 
+        <br>
+        Click on the link(s) to upload your answers.
         <%} else {%>
         Problems
           <% } %>
 
       <ul>
-        <% for(i=0; i<problems.length; i++){ %>
+        <% for(i=0; i<problems.length; i++){ 
+          const numSkillsToMaster=
+            problems[i].skills
+            .filter( 
+                    (skill)=>
+                      !skillsMastered.includes(skill.toString())
+                  ).length; 
+          %>
 
-          
 
-          <% // find the problem skills that have not yet been mastered
-             // in this problem...
-             const numSkillsToMaster=
-                problems[i].skills
-                .filter( 
-                        (skill)=>
-                           !skillsMastered.includes(skill.toString())
-                       ).length
-                                        %>
           <% if (
                   (problemSet.status=="released" && numSkillsToMaster>0)
-                  // if the problem set is released, only show problems they have not mastered
-                  ||
-                  (problemSet.status!="released") 
-                    && problemsAnswered.includes(problems[i]._id.toString())
-                  // if the problem set is not released, only show problems they have answered
+                  // if the problem set is released, only show problems they have not mastered              
               ) 
            { %> 
             <li>
               <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                <%= problems[i].description || "no name" %>
+                <%= problems[i].description || "no name" %> A
               </a>
             </li>
-        <% }} %>
+        <% } else if ((problemSet.status!="released")  
+                     && problemsAnswered.includes(problems[i]._id.toString())) {
+      // if the problem set is not released, only show problems they have answered %>
+            <li >
+              <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                <%= problems[i].description || "no name" %> 
+                </a>
+                <% if (numSkillsToMaster==0){ %> 
+                   <span class="text-info">MASTERED</span>  
+                <% } else { %>
+                  <span class="text-danger">not mastered yet</span>  
+                <% } %>
+
+              
+            </li>
+        <% } %>
+      <% } %>
+
       </ul>
 
 

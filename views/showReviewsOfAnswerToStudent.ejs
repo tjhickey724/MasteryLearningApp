@@ -6,14 +6,14 @@
 <script type="text/javascript" src="/js/clickThumb.js"></script>
     <hr>
    
-    <h1>Problem</h1>
+    <h1>Review of your answer to</h1>
     <h3><%= problem.description %></h3>
     <b>The Question</b>
     <div class="bg-default" style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"
-    ><% if (problem.mimeType != 'tex'){ %><%= problem.problemText %><%
+    ><% if (problem.mimeType != 'tex'){ %><%- markdownText %><%
     } else { %>Tex answers are hidden.   <%} %></div>
 
-    <b>Their Answer</b>
+    <b>Submitted Answer</b>
     <small>Submission time and date:<%= answer.createdAt %> </small>
     <% if (!answer.imageFilePath) {%>
         TEXT ANSWER:<br>
@@ -21,62 +21,45 @@
          style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"
          ><%= answer.answer %></pre>
     <% } else { %>
-        <br>
-        IMAGE ANSWER:<br>
     <img src="<%= answer.imageFilePath %>" width="50%">
         <% } %>
 
+<hr>
+     <b>Official Review</>
 
-     <h1>Review for the Grade!</h1>
-     <pre><%= JSON.stringify(review,null,5) %></pre>
 
 
 
             
   
-
-            Skills Mastered:
-            <% let fullskills = review.skills ; 
-               if (fullskills.length==0) {%>
-                <ul>
-                    <li class="text-danger p-3 mb-1">
-                        <b>no skills mastered</b>
-                    </li>
-                </ul>
-            <%}else {%>
-
-            <ul>
-            <% fullskills.map((x) => {%>
-                <li>
-                    <span  style="padding:5px;color:red">
-                        <%= x['name']%>
-                    </span>
-                </li>
-             <%}) %>
-             </ul>
-            <% }%>
-
-
             <div class="bg-info mb-3 p-4" >
                 <%= review.review %>
              </div>
         <hr>
 
-            <h3>Regrade Requests</h3>
-            If you think the grading is incorrect, then you can Submit
-            a regrade request. The request will be reviewed by the staff.
-            <% if (answer.studentId==user.id) {%>
-                <pre><%= JSON.stringify(review,null,5)%> </pre>
-                <form method="post" action="/requestRegrade/<%= courseId%>/<%= review._id %>">
-                    Regrade request:
-                    Reason:<br>
-                    <textarea name="reason" style="width:100%"></textarea>
-                    <hr>
+        <b>Skills Mastered:</b>
+        <% let fullskills = review.skills ; 
+           if (fullskills.length==0) {%>
+            <ul>
+                <li class="text-danger p-3 mb-1">
+                    <b>no skills mastered</b>
+                </li>
+            </ul>
+        <%}else {%>
+
+        <ul>
+        <% fullskills.map((x) => {%>
+            <li>
+                <span  style="padding:5px;color:red">
+                    <%= x['name']%>
+                </span>
+            </li>
+         <%}) %>
+         </ul>
+        <% }%>
 
 
-                    <input type="submit" value="request regrade">
-                </form>
-            <% } %>
+           
 
         </li>
 
@@ -86,14 +69,17 @@
 
 
     
-    <h4 style="margin-top:20px;border-top:thick solid black">
-        Outstanding Regrade Requests</h4>
+    <h3 style="margin-top:20px;border-top:thick solid black">
+        Regrade Requests</h4>
     <ul>
     <% let outstanding = 0;
        for(let i=0; i<regradeRequests.length; i++){
+          
           rr = regradeRequests[i];
-          if (rr.completed) continue;%>
-          outstanding += 1;
+          if (rr.completed) continue;
+          else outstanding += 1;
+          %>
+          
           <li>
               reason:<br>
 <pre class="bg-warning"
@@ -105,9 +91,22 @@
        <hr>
        </li>
     <% }%>
-    <% if (outstanding==0) {%> 
-        <li>
-            No outstanding regrade requests
+    <% if ((outstanding==0) && (fullskills.length==0)) {%> 
+        <li><%= outstanding %> outstanding regrade requests<br>
+            If you think the grading is incorrect, then you can Submit
+            a regrade request. The request will be reviewed by the staff.
+            <% if (answer.studentId==user.id) {%>
+
+                <form method="post" action="/requestRegrade/<%= courseId%>/<%= review._id %>">
+                    Regrade request:
+                    Reason:<br>
+                    <textarea name="reason" style="width:100%"></textarea>
+                    <hr>
+
+
+                    <input type="submit" value="request regrade">
+                </form>
+            <% } %>
         </li>
     <% } %>
     </ul>
