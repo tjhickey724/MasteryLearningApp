@@ -1658,7 +1658,7 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   res.locals.students = memberList.map((x) => x.studentId);
   res.locals.studentsInfo = await User.find({_id: {$in: res.locals.students}}, {}, {sort: {googleemail: 1}});
 
-  const taList = await CourseMember.find({courseId: res.locals.courseInfo._id, role: "ta"}).populate('studentId');
+  const taList = await CourseMember.find({courseId: res.locals.courseInfo._id, role:{$in:["ta","owner"]}}).populate('studentId');
   const taIds = taList.map((x) => x.studentId._id+"");
   const taReviews = await Review.find({psetId: psetId, reviewerId: {$in: taIds}});
 

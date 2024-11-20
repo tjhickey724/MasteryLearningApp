@@ -378,14 +378,15 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
 
         // but we need to adjust numreviews and pendingReviewers
         // if this was a pending review
-
+        console.log('updated answer');
+        console.dir(await Answer.findOne({_id: answer._id}));
         if (answer.pendingReviewers.find(
                (x) => x.equals(req.user._id)) ) {
           await Answer.findByIdAndUpdate(answer._id,
             {$inc:{numReviews:-1},
              $pull:{pendingReviewers:req.user._id}});
           }
-  
+          
  
         // redid this using $incr and $pull ***
         let pendingReviews = [];
