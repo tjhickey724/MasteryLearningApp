@@ -470,8 +470,15 @@ app.get("/mla_home/:show", isLoggedIn,
   
 
   if (!req.user) next();
+
+  const show = (req.params.show=="showAll")?'showAll':'currentOnly';
+  console.log(`show is ${show}`);
+
   const userId = req.user._id;
-  const coursesOwned = await Course.find({ownerId: userId});
+  const coursesOwned = 
+    (show=="showAll"?
+       await Course.find({ownerId: userId}) :
+       await Course.find({ownerId: userId, active:true}));
 
   const registrations = await CourseMember.find({studentId: userId,role:'student'}, "courseId");
   const registeredCourses = registrations.map((x) => x.courseId);
@@ -482,8 +489,7 @@ app.get("/mla_home/:show", isLoggedIn,
   const coursesTAing = await Course.find({_id: {$in: taRegisteredCourses}});
 
   const title = "PRA";
-  const show = (req.params.show=="showAll")?'showAll':'currentOnly';
-  console.log(`show is ${show}`);
+
 
   res.locals = {
     ...res.locals,
@@ -565,6 +571,7 @@ app.post("/createNewCourse", isLoggedIn,
       courseType: req.body.courseType,
       coursePin: coursePin,
       createdAt: new Date(),
+      active: true,
     });
 
 
@@ -601,6 +608,19 @@ async function getCoursePin() {
 /*
 All routes below here must start with a courseId parameter
 */
+
+app.get("/setActive/:courseId/:value", authorize, isOwner,
+  async (req, res, next) => {
+  try {
+    const courseId = req.params.courseId;
+    const value = req.params.value;
+    await Course.findOneAndUpdate({_id: courseId}, {active: value=='true'});
+    res.redirect("/showCourse/" + courseId);
+  } catch (e) {
+    next(e);
+  }
+ }
+)
 
 app.use(reviews);
 

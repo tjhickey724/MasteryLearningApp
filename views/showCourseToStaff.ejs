@@ -15,6 +15,18 @@
       studentPin: <%= courseInfo.coursePin %>
       <hr>
 
+      <% if (isOwner) { %>
+        <% if (course.active) { %>
+          <a href="/setActive/<%= courseInfo._id %>/false">
+            Set Course Inactive
+          </a>
+        <% } else { %>
+        <a href="/setActive/<%= courseInfo._id %>/true">
+          Set Course Active
+        </a>
+        <% } %>
+      <% } %>
+
       <% if (isTA || isOwner) { %>
         <h2>Students and Teaching Staff</h2>
           <ul><li>

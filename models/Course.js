@@ -10,6 +10,7 @@ var courseSchema = Schema( {
   createdAt: Date,
   startDate: Date,
   stopDate: Date,
+  active: {type:Boolean, default:true}, // set to false to archive the course
   courseType: {
     type: String,
     enum: ['mla0',  // skill-based exam generation on paper
