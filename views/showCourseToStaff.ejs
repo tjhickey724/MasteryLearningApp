@@ -10,6 +10,7 @@
         </a>
         <% } %>
     </h1>
+
     <div class="p-2">
       studentPin: <%= courseInfo.coursePin %>
       <hr>
@@ -111,7 +112,7 @@
       <% } %>
       <hr>
       
-       
+
 
       <br>
 
@@ -124,6 +125,17 @@
 
 
     </div>
+
+    <% if (false && isOwner) { 
+      // this will delete all of the student data for the course
+      // but I'm hiding it as it not something that should be done lightly!!
+      
+      %>
+      <a class="btn btn-lg btn-danger" href="/deleteStudentData/<%= courseInfo._id %>" >
+        Delete All Student Data from the Course
+      </a>
+      <% } %>
+
   </div>
 
 </div>

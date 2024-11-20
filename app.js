@@ -26,6 +26,8 @@ require("dotenv").config();
 
 let storageAWS = null;
 
+let s3="";
+
 if (process.env.UPLOAD_TO == "AWS") {
   const aws_config = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -35,7 +37,7 @@ if (process.env.UPLOAD_TO == "AWS") {
   console.dir(aws_config);
   aws.config.update(aws_config);
 
-  const s3 = new aws.S3();
+  s3 = new aws.S3();
 
   storageAWS = multerS3({
     s3: s3,
@@ -300,6 +302,128 @@ app.post("/addInstructor", isAdmin,
       await instructor.save();
       res.redirect("/instructors");
     } catch (e) {
+      next(e);
+    }
+  }
+)
+app.get("/deleteCourse/:courseId", isAdmin,
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      // 
+    } catch (e) {
+      next(e);
+    }
+  }
+)
+
+const deleteStudentData = async (courseId) => {
+      const answers 
+         = await Answer.find({courseId});
+
+      console.log("deleting student data");
+      console.log(answers.length);
+      console.dir(req.params);
+
+      // now delete all of the images in the answers
+      for (let answer of answers) {
+        console.dir(['deleting',answer]);
+        if (answer.imageFilePath) {
+          if (answer.imageFilePath.startsWith("https://")) {
+            try {
+                // remove the https://domain_name/ from the imageFilePath to get the key
+                const imageKey = answer.imageFilePath.split("/").slice(3).join("/");
+                console.log(`deleting AWS file ${imageKey}`);
+                await s3.deleteObject({
+                  Bucket: process.env.AWS_BUCKET_NAME,
+                  Key: imageKey
+                }).promise();
+              } catch (e) {
+                console.log(`error deleting AWS file ${answer.imageFilePath}`);
+                console.log(`with key ${imageKey}`);
+                console.log(`error=${e}`);
+            }
+          } else {
+            const localPath = path.resolve("public"+answer.imageFilePath);
+            console.log(`deleting local file ${localPath}`);
+            try{
+              // delete the local file
+              await unlinkAsync(localPath);  
+            } catch (e) {
+              console.log(`error deleting file ${answer.imageFilePath}`);
+              console.log(`error=${e}`);
+            }
+          }
+        }
+      }
+
+}
+
+app.get("/deleteStudentData/:courseId", isAdmin,
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+
+      await deleteStudentData(courseId);
+      // const answers 
+      //    = await Answer.find({courseId});
+
+      
+      // console.log("deleting student data");
+      // console.log(answers.length);
+      // console.dir(req.params);
+
+      // // now delete all of the images in the answers
+      // for (let answer of answers) {
+      //   console.dir(['deleting',answer]);
+      //   if (answer.imageFilePath) {
+      //     if (answer.imageFilePath.startsWith("https://")) {
+      //       try {
+      //           // remove the https://domain_name/ from the imageFilePath to get the key
+      //           const imageKey = answer.imageFilePath.split("/").slice(3).join("/");
+      //           console.log(`deleting AWS file ${imageKey}`);
+      //           await s3.deleteObject({
+      //             Bucket: process.env.AWS_BUCKET_NAME,
+      //             Key: imageKey
+      //           }).promise();
+      //         } catch (e) {
+      //           console.log(`error deleting AWS file ${answer.imageFilePath}`);
+      //           console.log(`with key ${imageKey}`);
+      //           console.log(`error=${e}`);
+      //       }
+      //     } else {
+      //       const localPath = path.resolve("public"+answer.imageFilePath);
+      //       console.log(`deleting local file ${localPath}`);
+      //       try{
+      //         // delete the local file
+      //         await unlinkAsync(localPath);  
+      //       } catch (e) {
+      //         console.log(`error deleting file ${answer.imageFilePath}`);
+      //         console.log(`error=${e}`);
+      //       }
+      //     }
+      //   }
+      // }
+
+      // now delete all of the grades for the course
+      await PostedGrades.deleteMany({courseId: courseId});
+
+      // now delete all of the answers for the course
+      await Answer.deleteMany({courseId: courseId});
+
+      // now delete all of the courseMembers for the course, except the owner
+      await CourseMember.deleteMany({courseId: courseId, role: {$ne:"owner"}});
+
+      // now delete all of the regradeRequests for the course
+      await RegradeRequest.deleteMany({courseId: courseId});
+
+      // now delete all of the reviews for the course
+      await Review.deleteMany({courseId: courseId});
+      
+      
+      res.redirect("/showCourse/" + courseId);
+    } catch (e) {
+      console.log(`error deleting student data ${e}`);
       next(e);
     }
   }
@@ -707,15 +831,14 @@ app.get("/showCourse/:courseId", authorize, hasCourseAccess,
   try {
     const courseId = req.params.courseId;
     const studentId = req.user._id;
-    const course = await Course.findOne({_id: courseId});
     const courseMember 
         = await CourseMember
                .findOne({studentId, courseId});
-    const role = courseMember.role;
-    if (["student","guest","audit"].includes(role)) {
-      res.redirect("/showCourseToStudent/" + courseId);
-    } else if (["ta","instructor","owner"].includes(role)) {
+
+    if (res.locals.isAdmin || ["ta","instructor","owner"].includes(courseMember.role)) {
       res.redirect("/showCourseToStaff/" + courseId);
+    } else if (["student","guest","audit"].includes(courseMember.role)) {
+      res.redirect("/showCourseToStudent/" + courseId);
     } else {
       res.send("You do not have access to this course.");
     }
@@ -2461,8 +2584,6 @@ app.post("/saveAnswer/:courseId/:psetId/:probId",
 
 
 
-
-
 const addImageFilePath = (req,res,next) => {
   // this adds a filepath to the request object
   // and is used to upload images in the storage system
@@ -2470,18 +2591,22 @@ const addImageFilePath = (req,res,next) => {
   // couldn't find a students answer by getting their
   // user_id and the course,pset, and problem Ids
   // this is a kind of salt.. 
+  console.dir(req.params);
   const uniqueSuffix = //Date.now() + '_' + 
-      Math.round(Math.random() * 1E9);
+      (Math.round(Math.random() * 1E9)).toString();
       if (process.env.UPLOAD_TO=='AWS'){
+        let path = 
         req.filepath =
-          req.params.probId+"_"
-          +req.user._id+"_"
+          "studentImages/"
+          +req.user._id+"/"
+          +req.params.probId+"/"   
           +uniqueSuffix+"_";
         req.urlpath = 
           "https://" + 
           process.env.AWS_BUCKET_NAME +
           ".s3.us-east-2.amazonaws.com/"+
           req.filepath;
+        console.log(`req.urlpath: ${req.urlpath}`);
       } else {
         req.filepath=
           "/answerImages/" +
@@ -2528,7 +2653,8 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                 let imageFilePath = answers[0].imageFilePath;
                 console.log(`deleting file: ${imageFilePath}`); 
                 if (imageFilePath) {
-                  let key = imageFilePath.split('/').slice(-1)[0];
+                  let key = imageFilePath.split('//').slice(-1)[0];
+                  console.log(`imageFilePath: ${imageFilePath}`);
                   console.log(`deleting file with key: ${key}`);
                   await s3.deleteObject({
                     Bucket: process.env.AWS_BUCKET_NAME,
