@@ -19,8 +19,6 @@ var courseSchema = Schema( {
           ],
     default: 'mla0'
     },
-  nonGrading: Boolean, // if true, grading will be done in an external app 
-  mathCourseId: {type:ObjectId,index:true,ref:"MathCourse"},
 } );
 
 module.exports = mongoose.model( 'Course', courseSchema );

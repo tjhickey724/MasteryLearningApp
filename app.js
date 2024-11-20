@@ -323,7 +323,6 @@ const deleteStudentData = async (courseId) => {
 
       console.log("deleting student data");
       console.log(answers.length);
-      console.dir(req.params);
 
       // now delete all of the images in the answers
       for (let answer of answers) {
@@ -358,6 +357,22 @@ const deleteStudentData = async (courseId) => {
       }
 
 }
+app.get("/deleteCourse/:courseId", isAdmin,
+  // this is dangerous because it might delete skills and problems
+  // that are used in other courses ...
+  // I should check if the skill or problem is used in another course
+  // before deleting...
+  // I could also just have an "archive" flag which indicate that the
+  // course should not be viewed....
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      res.send("deleting courses is not allowed yet");
+    } catch (e) {
+      next(e);
+    }
+  }
+)
 
 app.get("/deleteStudentData/:courseId", isAdmin,
   async (req, res, next) => {
@@ -528,9 +543,7 @@ app.get("/createCourse", isLoggedIn, isInstructor,
 });
 
 // rename this to /createCourse and update the ejs form
-/*
-  This creates a new course and if it is a nonGrading course.
-*/
+
 app.post("/createNewCourse", isLoggedIn,
   async (req, res, next) => {
 
@@ -550,7 +563,6 @@ app.post("/createNewCourse", isLoggedIn,
       startDate: new Date(req.body.startDate),
       stopDate: new Date(req.body.stopDate),
       courseType: req.body.courseType,
-      nonGrading: ["exam_reporting", "exam_generation"].includes(req.body.courseType),
       coursePin: coursePin,
       createdAt: new Date(),
     });
@@ -600,13 +612,10 @@ app.post("/changeCourseName/:courseId", authorize, isOwner,
     const startDate = req.body.startDate;
     const stopDate = req.body.stopDate;
     const courseType = req.body.courseType;
-    const nonGrading = req.body.nonGrading == "true";
-    console.log(`req.body=${JSON.stringify(req.body)}`);
     const course = await Course.findOne({_id:req.params.courseId});
     course.name = name;
     course.startDate = new Date(startDate);
     course.stopDate = new Date(stopDate);
-    course.nonGrading = nonGrading;
     course.courseType = courseType;
     await course.save();
     res.redirect("/showCourse/"+req.params.courseId);
@@ -2012,7 +2021,7 @@ const generateTex = (problems) => {
        let tookExamEmails=[];
        if (pset.makeupOf) { 
 
-         const makeupOf = pset.makeupOf; // the id of the MathExam that this exam is a makeup for
+         const makeupOf = pset.makeupOf; // the id of the Exam that this exam is a makeup for
          let tookExamEmails0 
              = (await PostedGrades
                       .find({examId: makeupOf}));
