@@ -33,7 +33,7 @@ var problemSchema = Schema( {
 
   // used for determining whether and how to show the problem
   allowAnswers: Boolean, // default value
-  visible: {type:Boolean, default: true}, //default value, actual value in PsetProblem
+  visible: {type:Boolean, default: true}, //default value, 
   submitable: {type:Boolean,default:true}, // default value
   answerable: {type:Boolean, default:true}, // default value
   peerReviewable:{type:Boolean, default:true}, // default value
