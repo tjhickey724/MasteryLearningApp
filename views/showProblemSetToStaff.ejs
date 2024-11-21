@@ -2,78 +2,67 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
-    <h1 class="pb-2 border-bottom">
-      <%= course.name.trim() || "Course" %>: 
-      <%= problemSet.name.trim() || "Problem Set" %>
-      (<%= problemSet.status %>)
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problemSet.name.trim()%> </li>
+      </ol>
+    </nav>
+
+    <h3 class="pb-2 border-bottom">
+      <%= problemSet.name.trim() || "Exam" %>
       <% if (isOwner){%> 
       <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
         <i class='fas fa-pen' style='font-size:24px'></i> 
      </a>
      <% } %>
-    </h1>
-    
-    <div>
-      <% if (problemSet.status=="in-prep") { %>
-        <p>
-          This problem set is still in preparation. 
-          It is not visible to students. You can now add problems to it.
-          </p><p>
-          You can preview the exam by clicking the "Download as .tex file" button below.
-          Store it in a folder which contains (customized versions of) the 
-          <a href="/latex/preamble.tex">preamble.tex</a> 
-          and <a href="/latex/title.tex">title.tex</a> files.
-          You can download the <a href="/latex.zip">latex.zip</a> 
-          file which contains these files.
-        </p><p>
-          Compile the .tex file to see what the exam 
-          will look like using the following command:
-<pre>pdflatex -shell-escape FILE.tex</pre>
-</p><p> 
-          If you are satisfied with the exam, you can download the Personalized Exams,
-          print and compile them as above, then give proctor the exam.
-        </p><p>
-          When you are ready to release the exam to the students,
-          release it by clicking the "Release" button below. 
-          You can then proceed to grading the exam!
+    </h3>
+               
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="in-prep") { %>
+              in-prep
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                  in-prep</a> 
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="released") { %>
+              released
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                  released</a>
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="grading") { %>
+              grading
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/grading">
+                  grading</a>
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="graded") { %>
+              graded
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/graded">
+                  graded</a>
+              <% } %>
+          </li>
 
-        </p>
-       <% } else if (problemSet.status=="released") {%>
-        <p>
-          <br>
-          <b>This problem set has been released. </b>
-          <% if (course.courseType=="mla0") {%>      
-            When the exam has been completed, you can grade it by clicking the "Grade"
-            button below.
-          <% } else if (course.courseType=="mla1"){ %>
-            Students can now upload their answers.  
-            When the exam has been completed and all answers have been uploaded,
-            you can grade it by clicking the "Grade" button below. Students will not
-            be able to upload answers once you click the "Grade" button.
-          <% }  else {%>
-            ???
-            <% } %>
+      </ol>
+    </nav>
 
-         
-        </p>
-
-        <% } else if (problemSet.status=="grading") {%>
-          <p><i>
-            The problem set can now be graded. When you have completed the grading,
-            you can change the status to "graded" by clicking the "Post Grades" button below.
-            Students will then be able to see their grades on this exam.
-          </i>
-          </p>
-
-
-        <% } else if (problemSet.status=="graded") {%>
-          The problem set has been graded. 
-          If you are not done grading then click the "Return to grading" button below.
-          <% } %>
-
-    </div>
+     
     <div class="p-2">
-      <h2>Problems
+      <h3>Problems
         <% if (isOwner){%> 
           <% if (problemSet.status=='in-prep') { %>
 
@@ -82,13 +71,14 @@
             </a>
            <% } %>
         <% } %>
-      </h2>
+      </h3>
       <ul>
         <% for(i=0; i<problems.length; i++){  %>
           <li>
 
                 <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                    <%= problems[i].description || "no name" %> 
+                  <%= problems[i].skills[0].shortName || "no skill" %>:
+                  <%= problems[i].description || "no name" %> 
                     <% if (isOwner && (problemSet.status=='in-prep')) { %>
                       <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
                         <i class='fas fa-trash' style='font-size:24px'></i>
@@ -116,37 +106,65 @@
  
        <% } %>
 
-      <% if (isOwner && (problemSet.status=='released')){ %>
-
-       The exam has been released and student can now upload their answers.
-
- 
-
-      <% } %>
-     
-      <% if (isOwner 
-            && (problemSet.status=="graded")
-            && !(problemSet.makeup || problemSet.makeupOf)
-            ) { %>
-        <h3>Makeup Exams</h3>
-        If you want to create a makeup exam for this problem set, click the button below.
-        It will let you create a new problem set, but when you print 
-        the personalized exams, it will only create exams for those students
-        who missed this (the original) exam.
-        <br>
-        <form method="post"
-            action="/saveProblemSet/<%=courseId%>">
-          <input type="hidden" name="psetId" value="<%=psetId%>">
-          <input type="hidden" name="makeupOf" value="<%=psetId%>">
-          <input type="hidden" name="name" value="Makeup For <%=problemSet.name%>">
-          <input type="submit" value="Create Makeup Exam">
+    
+    <div>
+      <% if (problemSet.status=="in-prep") { %>
+        <hr>
+        <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+          <input type="hidden" name="status" value="released">
+          <input class="btn btn-lg btn-danger" type="submit" value="Release for Grading">
         </form>
-        <br><hr><br>
-        <% } %>
+        <p class="mt-3">
+          <hr>
+          <h3>Instructions:</h3>
+          <i>
+          This problem set is still in preparation. 
+          It is not visible to students. You can now add problems to it.
+          </p><p>
+          You can preview the exam by clicking the "Download as .tex file" button below.
+          Store it in a folder which contains (customized versions of) the 
+          <a href="/latex/preamble.tex">preamble.tex</a> 
+          and <a href="/latex/title.tex">title.tex</a> files.
+          You can download the <a href="/latex.zip">latex.zip</a> 
+          file which contains these files.
+        </p><p>
+          Compile the .tex file to see what the exam 
+          will look like using the following command:
+<pre>pdflatex -shell-escape FILE.tex</pre>
+</p><p> 
+          If you are satisfied with the exam, you can download the Personalized Exams,
+          print and compile them as above, then give proctor the exam.
+        </p><p>
+          When you are ready to release the exam to the students,
+          release it by clicking the "Release" button below. 
+          You can then proceed to grading the exam!
+        </i>
+        </p>
+       <% } else if (problemSet.status=="released") {%>
+        <p>
+          <br>
+          <b>This problem set has been released. </b>
+          <% if (course.courseType=="mla0") {%>      
+            When the exam has been completed, you can grade it by clicking the "Grade"
+            button below.
+          <% } else if (course.courseType=="mla1"){ %>
+            Students can now upload their answers.  
+            When the exam has been completed and all answers have been uploaded,
+            you can grade it by clicking the "Grade" button below. Students will not
+            be able to upload answers once you click the "Grade" button.
+          <% }  else {%>
+            ???
+            <% } %>
+            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+              <input type="hidden" name="status" value="grading">
+              <input class="btn btn-lg btn-danger" type="submit" value="Start Grading">
+            </form>
 
+         
+        </p>
 
-      <% if (isStaff && problemSet.status=='grading') { %>
-        
+        <% } else if (problemSet.status=="grading") {%>
+            
         <% if (course.courseType!="mla0") {%>
           
           <a class="btn btn-sm btn-danger" 
@@ -186,90 +204,63 @@
       </form>
          
       <% } %>
-<hr>
-      <% } %>
-
-      <% if (isOwner) { %>
-      <div>
-        <% if (problemSet.status=="in-prep") { %>
-          <p>
-
-            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-              <input type="hidden" name="status" value="released">
-              <input type="submit" value="Release for Grading">
-            </form>
+          <p><i>
+            The problem set can now be graded. When you have completed the grading,
+            you can change the status to "graded" by clicking the "Post Grades" button below.
+            Students will then be able to see their grades on this exam.
+          </i>
           </p>
-         <% } else if (problemSet.status=="released") {%>
-          <p>
-  
 
-            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-              <input type="hidden" name="status" value="grading">
-              <input type="submit" value="Start Grading">
-            </form>
-            or  
-            <form method="post" 
-                  action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-              <input type="hidden" name="status" value="in-prep">
-              <input type="submit" value="Go back and add/delete problems">
-              (Obviously, don't do this if students have already started the exam!)
-            </form>
-           
-          </p>
-  
-          <% } else if (problemSet.status=="grading") {%>
-            <p>
-<!--
-              <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-                <input type="hidden" name="status" value="graded">
-                <input type="submit" value="Post Grades">
-                </form>
-              or 
--->
-              <form method="post" 
-              action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-                <input type="hidden" name="status" value="released">
-                <input type="submit" value="Go back to allow students to continue submitting answers">
+
+        <% } else if (problemSet.status=="graded") {%>
+          The problem set has been graded. 
+          If you are not done grading then click the "Return to grading" button below.
+
+
+                  <% if (!(problemSet.makeup || problemSet.makeupOf)) { %>
+              <h3>Makeup Exams</h3>
+              If you want to create a makeup exam for this problem set, click the button below.
+              It will let you create a new problem set, but when you print 
+              the personalized exams, it will only create exams for those students
+              who missed this (the original) exam.
+              <br>
+              <form method="post"
+                  action="/saveProblemSet/<%=courseId%>">
+                <input type="hidden" name="psetId" value="<%=psetId%>">
+                <input type="hidden" name="makeupOf" value="<%=psetId%>">
+                <input type="hidden" name="name" value="Makeup For <%=problemSet.name%>">
+                <input type="submit" value="Create Makeup Exam">
               </form>
-            </p>
-  
-  
-          <% } else if (problemSet.status=="graded")  {%>
+              <br><hr><br>
+              <% } %>
+
+          <% } %>
+
+    </div>
+
+   
+
+     
 
 
-            <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
-              <input type="hidden" name="status" value="grading">
-              <input type="submit" value="Return to grading">
-              </form>
-            <% } %>
-  
-      </div>
-      <% } %>
+    <% if (problemSet.makeup)  { %>
+      <hr>
+      <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
+        class="btn btn-sm btn-warning">
+        Show Makeup Exam
+        </a>
+      <% } else  if (problemSet.makeupOf) { %>
+        <hr>
+        <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
+          class="btn btn-sm btn-warning">
+          Show Original Exam
+          </a>
+        <% } %> 
+      
 
-      <% if (isOwner) { %>
 
-  
-        <% if (problemSet.makeup)  { %>
-          <hr>
-          <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
-            class="btn btn-sm btn-warning">
-            Show Makeup Exam
-            </a>
-          <% } else  if (problemSet.makeupOf) { %>
-            <hr>
-            <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
-              class="btn btn-sm btn-warning">
-              Show Original Exam
-              </a>
-            <% } %> 
-  <hr>
-  <br>
-        <% } %>
-              
+
           
-          <a href="/showCourse/<%= courseId %>" 
-            class="btn btn-sm btn-primary">
-            Back to Course page</a>
     </div>
 
   </div>

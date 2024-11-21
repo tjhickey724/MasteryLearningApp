@@ -947,12 +947,14 @@ app.post("/editCourse/:courseId", authorize, isOwner,
     const name = req.body.newName;
     const startDate = req.body.startDate;
     const stopDate = req.body.stopDate;
+    const guestAccess = req.body.guestAccess;
     const courseType = req.body.courseType;
     const course = await Course.findOne({_id:req.params.courseId});
     course.name = name;
     course.startDate = new Date(startDate);
     course.stopDate = new Date(stopDate);
     course.courseType = courseType;
+    course.guestAccess = guestAccess;
     await course.save();
     res.redirect("/showCourse/"+req.params.courseId);
 });
@@ -1008,30 +1010,6 @@ const getClassGrades = async (req,res,next) => {
   next()
 }
 
-app.get("/showExamToStudent/:courseId/:examId",
-  authorize, hasCourseAccess,
-  getClassGrades,
-  async (req, res, next) => {
-    try {
-      const studentId = req.user._id;
-      const courseId = req.params.courseId;
-      const psetId = req.params.examId;
-      const course = await Course.findOne({_id: courseId});
-      res.locals.courseInfo = course;
-      const problemSet = await ProblemSet.findOne({_id: psetId});
-      const problems = await Problem.find({psetId});
-      const answers 
-         = await Answer
-                .find({studentId, psetId})
-                .populate('problemId');
-      res.locals = {...res.locals, course, problemSet, problems, answers};
-      res.render('showProblemSetToStudent');
-
-    } catch (e) {
-      next(e);
-    }
-  }
-);
 
 app.get("/showCourseToStudent/:courseId", 
   authorize, hasCourseAccess,
@@ -1563,7 +1541,10 @@ app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
   res.locals.courseId = courseId;
   
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
-  res.locals.problems = await Problem.find({psetId: psetId}).sort({description:1});
+  res.locals.problems 
+      = await Problem.find({psetId: psetId})
+                      .populate('skills')
+                      .sort({'skills.shortName':1});
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
  
@@ -1589,7 +1570,10 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
   res.locals.courseId = courseId;
   
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
-  res.locals.problems = await Problem.find({psetId: psetId}).sort({description:1});
+  res.locals.problems 
+      = await Problem.find({psetId: psetId})
+                      .populate('skills')
+                     .sort({description:1});
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
   res.locals.myAnswers = await Answer.find({psetId: psetId, studentId: userId});
@@ -1699,7 +1683,49 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
         // set the status of all problems in the problem set to "released"
         // visible=true, submitable=true, answerable=true, peerReviewable=false
         await Problem.updateMany({psetId: psetId}, 
-          {visible: true, submitable: true, answerable: true, peerReviewable: false});
+          {visible: true, submitable: false, answerable: true, peerReviewable: false});
+      } else if (problemSet.status == "grading") {
+        // set the status of all problems in the problem set to "grading"
+        // visible=true, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: false, answerable: false, peerReviewable: false});
+      } else if (problemSet.status == "graded") {
+        // set the status of all problems in the problem set to "graded"
+        // visible=true, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: false, answerable: false, peerReviewable:false});
+      }
+      
+      res.redirect("/showProblemSet/"+req.params.courseId+"/"+psetId);
+    }
+    catch (e) {
+      next(e);
+    }
+  }
+)    
+
+
+app.get("/updatePsetStatus/:courseId/:psetId/:status", authorize, isOwner,
+  async (req, res, next) => {
+    try {
+      const psetId = req.params.psetId;
+      // update the status of the problem set, this will return the old pset    
+      await ProblemSet.findOneAndUpdate({_id:psetId},{status:req.params.status});
+      // lookup the new pset
+      const problemSet = await ProblemSet.findOne({_id:psetId});
+
+
+      // update the status of all problems in the problem set
+      if (problemSet.status == "in-prep") {
+        // set the status of all problems in the problem set to "in-prep"
+        // visible=false, submitable=false, answerable=false, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: false, submitable: false, answerable: false, peerReviewable: false});
+      } else if (problemSet.status == "released") {
+        // set the status of all problems in the problem set to "released"
+        // visible=true, submitable=true, answerable=true, peerReviewable=false
+        await Problem.updateMany({psetId: psetId}, 
+          {visible: true, submitable: false, answerable: true, peerReviewable: false});
       } else if (problemSet.status == "grading") {
         // set the status of all problems in the problem set to "grading"
         // visible=true, submitable=false, answerable=false, peerReviewable=false
@@ -2149,6 +2175,17 @@ app.get("/addProblem/:courseId/:psetId", authorize, isOwner,
     res.locals.courseId = req.params.courseId;
     res.locals.skills = await Skill.find({courseId: pset.courseId});
     res.locals.problem={description:"",problemText:"",points:0,rubric:"",skills:[],visible:true,submitable:true,answerable:true,peerReviewable:true};
+    res.locals.problemSet = await ProblemSet.findOne({_id: req.params.psetId});
+
+
+    let problems = await Problem.find({psetId: req.params.psetId}).populate('skills');
+    res.locals.psetSkillIds = problems.map((x) => x.skills[0]._id.toString());
+    res.locals.problems = [];
+    let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
+    res.locals.skillIds = skills.map((x) => x.skillId);
+    res.locals.skill = null;
+    res.locals.newProblems=[];
+    
     res.render("addProblem");
   } catch (e) {
     next(e);
@@ -2242,7 +2279,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
     const userId = req.user._id;
     
     const problemSet = await ProblemSet.findOne({_id: psetId});
-    const problem = await Problem.findOne({_id: probId});
+    const problem = await Problem.findOne({_id: probId}).populate('skills');
     const course = await Course.findOne({_id: courseId});
 
     // get info about answers
@@ -2452,7 +2489,7 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
 
     let currentProblems = await Problem.find({psetId: req.params.psetId}).populate('skills');
     res.locals.psetSkillIds = currentProblems.map((x) => x.skills[0]._id.toString());
-
+    res.locals.problemSet = await ProblemSet.findOne({_id: req.params.psetId});
 
     res.locals = 
       {...res.locals, 
@@ -2461,7 +2498,7 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
         psetMap,
         skill, skills};
 
-    res.render('showProblemLibrary');
+    res.render('showProblemsBySkill');
   }
 )
 
@@ -2492,7 +2529,7 @@ app.get("/addProblemToPset/:courseId/:psetId/:probId/:skillId", authorize, isOwn
     await newProblem.save();
 
 
-    res.redirect("/showProblemLibrary/" + courseId+"/"+ psetId); 
+    res.redirect("/addProblem/" + courseId+"/"+ psetId); 
   });
 
 app.get("/removeProblem/:courseId/:psetId/:probId", authorize, isOwner,
@@ -3221,7 +3258,7 @@ app.get("/showMastery/:courseId",
   }
 })
 
-app.get("/showExam/:courseId/:examId", 
+app.get("/showExamMastery/:courseId/:examId", 
   authorize, hasStaffAccess, 
   getClassGrades,
  async (req,res,next) => {

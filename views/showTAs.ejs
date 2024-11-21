@@ -4,19 +4,20 @@
 
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
-    <h1 class="pb-2 border-bottom">
-      <%= courseInfo.name %>
-    </h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseInfo._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Teaching Assistants</li>
+      </ol>
+    </nav>
+
     <div class="p-2">
 
-      studentPin: <%= courseInfo.coursePin %>
-      <br>
-
-
-
-
       <hr>
-      <b>Teaching Assistants</b>
+      <h3>Teaching Assistants</h3>
       <form method="post" action="/removeTAs/<%=courseInfo._id%>">
         <ul>
           <% for(i=0; i< tas.length; i++){ %>
@@ -40,7 +41,6 @@
       </form>
       <hr>
       <% if (user._id.equals(courseInfo.ownerId)) { %>
-      <h2>Add a Teaching Assistant</h2>
       <form method="post" action="/addTA/<%= courseInfo._id%>" class="col-lg-8">
         <div class="input-group"><label for="email" class="input-group-text">Email</label><input class="form-control" type="text" name="email">
           <input class="btn btn-warning" type="submit" value="add specified TA">

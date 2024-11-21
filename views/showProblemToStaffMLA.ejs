@@ -6,8 +6,22 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
+            <%= problemSet.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problem.description %> </li>
+      </ol>
+    </nav>
 
     <h3 class="pb-2 border-bottom">
+      <%= problem.skills[0].shortName %>::
       <%= problem.description %>
       <% if (isOwner){ %>
         <a href="/editProblem/<%= problem.courseId%>/<%= problem._id %>">
@@ -41,7 +55,7 @@
 
       <a href="/showProblemSet/<%= courseId%>/<%= psetId %>" 
         class="btn btn-small btn-primary">
-        Back to the Problem Set</a>
+        Back to the Exam</a>
 
 
     </div>

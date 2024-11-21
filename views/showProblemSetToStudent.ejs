@@ -35,6 +35,7 @@
            { %> 
             <li>
               <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                <%= problems[i].skills[0].shortName || "no skill" %>:
                 <%= problems[i].description || "no name" %> A
               </a>
             </li>
@@ -63,9 +64,13 @@
    
 
           
-          <a href="/showCourse/<%= courseId %>" 
+          <a href="/showProblemSet/<%= courseId %>/<%= psetId %>" 
             class="btn btn-sm btn-primary">
-            Back to Course</a>
+            Back to Exam</a>
+            <hr>
+            <a href="/showCourse/<%= courseId %>" 
+              class="btn btn-sm btn-primary">
+              Back to Course</a>
     </div>
 
   </div>

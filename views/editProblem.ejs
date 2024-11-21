@@ -82,7 +82,7 @@
                  id="check<%= allSkills[i].id %>" <% if
                         (skillIds.includes(allSkills[i].id)) {%> checked <%}%>>
                         <label class="form-check-label" for="check<%= allSkills[i].id %>">
-          <%= allSkills[i].name %>
+          <%= allSkills[i].shortName%>:<%= allSkills[i].name %>
           </label>
         </div>
         <% } %>

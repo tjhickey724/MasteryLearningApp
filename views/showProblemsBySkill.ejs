@@ -2,12 +2,21 @@
 <%- include('menubar') -%>
 <div class="p-lg-5 p-4 mb-4 bg-light">
   <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%=psetId%>">
+            <%= problemSet.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            add problem </li>
+      </ol>
+    </nav>
     <h1>Problem Search Page
     </h1>
-    <a href="/showProblemSet/<%= courseId %>/<%= psetId %>"
-       class="btn btn-sm btn-info">
-      Back to Problem Set
-    </a>
     <hr>
     <% if (skill) { %>
       <h2>Selected Skill: <b><%= skill.shortName %></b>::<%= skill.name %></h2>
@@ -42,24 +51,8 @@
     </table>
 
     <% } else { %>
-    
-    psetSkillIds: <%= psetSkillIds %>
-    <hr>
-    <h2>Select a Skill to see all problems for that skill</h2>
-    <ul>
-      <% if (skills.length > 0) { 
-        skills.forEach(skill => { %>
-        <li> 
-          <% if (psetSkillIds.includes(skill._id.toString())) { %>
-            <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </b>
-          <% } else { %>
-            <a href="/showProblemsBySkill/<%= courseId %>/<%= psetId %>/<%= skill._id %>">
-              <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </a>
-          <% } %>
-            </li>
-      <% })}; %>
-    <ul>
-    <hr>
+      <h1>You need to specify a skill!</h1>
+   
    <% } %>
 
   </div>

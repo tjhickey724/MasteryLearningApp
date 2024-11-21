@@ -13,22 +13,22 @@
 </style>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Mastery</li>
+      </ol>
+    </nav>
     <h1 class="pb-2 border-bottom">
-     Mastery Summary for <%= course.name %></h1>
-    <div>
-        <%= course.description %>
-        <br>
-        Created at <%= course.createdAt %>
-        
-    </div>
-    <!-- Link to return to showCourse -->
-    <a href="/showCourse/<%= course._id %>">Return to course</a>
-    <hr>
+       Skill Mastery 
+    </h1>
 
 
-        <a href="?csv=1">Download as CSV file</a>
-        <br>
-        Students who have not mastered any skills are highlighted.
+
+
       <table class="table table-bordered table-striped js-sort-table">
         <thead style="position: sticky;top: 0" >
             <tr>
@@ -99,12 +99,15 @@
                  
         </tbody>
       </table>
+      <a href="?csv=1">Download as CSV file</a>
+      <br>
+      Students who have not mastered any skills are highlighted.
       <hr>
       <h2>Mastery Results by Exam</h2>
       <ul>
         <% for (exam of exams){
             if (exam.status=='graded') {%>
-          <li><a href="/showExam/<%= course._id%>/<%= exam._id %>"><%= exam.name %></a></li>
+          <li><a href="/showExamMastery/<%= course._id%>/<%= exam._id %>"><%= exam.name %></a></li>
           <%} else {%>
             <li><%= exam.name %> (<%= exam.status%> -- not yet graded)</li>
         <% }}%>

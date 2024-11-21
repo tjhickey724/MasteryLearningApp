@@ -3,9 +3,23 @@
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
 
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
+            <%= problemSet.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problem.description %> </li>
+      </ol>
+    </nav>
+
     <h3 class="pb-2 border-bottom">
-      <%= course.name %>:
-      <%= problem.description %> (<%= problemSet.status %>)!!
+      <%= problem.skills[0].shortName %>::
+      <%= problem.description %> 
     </h3>
    
 

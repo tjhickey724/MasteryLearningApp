@@ -13,43 +13,19 @@
 </style>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
-    <h1 class="pb-2 border-bottom">
-      <%= courseInfo.name %> </h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseInfo._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Enrollment</li>
+      </ol>
+    </nav>
+
+
     <div class="p-2">
-
-      studentPin: <%= courseInfo.coursePin %>
-      Current Time: <%= new Date().toISOString().slice(0, 19).replace('T', ' ') %>
-      <a href="/showCourse/<%= courseInfo._id %>" class="btn btn-sm btn-info">
-        Back to Course
-      </a>
-      <br>
-
-      <hr>
-
-      
-      <hr>
-      <% if (isOwner){ %> 
-      <div>
-        <h3>(Re)Upload Student Roster</h3>
-        <p>Upload a csv file with the following columns: name, email, section</p>
-        <p>This will add them to the class if they are not already in the class,
-          and update their section and role if they are already in the class.
-          Students who are not in the csv file will be given the "dropped" role.
-          Each person can have only one role (student, ta, instructor, dropped) 
-          and at most one section.
-        </p>
-
-        <form method="post" 
-          action="/uploadRoster/<%= courseInfo._id %>" 
-          enctype="multipart/form-data">
-        <input required  class="mb-3"
-              type="file" name="sections" >
-        <input class="btn btn-sm btn-primary" 
-              type="submit" 
-              value="upload roster csv file">
-        </form>
-      </div>
-      <% } %>
+ 
 
       <h1>Roster</h1>
 
@@ -88,17 +64,40 @@
         <% } %>
       </table>
 
+  
+      <% if (isOwner){ %> 
+      <div>
 
+
+        <form method="post" 
+          action="/uploadRoster/<%= courseInfo._id %>" 
+          enctype="multipart/form-data">
+        <input required  class="mb-3"
+              type="file" name="sections" >
+        <input class="btn btn-sm btn-primary" 
+              type="submit" 
+              value="upload roster csv file">
+        </form>
+        <p>To update the roster, upload a csv file where the first line is as below.
+          This only impacts the students, not the TAs, guests, etc.
+        </p>
+          <pre>name,email,section</pre>
+          
+      </div>
+     
+  
       <hr>
-      <% if (false && user._id.equals(courseInfo.ownerId)) { %>
-      <span class="lead">You are the owner</span>
-      <form method="post" action="/addStudents/<%= courseInfo._id %>">
-        <div class="mb-3">
-          <label for="description" class="form-label h3">Enter emails of students to add to your course</label>
-          <textarea class="form-control" name="emails" rows="10" cols="40"></textarea>
-        </div>
-        <input class="btn btn-lg btn-outline-dark" type="submit">
-      </form>
+          <% if (false) { %>
+          You can also add students to the course by entering their email addresses below.
+          <form method="post" action="/addStudents/<%= courseInfo._id %>">
+            <div class="mb-3">
+              <label for="description" class="form-label">Emails</label>
+              <textarea class="form-control" name="emails" rows="10" cols="40"></textarea>
+            </div>
+            <input class="btn btn-lg btn-outline-dark" type="submit">
+          </form>
+          <% } %>
+
       <% }  %>
       <br>
 

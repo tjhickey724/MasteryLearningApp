@@ -2,98 +2,178 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
-    <h1 class="pb-2 border-bottom">
-      Add Problem
-    </h1>
-    <a class="btn btn-sm btn-success" 
-    href="/showProblemLibrary/<%= courseId%>/<%= psetId %>">
-      Add Problem from Library
- </a>
-OR 
- <a class="btn btn-sm btn-success" 
- href="/uploadProblems/<%= courseId%>/<%= psetId %>">Upload Problems from a Folder</a>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%=psetId%>">
+            <%= problemSet.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            add problem </li>
+      </ol>
+    </nav>
 
- OR<hr>
-   <h2>Create New Problem</h2>
-    <div class="p-2">
-      <form method="post" action="/saveProblem/<%= courseId%>/<%= psetId %>">
-       <!-- 
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value='visible' name='visible' id="visible" checked>
-          <label class="form-check-label" for="visible">
-            Visible: students can see the problem.
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="answerable" name='answerable' id="answerable" checked>
-          <label class="form-check-label" for="answerable">
-            Answerable: students can type in an answer to the problem and either
-            save it or submit it. </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name='submitable' id="submitable" checked value='submitable'>
-          <label class="form-check-label" for="submitable">
-            Submitable: students can submit their answer (otherwise they can only save)
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name='peerReviewable' id="peerReviewable" checked value='peerReviewable'>
-          <label class="form-check-label" for="peerReviewable">
-            Peer Reviewable: students who have submitted their answer can review the
-            answers of their peers in a doubly blind anonymous fashion
-          </label>
-        </div>
-        <hr>
-        -->
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-a" data-bs-toggle="tab" data-bs-target="#content-a" type="button" role="tab">
+            Add Problem From Library
+          </button>
+      </li>
+      <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-b" data-bs-toggle="tab" data-bs-target="#content-b" type="button" role="tab">
+            Create New Problem
+          </button>
+      </li>
+      <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-c" data-bs-toggle="tab" data-bs-target="#content-c" type="button" role="tab">
+            Upload Problems
+          </button>
+      </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="content-a" role="tabpanel">
+          <div class="card mt-3">
+              <div class="card-body">
+                  
+                  <p class="card-text">
+                    
+                    <h2>Select a Skill to see all problems for that skill</h2>
+                    <ul>
+                      <% if (skillIds.length > 0) { 
+                        skillIds.forEach(skill => { %>
+                        <li> 
+                          <% if (psetSkillIds.includes(skill._id.toString())) { %>
+                            <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </b>
+                          <% } else { %>
+                            <a href="/showProblemsBySkill/<%= courseId %>/<%= psetId %>/<%= skill._id %>">
+                              <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </a>
+                          <% } %>
+                            </li>
+                      <% })}; %>
+                    <ul>
+                    <hr>
+                  </p>
+              </div>
+          </div>
+      </div>
+      <div class="tab-pane fade" id="content-b" role="tabpanel">
+          <div class="card mt-3">
+              <div class="card-body">
+                  <p class="card-text">
+                    <form method="post" action="/saveProblem/<%= courseId%>/<%= psetId %>">
+     
         
-        <div class="mb-3 col-lg-4">
-          <label for="description" class="form-label">Problem Title</label>
-          <input type="text" class="form-control" 
-                 name="description" id="description"
-                 value="<%= problem.description%>">
-        </div>
-        <div class="mb-3 col-lg-4">
-          <label for="mimeType" class="form-label">mimeType</label>
-          <select name="mimeType" id="mimeType">
-            <option>plain</option>
-            <option>markdown</option>
-            <option>tex</option>
-          </select>
-        </div>
-        <div class="mb-3 col-lg-4">
-          <label for="answerMimeType" class="form-label">
-            upload format for the answer
-          </label>
-          <select name="answerMimeType" id="answerMimeType">
-            <option>text</option>
-            <option>image</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="problemText" class="form-label">Problem Description</label>
-          <textarea name="problemText" class="form-control" 
-                  cols="100" rows="10"><%= problem.problemText %></textarea>
-        </div>
-        <b>Rubric:</b><br>
-        <textarea class="form-control" name="rubric" 
-              cols="100" rows="10"><%= problem.rubric %></textarea>
-        <hr>
-        <h2>Skills required to fully solve this problem</h2>
-        Check all that apply.
-        <hr>
-        <% for(let i=0; i<skills.length; i++){ %>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="skills" value="<%= skills[i].id %>" id="check<%= skills[i].id %>">
-          <label class="form-check-label" for="check<%= skills[i].id %>">
-            <%= skills[i].shortName %> :: <%= skills[i].name %>
-          </label>
-        </div>
-        <% } %>
-        <hr>
-        <input class="btn btn-lg btn-primary" type="submit">
-      </form>
+                      <div class="mb-3 col-lg-4">
+                        <label for="description" class="form-label">Problem Name</label>
+                        <input type="text" class="form-control" 
+                               name="description" id="description"
+                               value="<%= problem.description%>">
+                      </div>
+                      <div class="mb-3 col-lg-4">
+                        <label for="mimeType" class="form-label">mimeType</label>
+                        <select name="mimeType" id="mimeType">
+                          <option>plain</option>
+                          <option>markdown</option>
+                          <option>tex</option>
+                        </select>
+                      </div>
+                      <div class="mb-3 col-lg-4">
+                        <label for="answerMimeType" class="form-label">
+                          upload format for the answer
+                        </label>
+                        <select name="answerMimeType" id="answerMimeType">
+                          <option>text</option>
+                          <option>image</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="problemText" class="form-label">Problem Description</label>
+                        <textarea name="problemText" class="form-control" 
+                                cols="100" rows="10"><%= problem.problemText %></textarea>
+                      </div>
+                      <b>Rubric:</b><br>
+                      <textarea class="form-control" name="rubric" 
+                            cols="100" rows="10"><%= problem.rubric %></textarea>
+                      <hr>
+                      <h2>Skill being tested by this problem.</h2>
+                      <hr>
+                      <% for(let i=0; i<skills.length; i++){ %>
 
-      <%= psetId %>
+                        <% if (!psetSkillIds.includes(skills[i]._id.toString())) { %>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="skills" value="<%= skills[i]._id %>" id="check<%= skills[i]._id %>">
+                            <label class="form-check-label" for="check<%= skills[i]._id %>">
+                              <%= skills[i].shortName %> :: <%= skills[i].name %>
+                              
+                            </label>
+                          </div>
+                          <% } else { %>
+                            <div class="form-check  disabled">
+                              <input disabled class="form-check-input  disabled" type="radio" name="skills" value="<%= skills[i]._id %>" id="check<%= skills[i]._id %>">   
+                              <label class="form-check-label  disabled" for="check<%= skills[i]._id %>">
+                                <%= skills[i].shortName %> :: <%= skills[i].name %>
+                              </label>
+                            </div>
+                            <% } %>
+                      <% } %>
+                      <hr>
+                      <input class="btn btn-lg btn-primary" type="submit">
+                    </form>
+                  </p>
+              </div>
+          </div>
+      </div>
+      <div class="tab-pane fade" id="content-c" role="tabpanel">
+          <div class="card mt-3">
+              <div class="card-body">
+                  <p class="card-text">
+
+                    <form method="post" 
+                         enctype="multipart/form-data"
+                         action="/uploadProblems/<%=courseId%>/<%= psetId %>">
+                      
+                     
+                      Select the skill for these problems: 
+                      <select name="skill">
+                        <% for (let i=0; i<skills.length; i++){ %>
+                          <option 
+                                <%= psetSkillIds.includes(skills[i]._id.toString()) ? 'disabled' : '' %>
+                                value="<%= skills[i]._id %>">
+                            <%= skills[i].shortName %> ::  <%= skills[i].name %>
+                          </option>
+                        <% } %>
+                      </select>
+                      <br> Problem MimeType for these problems:
+                      <select name="mimeType">
+                        <option>plain</option>
+                        <option>markdown</option>
+                        <option>tex</option>
+                      </select>
+                      <br> Answer MimeType for these problems
+                      <select name="answerMimeType">
+                        <option>text</option>
+                        <option>image</option>
+                      </select>
+                      <hr>
+                      Select the files containing the problems for this problem set:<br>
+                      The file names will become the name of the skill<br>
+                      You will have to add the shortName yourself later<br>
+                      <input type="file" multiple name="problems"><br>
+                     
+                      <input type="submit" value="Upload" class="btn btn-sm btn-info">
+                    </form>
+          
+                  </p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
     </div>
   </div>
 </div>
