@@ -2,11 +2,63 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problemSet.name.trim()%> </li>
+      </ol>
+    </nav>
     <h1 class="pb-2 border-bottom">
-      <%= course.name.trim() || "Course" %>: 
       <%= problemSet.name.trim() || "Problem Set" %>
-      (<%= problemSet.status %>)
     </h1>
+
+                 
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="in-prep") { %>
+              <b>in-prep</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                   href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                  in-prep</a> 
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="released") { %>
+              <b>released</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                  href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                  released</a>
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="grading") { %>
+              <b>grading</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                  href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/grading">
+                  grading</a>
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="graded") { %>
+              <b>graded</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                  href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/graded">
+                  graded</a>
+              <% } %>
+          </li>
+
+      </ol>
+    </nav>
+
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
         The problems below are the ones from this problem set on skills

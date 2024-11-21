@@ -21,7 +21,7 @@
      </a>
      <% } %>
     </h3>
-               
+  <% if (isOwner){%>               
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
           <li class="breadcrumb-item">
@@ -59,7 +59,49 @@
 
       </ol>
     </nav>
+<% } else {%>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="in-prep") { %>
+            <b>in-prep</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                 href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                in-prep</a> 
+            <% } %>
+        </li>
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="released") { %>
+            <b>released</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                released</a>
+            <% } %>
+        </li>
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="grading") { %>
+            <b>grading</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/grading">
+                grading</a>
+            <% } %>
+        </li>
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="graded") { %>
+            <b>graded</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/graded">
+                graded</a>
+            <% } %>
+        </li>
 
+    </ol>
+  </nav>
+  <% } %>
      
     <div class="p-2">
       <h3>Problems
@@ -104,16 +146,17 @@
          Download personalized exams
        </a>
  
-       <% } %>
 
     
     <div>
-      <% if (problemSet.status=="in-prep") { %>
+      
         <hr>
+       
         <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
           <input type="hidden" name="status" value="released">
           <input class="btn btn-lg btn-danger" type="submit" value="Release for Grading">
         </form>
+        
         <p class="mt-3">
           <hr>
           <h3>Instructions:</h3>
@@ -155,10 +198,14 @@
           <% }  else {%>
             ???
             <% } %>
+
+            <% if (isOwner){%>
             <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
               <input type="hidden" name="status" value="grading">
-              <input class="btn btn-lg btn-danger" type="submit" value="Start Grading">
+              <input class="btn btn-lg btn-danger" type="submit" 
+                    value="End the Exam and start grading">
             </form>
+            <% } %>
 
          
         </p>
@@ -214,7 +261,14 @@
 
         <% } else if (problemSet.status=="graded") {%>
           The problem set has been graded. 
-          If you are not done grading then click the "Return to grading" button below.
+          Here is 
+          <a  
+            href="/showExamMastery/<%= courseId%>/<%= problemSet._id %>">
+            how the students did on the exam
+          </a>
+          and here is the current level of 
+          <a href="/showMastery/<%= courseId%>">Mastery</a>
+          for the students in this course.
 
 
                   <% if (!(problemSet.makeup || problemSet.makeupOf)) { %>

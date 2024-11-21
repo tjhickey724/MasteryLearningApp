@@ -95,6 +95,11 @@
 
     <ul>
       <% for(i=0; i<=coursesOwned.length-1; i++){ 
+        console.log(`now=${now}`);
+        console.log(`stopDate=${coursesOwned[i].stopDate}`);
+        console.log(`${now  < coursesOwned[i].stopDate }`);
+        console.log(coursesOwned[i].name);
+        console.log('active='+coursesOwned[i].active);
         if (show=='currentOnly' 
         && (!coursesOwned[i].stopDate 
            || (coursesOwned[i].stopDate < now))) {
@@ -104,14 +109,14 @@
           <%= coursesOwned[i].name %>
         </a>
           <% if (coursesOwned[i].active) { %>
+            <% if (true || show=='currentOnly') { %>
             <a href="/setActive/<%= coursesOwned[i]._id %>/false">
-              
-              <i class='fas fa-eye' style='font-size:24px'></i>
+              <i class='fas fa-ban text-light' style='font-size:16px'></i>
             </a>
+            <% } %>
           <% } else { %>
           <a href="/setActive/<%= coursesOwned[i]._id %>/true">
-            
-            <i class='fas fa-eye-slash' style='font-size:24px'></i>
+            <i class='fas fa-plus text-light' style='font-size:16px'></i>
           </a>
           <% } %>
 

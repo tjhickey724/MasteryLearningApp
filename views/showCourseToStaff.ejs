@@ -62,36 +62,52 @@
       <tbody>
         <tr>
           <td>
+            <ul>
             <% for(let i = 0; i<= problemSets.length-1; i++){
               if (problemSets[i].status=='in-prep') { %>
-            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
-              <%= problemSets[i].name.trim() || "problem set" %>
-            </a>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                         <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
             <% }} %>
+             </ul>
           </td>
           <td>
-            <% for(let i = 0; i<= problemSets.length-1; i++){
-              if (problemSets[i].status=='released') {%>
-            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
-              <%= problemSets[i].name.trim() || "problem set" %>
-            </a>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='released') {%>
+                <li>
+                  <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                     <%= problemSets[i].name.trim() || "problem set" %>
+                  </a>
+                </li>
             <% }} %>
+            </ul>
           </td>
           <td>
-            <% for(let i = 0; i<= problemSets.length-1; i++){
-              if (problemSets[i].status=='grading') {%>
-            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
-              <%= problemSets[i].name.trim() || "problem set" %>
-            </a>
-            <% }} %>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='grading') {%>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                      <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
+              <% }} %>
+            </ul>
           </td>
           <td>
-            <% for(let i = 0; i<= problemSets.length-1; i++){
-              if (problemSets[i].status=='graded') {%>
-            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
-              <%= problemSets[i].name.trim() || "problem set" %>
-            </a>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='graded') {%>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                      <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
             <% }} %>
+            </ul>
           </td>
         </tr>
       </tbody>
