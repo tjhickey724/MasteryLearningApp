@@ -41,20 +41,26 @@
       </tbody>
     </table>
 
-    <% } %>
+    <% } else { %>
     
+    psetSkillIds: <%= psetSkillIds %>
+    <hr>
     <h2>Select a Skill to see all problems for that skill</h2>
     <ul>
       <% if (skills.length > 0) { 
         skills.forEach(skill => { %>
-        <li>
+        <li> 
+          <% if (psetSkillIds.includes(skill._id.toString())) { %>
+            <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </b>
+          <% } else { %>
             <a href="/showProblemsBySkill/<%= courseId %>/<%= psetId %>/<%= skill._id %>">
               <b><%= skill.shortName %>::</b><%= skill.name %> | <%= skill._id%> </a>
-        </li>
+          <% } %>
+            </li>
       <% })}; %>
     <ul>
     <hr>
-   
+   <% } %>
 
   </div>
 </div>

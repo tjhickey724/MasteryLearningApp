@@ -11,7 +11,7 @@ var courseMemberSchema = Schema( {
   status: String, // I think we can delete this field!!
   role: {
     type: String,
-    enum: ['dropped','guest','audit','student', 'ta', 'instructor', 'owner'],
+    enum: ['dropped','guest','audit','student', 'ta', 'grader', 'instructor', 'owner'],
     default: 'student'
     }
   }

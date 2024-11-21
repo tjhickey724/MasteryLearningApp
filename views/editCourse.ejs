@@ -5,7 +5,7 @@
         <div class="p-2">
             <% if ( isOwner) { %>
                 <h2>Settings</h2>
-                <form method="post" action ="/changeCourseName/<%= courseInfo._id %>">
+                <form method="post" action ="/editCourse/<%= courseInfo._id %>">
                    course name: <input type="text" name="newName" 
                           class="form-control w-50"
                           value="<%= courseInfo.name %>">
@@ -18,6 +18,27 @@
                       value="<%= courseInfo.stopDate.toISOString().slice(0,10) %>">
                     stopDate
                     <br>
+                    <select name="guestAccess">
+                      <option value="none" 
+                              <%= courseInfo.guestAccess=="none"?"selected":"" %>
+                        >
+                        No guest access
+                      </option>
+                      <option value="instructors" 
+                              <%= courseInfo.guestAccess=="instructors"?"selected":"" %>
+                        >
+                        Guest access to all instructors
+                      </option>
+                      <option value="all" 
+                              <%= courseInfo.guestAccess=="all"?"selected":"" %>
+                        >
+                        Guest access to all instructors and students
+                      </option>
+                    </select>
+                      value="<%= courseInfo.guestAccess %>">
+                    value="<%= courseInfo.stopDate.toISOString().slice(0,10) %>">
+                    grant guest access to all instructors
+                  <br>
                     <select disabled name="courseType"> 
                       <option value="mla0" 
                               <%= courseInfo.courseType=="mla0"?"selected":"" %>

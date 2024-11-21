@@ -586,7 +586,7 @@ app.post("/createNewCourse", isLoggedIn,
     let cm = new CourseMember(registration);
     await cm.save();
 
-    res.redirect("/mla_home");
+    res.redirect("/showCourseToStaff/" + theCourse._id);
   } catch (e) {
     next(e);
   }
@@ -615,7 +615,7 @@ app.get("/setActive/:courseId/:value", authorize, isOwner,
     const courseId = req.params.courseId;
     const value = req.params.value;
     await Course.findOneAndUpdate({_id: courseId}, {active: value=='true'});
-    res.redirect("/showCourse/" + courseId);
+    res.redirect("/mla_home");
   } catch (e) {
     next(e);
   }
@@ -625,21 +625,6 @@ app.get("/setActive/:courseId/:value", authorize, isOwner,
 app.use(reviews);
 
 
-app.post("/changeCourseName/:courseId", authorize, isOwner,
-  async (req, res) => {
-    // better to use Course.findOneAndUpdate ...
-    const name = req.body.newName;
-    const startDate = req.body.startDate;
-    const stopDate = req.body.stopDate;
-    const courseType = req.body.courseType;
-    const course = await Course.findOne({_id:req.params.courseId});
-    course.name = name;
-    course.startDate = new Date(startDate);
-    course.stopDate = new Date(stopDate);
-    course.courseType = courseType;
-    await course.save();
-    res.redirect("/showCourse/"+req.params.courseId);
-});
 
 app.get("/showRoster/:courseId", authorize, hasStaffAccess, 
   async (req, res, next) => {
@@ -955,6 +940,23 @@ app.get("/editCourse/:courseId", authorize, isOwner,
     }
   }
 );
+
+app.post("/editCourse/:courseId", authorize, isOwner,
+  async (req, res) => {
+    // better to use Course.findOneAndUpdate ...
+    const name = req.body.newName;
+    const startDate = req.body.startDate;
+    const stopDate = req.body.stopDate;
+    const courseType = req.body.courseType;
+    const course = await Course.findOne({_id:req.params.courseId});
+    course.name = name;
+    course.startDate = new Date(startDate);
+    course.stopDate = new Date(stopDate);
+    course.courseType = courseType;
+    await course.save();
+    res.redirect("/showCourse/"+req.params.courseId);
+});
+
     
 
 
@@ -1422,7 +1424,7 @@ app.post("/saveProblemSet/:courseId", authorize, isOwner,
 
     res.locals.problemSets = await ProblemSet.find({courseId: res.locals.courseInfo._id});
 
-    res.redirect("/showCourse/" + res.locals.courseInfo._id);
+    res.redirect(`/showProblemSetToStaff/${res.locals.courseInfo._id}/${newProblemSet._id}`);
   } catch (e) {
     next(e);
   }
@@ -2336,6 +2338,8 @@ app.get('/showProblemLibrary/:courseId/:psetId', authorize, hasCourseAccess,
   async (req,res,next) => {
     res.locals.courseId = req.params.courseId;
     res.locals.psetId = req.params.psetId;
+    let problems = await Problem.find({psetId: req.params.psetId}).populate('skills');
+    res.locals.psetSkillIds = problems.map((x) => x.skills[0]._id.toString());
     res.locals.problems = [];
     let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
     res.locals.skills = skills.map((x) => x.skillId);
@@ -2446,6 +2450,9 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
 
     newProblems.sort(compProbs);
 
+    let currentProblems = await Problem.find({psetId: req.params.psetId}).populate('skills');
+    res.locals.psetSkillIds = currentProblems.map((x) => x.skills[0]._id.toString());
+
 
     res.locals = 
       {...res.locals, 
@@ -2485,7 +2492,7 @@ app.get("/addProblemToPset/:courseId/:psetId/:probId/:skillId", authorize, isOwn
     await newProblem.save();
 
 
-    res.redirect("/showProblemSet/" + courseId+"/"+ psetId); 
+    res.redirect("/showProblemLibrary/" + courseId+"/"+ psetId); 
   });
 
 app.get("/removeProblem/:courseId/:psetId/:probId", authorize, isOwner,

@@ -9,98 +9,136 @@
           <i class='fas fa-pen' style='font-size:24px'></i> 
         </a>
         <% } %>
+
     </h1>
 
     <div class="p-2">
       studentPin: <%= courseInfo.coursePin %>
       <hr>
 
-      <% if (isOwner) { %>
-        <% if (course.active) { %>
-          <a href="/setActive/<%= courseInfo._id %>/false">
-            Set Course Inactive
-          </a>
-        <% } else { %>
-        <a href="/setActive/<%= courseInfo._id %>/true">
-          Set Course Active
-        </a>
-        <% } %>
-      <% } %>
+     
 
       <% if (isTA || isOwner) { %>
-        <h2>Students and Teaching Staff</h2>
-          <ul><li>
-        <a  href="/showRoster/<%= courseInfo._id %>">
-          Show/Update Roster
-        </a>
-      </li><li>
-        <a href="/showTAs/<%= courseInfo._id %>" >
-          Show/Update TAs
-        </a>
-      </li><li>
-        <a  href="/showMastery/<%= courseInfo._id %>">
-          Show Mastery
-        </a>
-   
-      </li></ul>
-  
-  
+        <b>Course Management</b>
+        <table class="table table-bordered table-striped">
+          <tr>
+            <td>
+              <a  href="/showRoster/<%= courseInfo._id %>">
+               Enrollment
+              </a>
+            </td>
+            <td>
+              <a href="/showTAs/<%= courseInfo._id %>" >
+                TAs and Graders
+              </a>
+            </td>
+            <td>
+              <a  href="/showMastery/<%= courseInfo._id %>">
+                Mastery
+              </a>
+            </td>
+          </tr>
+        </table>
+
       <%} %>
       <hr>
 
-      <h2>Exams
+      <b>Exams
         <% if (isOwner) { %>
-      <a href="/addProblemSet/<%= courseInfo._id %>">
-        <i class='fas fa-plus' style='font-size:24px'></i> 
-      </a>
+          <a href="/addProblemSet/<%= courseInfo._id %>">
+            <i class='fas fa-plus' style='font-size:12px'></i> 
+          </a>
       <% } %>
-      </h2>
-      <ul>
-        <% for(i = 0; i<= problemSets.length-1; i++){ %>
-        <%
-             if (!problemSets[i].visible && !(courseInfo.ownerId==user.id)) continue
-             else if (courseInfo.ownerId==user.id && !problemSets[i].visible) {
-                 %> <li> HIDDEN
-          <% } else { %>
-        <li>
-          <%}%>
-
-
+      </b>
+      <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>In Preparation</th>
+          <th>Released</th>
+          <th>Being Graded</th>
+          <th>Graded</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <% for(let i = 0; i<= problemSets.length-1; i++){
+              if (problemSets[i].status=='in-prep') { %>
             <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
-                <%= problemSets[i].name.trim() || "problem set" %>
+              <%= problemSets[i].name.trim() || "problem set" %>
             </a>
-            (<%= problemSets[i].status %>)
+            <% }} %>
+          </td>
+          <td>
+            <% for(let i = 0; i<= problemSets.length-1; i++){
+              if (problemSets[i].status=='released') {%>
+            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+              <%= problemSets[i].name.trim() || "problem set" %>
+            </a>
+            <% }} %>
+          </td>
+          <td>
+            <% for(let i = 0; i<= problemSets.length-1; i++){
+              if (problemSets[i].status=='grading') {%>
+            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+              <%= problemSets[i].name.trim() || "problem set" %>
+            </a>
+            <% }} %>
+          </td>
+          <td>
+            <% for(let i = 0; i<= problemSets.length-1; i++){
+              if (problemSets[i].status=='graded') {%>
+            <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+              <%= problemSets[i].name.trim() || "problem set" %>
+            </a>
+            <% }} %>
+          </td>
+        </tr>
+      </tbody>
+      </table>
 
-
-        </li>
-        <% } %>
-      </ul>
+     
 
        <hr>
 
      
     <hr>
-    <h2>Skills
+    <b>Skills
       <% if (isOwner) { %>
         <a href="/addSkill/<%= courseInfo._id %>">
-          <i class='fas fa-plus' style='font-size:24px'></i> 
+          <i class='fas fa-plus' style='font-size:12px'></i> 
         </a>
         <a href="/showSkills/<%= courseInfo._id %>" >
-          <i class='fas fa-pen' style='font-size:24px'></i> 
+          <i class='fas fa-pen' style='font-size:12px'></i> 
         </a>
         <% } %>
-    </h2>
-    <i>ShortName: Name -- Level <br>(F for fundamental, G for general)</i>
+    </b>
+    <br>
+    
     <ul>
+      <li><i>Fundamental Skills</i></li>
 
-      <% for(i = 0; i< allSkills.length; i++){%>
+      <% for(i = 0; i< allSkills.length; i++){
+        if (allSkills[i].shortName[0]=='F') { %>
       <li>
         <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
           <%= allSkills[i].shortName %>: <%= allSkills[i].name %> 
           -- <%= allSkills[i].level %>
         </a>
       </li>
-      <% } %>
+      <% }} %>
+      <hr>
+      <li>General Skills</li>
+      <% for(i = 0; i< allSkills.length; i++){
+        if (allSkills[i].shortName[0]=='G') {
+        %>
+        <li>
+          <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
+            <%= allSkills[i].shortName %>: <%= allSkills[i].name %> 
+            -- <%= allSkills[i].level %>
+          </a>
+        </li>
+        <% }} %>
     </ul>
 
   

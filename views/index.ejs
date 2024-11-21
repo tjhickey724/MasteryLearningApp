@@ -103,6 +103,18 @@
         <a class="link-info" href="/showCourse/<%= coursesOwned[i]._id %>">
           <%= coursesOwned[i].name %>
         </a>
+          <% if (coursesOwned[i].active) { %>
+            <a href="/setActive/<%= coursesOwned[i]._id %>/false">
+              
+              <i class='fas fa-eye' style='font-size:24px'></i>
+            </a>
+          <% } else { %>
+          <a href="/setActive/<%= coursesOwned[i]._id %>/true">
+            
+            <i class='fas fa-eye-slash' style='font-size:24px'></i>
+          </a>
+          <% } %>
+
       </li>
       <% } %>
     </ul>

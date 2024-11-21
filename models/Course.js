@@ -11,6 +11,11 @@ var courseSchema = Schema( {
   startDate: Date,
   stopDate: Date,
   active: {type:Boolean, default:true}, // set to false to archive the course
+  guestAccess: // who can see the course without joining it
+    { type:String,
+      enum: ['none','instructors','all'],
+      default: 'none'
+    },
   courseType: {
     type: String,
     enum: ['mla0',  // skill-based exam generation on paper
