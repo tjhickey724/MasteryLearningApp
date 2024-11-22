@@ -73,7 +73,7 @@
       <% // a user can see the reviews of their answer, 
          // if they answered the question
          // whether or not it is peer-reviewable
-          if ( usersAnswers.length>0) { %>
+          if ( theAnswer.numReviews>0) { %>
         <a href="/showReviewsOfAnswer/<%= courseId%>/<%= psetId%>/<%=  usersAnswers[0]._id %>" 
             class="btn btn-small btn-info">
           Reviews of your answer</a>
@@ -87,7 +87,6 @@
         
 
 
- 
 
 
       <%  if (
@@ -112,6 +111,7 @@
                   </div>
                   <br>
                  
+                 
                     <% // draw a save or submit button
                      if(status=='submitable'){%>
                     <input class="btn btn-lg btn-danger" type="submit" value="submit answer text">
@@ -133,7 +133,7 @@
                 <% } else { %>
  
                 <h3> Submit a photo of your answer</h3>
-
+                
                 <form method="post" action="/uploadAnswerPhoto/<%= courseId%>/<%= psetId%>/<%= problem._id %>" enctype="multipart/form-data">
                   <input type="file" id="picture" name="picture" accept="image/*" capture="environment" />
           
@@ -141,7 +141,14 @@
                   if(status=='submitable'){%>
                  <input class="btn btn-lg btn-danger" type="submit" value="submit answer photo">
                  <% } else{%>
+                    <% if (theAnswer.imageFilePath){%>
+                      <input class="btn btn-lg btn-warning" type="submit" value="retake photo"> OR
+                      <a class="btn btn-lg btn-info" href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
+                        upload answer to next problem
+                      </a>
+                    <% }else { %>
                  <input class="btn btn-lg btn-warning" type="submit" value="save answer photo">
+                  <% } %>
                  <% }%>
                  <% if (theAnswer.imageFilePath){%>
                  <img src="<%= theAnswer.imageFilePath %>"
@@ -150,6 +157,7 @@
                       >
                       <% } %>
                 </form>
+               
 
               <% } %>
           </div>
@@ -158,6 +166,7 @@
      
       <hr>
       <% }%>
+
      
 
         

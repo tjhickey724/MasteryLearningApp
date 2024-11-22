@@ -1573,7 +1573,7 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
   res.locals.problems 
       = await Problem.find({psetId: psetId})
                       .populate('skills')
-                     .sort({description:1});
+                     .sort({'skills.shortName':1});
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
   res.locals.myAnswers = await Answer.find({psetId: psetId, studentId: userId});

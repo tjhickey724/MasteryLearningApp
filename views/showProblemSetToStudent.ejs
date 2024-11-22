@@ -90,6 +90,10 @@
                 <%= problems[i].skills[0].shortName || "no skill" %>:
                 <%= problems[i].description || "no name" %> A
               </a>
+              <% if (problemsAnswered.includes(problems[i]._id.toString())) { %>
+                <span class="text-danger">ANSWERED</span>
+              
+              <% } %>
             </li>
         <% } else if ((problemSet.status!="released")  
                      && problemsAnswered.includes(problems[i]._id.toString())) {
@@ -116,13 +120,6 @@
    
 
           
-          <a href="/showProblemSet/<%= courseId %>/<%= psetId %>" 
-            class="btn btn-sm btn-primary">
-            Back to Exam</a>
-            <hr>
-            <a href="/showCourse/<%= courseId %>" 
-              class="btn btn-sm btn-primary">
-              Back to Course</a>
     </div>
 
   </div>
