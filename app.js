@@ -920,7 +920,11 @@ app.get("/showCourseToStaff/:courseId", authorize, hasStaffAccess,
     res.locals.stopDate = stopDate;  
     
     if (res.locals.hasCourseAccess) {
-      res.render("showCourseToStaff");
+      if (course.courseType == 'pra'){
+        res.render("showCourseToStaff_PRA");
+      } else {
+        res.render("showCourseToStaff");
+      }
     } else {
       res.send("You do not have access to this course.");
     }

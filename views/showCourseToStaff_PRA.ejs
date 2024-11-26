@@ -1,0 +1,149 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <h1 class="pb-2 border-bottom">
+      <%= courseInfo.name %>
+      <% if (isOwner) { %>
+        <a href="/editCourse/<%= courseInfo._id %>" >
+          <i class='fas fa-pen' style='font-size:24px'></i> 
+        </a>
+        <% } %>
+
+    </h1>
+
+    <div class="p-2">
+      studentPin: <%= courseInfo.coursePin %>
+      <hr>
+
+     
+
+      <% if (isTA || isOwner) { %>
+        <b>Course Management</b>
+        <table class="table table-bordered table-striped">
+          <tr>
+            <td>
+              <a  href="/showRoster/<%= courseInfo._id %>">
+               Enrollment
+              </a>
+            </td>
+            <td>
+              <a href="/showTAs/<%= courseInfo._id %>" >
+                TAs and Graders
+              </a>
+            </td>
+            <td>
+              <a  href="/showMastery/<%= courseInfo._id %>">
+                Mastery
+              </a>
+            </td>
+          </tr>
+        </table>
+
+      <%} %>
+      <hr>
+
+      <b>Problem Sets </b>
+        <% if (isOwner) { %>
+          <a href="/addProblemSet/<%= courseInfo._id %>">
+            <i class='fas fa-plus' style='font-size:12px'></i> 
+          </a>
+      <% } %>
+      </b>
+      <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>In Preparation</th>
+          <th>Released</th>
+          <th>Being Graded</th>
+          <th>Graded</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <ul>
+            <% for(let i = 0; i<= problemSets.length-1; i++){
+              if (problemSets[i].status=='in-prep') { %>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                         <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
+            <% }} %>
+             </ul>
+          </td>
+          <td>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='released') {%>
+                <li>
+                  <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                     <%= problemSets[i].name.trim() || "problem set" %>
+                  </a>
+                </li>
+            <% }} %>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='grading') {%>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                      <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
+              <% }} %>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <% for(let i = 0; i<= problemSets.length-1; i++){
+                  if (problemSets[i].status=='graded') {%>
+                <li>
+                    <a href="/showProblemSet/<%= courseInfo._id%>/<%= problemSets[i]._id %>">
+                      <%= problemSets[i].name.trim() || "problem set" %>
+                    </a>
+                </li>
+            <% }} %>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+      </table>
+
+     
+
+       <hr>
+
+     
+    <hr>
+      
+      <hr>
+     
+
+      <br>
+
+
+
+
+
+    </div>
+
+    <% if (false && isOwner) { 
+      // this will delete all of the student data for the course
+      // but I'm hiding it as it not something that should be done lightly!!
+      
+      %>
+      <a class="btn btn-lg btn-danger" href="/deleteStudentData/<%= courseInfo._id %>" >
+        Delete All Student Data from the Course
+      </a>
+      <% } %>
+
+  </div>
+
+</div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>
