@@ -59,6 +59,7 @@
       </ol>
     </nav>
 
+
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
         The problems below are the ones from this problem set on skills
@@ -75,9 +76,10 @@
             problems[i].skills
             .filter( 
                     (skill)=>
-                      !skillsMastered.includes(skill.toString())
+                      !skillsMastered.includes(skill._id.toString())
                   ).length; 
           %>
+
 
 
           <% if (
@@ -106,6 +108,9 @@
                    <span class="text-info">MASTERED</span>  
                 <% } else { %>
                   <span class="text-danger">not mastered yet</span>  
+                  <br>
+                  <%= problems[i].skills[0].shortName || "no skill" %>:
+                <%= problems[i].skills[0].description || "no name" %> A
                 <% } %>
 
               
