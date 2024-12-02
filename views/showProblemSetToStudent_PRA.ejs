@@ -64,7 +64,7 @@
            { %> 
             <li>
               <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                <%= problems[i].description || "no name" %> A
+                <%= problems[i].description || "no name" %> 
               </a>
               <% if (problemsAnswered.includes(problems[i]._id.toString())) { %>
                 <span class="text-danger">ANSWERED</span>

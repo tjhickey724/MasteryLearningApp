@@ -105,6 +105,8 @@ const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isAdmin, authorize}
       res.locals.psetId = psetId;
       res.locals.probId = probId;
 
+      const course = await Course.findOne({_id: courseId});
+
 
       let problem = await Problem.findOne({_id: probId});
   
@@ -156,7 +158,8 @@ const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isAdmin, authorize}
 
       });
 
-
+      const localinfo = JSON.stringify(res.locals,null,5);
+      res.locals.localinfo = localinfo;
        
 
       // next, we look to see if there is an answer which the user is already
@@ -348,6 +351,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
           review: req.body.review,
           points: skills.length, //req.body.points,
           skills: skills,
+          goodFaithEffort: (req.body.goodFaithEffort=="yes"),
           upvoters: [],
           downvoters: [],
           createdAt: new Date(),
@@ -485,8 +489,11 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
   app.get("/showReviewsOfAnswer/:courseId/:psetId/:answerId", authorize, hasCourseAccess,
     async (req, res, next) => {
     try {
+      const personal = req.query.personal;
+      console.dir(req.query);
       const courseId = req.params.courseId;
       res.locals.courseId = courseId;
+      const course = await Course.findOne({_id: courseId});
 
       const psetId = req.params.psetId;
       res.locals.psetId = psetId;
@@ -532,7 +539,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       res.locals.allSkills = await Skill.find({courseId: answer.courseId});
       res.locals.regradeRequests = await RegradeRequest.find({answerId: answerId});
   
-      if (res.locals.isStaff) {
+      if (res.locals.isStaff || course.courseType=='pra' && !personal) {
         res.render("showReviewsOfAnswer");
       } else {
         res.locals.review 

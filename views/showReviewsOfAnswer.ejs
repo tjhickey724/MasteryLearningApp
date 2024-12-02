@@ -5,6 +5,7 @@
                 <div class="p-2">
 <script type="text/javascript" src="/js/clickThumb.js"></script>
     <hr>
+<h1>Reviews of Answer to Graders</h1>
     <h3 class="bg-danger">
     <% let userIsTA = isTA;
        let userIsOwner = user._id.equals(courseInfo.ownerId);
@@ -34,9 +35,12 @@
         <% } %>
 
 
-    <ul>
+
+
+        <ul>
+
     <% let youReviewed = false
-       for(i = 0; i<= reviews.length-1; i++){
+       for(i = 0; i< reviews.length; i++){
         console.log("in reviews i= "+i)
         console.log(reviews[i].upvoters)
         console.log(user._id)
@@ -55,7 +59,7 @@
         let isTAreview = taReviewer.length==1
         let fullskills = reviews[i].skills
         %>
-	<h2>Reviewed by <%= reviews[i].id %>
+	<h2>Reviewed by <%= reviews[i].id %></h2>
         <% if (isOfficial) {%>
             <li style="border:thick solid green; background:lightgreen;margin:10px;padding:10px">
                 <h1>Review for the Grade</h1>
@@ -63,7 +67,7 @@
             <li style="border:thick solid black; margin:10px;padding:10px">
 
         <% } %>
-<pre><%= JSON.stringify(answer) %> </pre>
+
             <% if (isStaff){%>
                 <form method="post" action="/removeReviews/<%=answer.courseId%>">
                      <input type="checkbox" name='deletes'
@@ -87,6 +91,7 @@
                </span>
             .... grade:
             <%= reviews[i].points %>/<%= problem.points %>pts
+            
             <% if (yourReview){%>
                 <b>Your Review!</b>
 
@@ -94,6 +99,15 @@
             <% } %>
             </i>
             <br>
+            <% if (reviews[i].goodFaithEffort){%>
+                <span style="background:lightgreen">
+                    Good Faith Effort
+                </span>
+            <% } else {%>
+                <span style="background:lightcoral">
+                    Minimal Effort
+                </span>
+            <% } %>
 
             Skills Mastered:
             <% if (fullskills.length==0) {%>
@@ -123,18 +137,7 @@
                     <% } else {%>
                 <div style="background:rgb(120,220,255);border:2px solid blue; white-space: pre-wrap; font-family:monospace; padding:1px">
                     <% } %><%= reviews[i].review %></div>
-            <!-- allow user to request regrades of their answers -->
-            <% if (answer.studentId==user.id) {%>
-                <form method="post" action="/requestRegrade/<%= answer.courseId%>/<%= reviews[i].id %>">
-                    Regrade request:
-                    Reason:<br>
-                    <textarea name="reason" style="width:100%"></textarea>
-                    <hr>
-
-
-                    <input type="submit" value="request regrade">
-                </form>
-            <% } %>
+           
 
         </li>
     <% } %>
@@ -157,6 +160,11 @@
                                >
                         <%= skills[i].shortName %> :: <%= skills[i].name %><br>
                     <% } %>
+                    <select name="goodFaithEffort">
+                        <option value="yes">This was a good faith effort.</option>
+                        <option value="no">This was a minimal effort.</option>
+                    </select>
+                    
 
                       <div class="form-group">
                           <label for="review">Enter your review below:</label>
@@ -183,6 +191,8 @@
             </div>
         <div>
     <% } %>
+
+    <% if (isStaff) {%> 
     <h1 style="margin-top:20px;border-top:thick solid black">
         Regrade Requests</h1>
     <ol>
@@ -225,6 +235,7 @@
        </li>
     <% }%>
     </ul>
+    <% } %>
     <hr>
     <a href="/reviewAnswers/<%= courseId %>/<%= psetId %>/<%= problem._id %>" class="btn btn-small btn-warning">Review others answers</a>
     <a href="/showProblem/<%= courseId %>/<%= psetId%>/<%= problem._id %>" class="btn btn-small btn-danger">Back to the Problem</a>

@@ -63,10 +63,10 @@
              let skillnames = skills//.map((s) => getSkill(s,allSkills)['name'])
              let numLikesU = reviews[j].upvoters.length
              let userLikesU = reviews[j].upvoters.includes(user._id)
-             let fa_prefixU = userLikesU?"fas":"far"
+             let fa_prefixU = reviews[j].goodFaithEffort?"fas":"far" //userLikesU?"fas":"far"
              let numLikesD = reviews[j].downvoters.length
              let userLikesD = reviews[j].downvoters.includes(user._id)
-             let fa_prefixD = userLikesD?"fas":"far"
+             let fa_prefixD = fa_prefixU?"far":"fas"
 
              let taReviewer = taList.filter(x=> (x.equals(reviews[j].reviewerId)))
              let isTAreview = taReviewer.length==1
@@ -82,12 +82,24 @@
                     <% } %>
                 </div>
  <div class="col">
+  <% if (reviews[j].goodFaithEffort) { %>
+    <i  class="far fa-thumbs-up"
+      id='<%= "reviewU"+j %>'></i>
+    <% } else { %> 
+    <i  class="fas fa-thumbs-down"
+      id='<%= "reviewD"+j %>'></i>
+      <% } %>
+
+  <!-- 
                   <i  class="<%= fa_prefixU %> fa-thumbs-up"
                                id='<%= "reviewU"+j %>'
                                onclick="clickThumb('<%= problem.courseId%>',<%= j %>,'<%= reviews[j]._id %>','<%= user._id %>','U')"></i>
                   <i  class="<%= fa_prefixD %> fa-thumbs-down"
                               id='<%= "reviewD"+j %>'
                               onclick="clickThumb('<%= problem.courseId%>',<%= j %>,'<%= reviews[j]._id %>','<%= user._id %>','D')"></i>
+                 
+                 -->
+                              <!-- 
                   <i>
                     likes: <span id='<%="likes"+ j %>'>
                              <%= numLikesU-numLikesD %>
@@ -95,21 +107,27 @@
                        .... grade:
                      <%= rev.points %>/<%= problem.points %>pts
                   </i><br>
-                  SKILLS Mastered: [[<%= JSON.stringify(skillnames) %>]]<br>
+                  -->
+                  <!-- SKILLS Mastered: [[<%= JSON.stringify(skillnames) %>]]<br> -->
+
                     <% if (isTAreview){%>
-                      <span style="color:rgb(255,0,0);">TA REVIEW!!</span>
-                      <% if (rev.points< problem.points) { %>
-                        <div style="background:rgb(255,0,0);color:rgb(0,0,0);
-                       <% } else { %>
-                       <div style=" background:rgb(0,255,0);color:rgb(0,0,0); <% } %>
-                          <% } else if (rev.points==0) { %>
-                            <div style="background:rgb(255,255,255);
-                  <% }else if (rev.reviewerId.equals(user._id)) {%>
+                        <span style="color:rgb(255,0,0);">TA REVIEW!!</span>
+                        <% if (rev.points< problem.points) { %>
+                          <div style="background:rgb(255,0,0);color:rgb(0,0,0);">
+                        <% } else { %>
+                          <div style=" background:rgb(0,255,0);color:rgb(0,0,0);">
+                        <% } %>
+                    <% } else if (rev.points==0) { %>
+                              <div style="background:rgb(255,255,255);">
+                    
+                    <% } else if (rev.reviewerId.equals(user._id)) {%>
                        <span style=" color:rgb(220,120,255);">YOUR REVIEW!!</span>
-                              <div style="background:rgb(220,120,255);<% } else { %>
-                       <div style="background:rgb(120,220,255);<% } %>
-                           padding:5px; margin-bottom:10px;border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"><%= rev.review %></div>
-                            </div>
+                              <div style="background:rgb(220,120,255);">
+                    <% } else { %>
+                       <div style="background:rgb(120,220,255);">
+                    <% } %>
+                           <div style="padding:5px; margin-bottom:10px;border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"><%= rev.review %></div>
+                          </div>
                         </div>
                         <% }%>
                           <% } %>

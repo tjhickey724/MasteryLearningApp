@@ -19,7 +19,7 @@
             <%= problem.description %> </li>
       </ol>
     </nav>
-    <pre><%= JSON.stringify(problem,null,5)%> </pre>
+
 
     <h3 class="pb-2 border-bottom">
       <%= problem.description %>
@@ -52,6 +52,18 @@
           download answers to check for plagiarism</a>
         <br>
     <% } %>
+<hr>
+    <a href="/reviewAnswers/<%= courseId%>/<%= psetId%>/<%= probId %>" 
+      class="btn btn-small btn-warning">
+      Review others answers</a>
+
+      <a href="/showReviewsByUser/<%= courseId%>/<%= psetId%>/<%= problem._id %>" 
+        class="btn btn-small btn-info">
+        Your Reviews of other's answers</a>
+
+     <a href="/showAllAnswers/<%= courseId %>/<%= problem._id %>" 
+         class="btn btn-small btn-danger">
+         Show all answers</a>
 
 
 

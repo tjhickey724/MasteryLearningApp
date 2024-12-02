@@ -18,12 +18,14 @@
     </nav>
 
     <h1>PRA</h1>
-    <pre><%= JSON.stringify(problem, null,5)%></pre>
+
 
     <h3 class="pb-2 border-bottom">
       <%= problem.description %> 
     </h3>
-   
+    <div class="p-3 border border-primary border-3">
+    <%= problem.problemText %>
+    </div> 
 
 
       <hr>
@@ -37,7 +39,7 @@
             <small>Submission time and date:<%= problem.createdAt %>
             </small>
             <% if (problem.answerMimeType!='image') { %>
-                <pre class="bg-warning"><%=  usersAnswers[0].answer %></pre>
+                <pre style="background-color:lightgreen"><%=  usersAnswers[0].answer %></pre>
             <% } else { %>
                 <img src="<%= usersAnswers[0].imageFilePath %>" 
                 alt="answer picture" 
@@ -46,6 +48,10 @@
             
             <hr>
             
+            <% } %>
+
+            <% // if the user answered the question, show the answer
+         if  (usersAnswers.length> 0) { %>
             <a href="/reviewAnswers/<%= courseId%>/<%= psetId%>/<%= probId %>" 
               class="btn btn-small btn-warning">
               Review others answers</a>
@@ -57,9 +63,9 @@
          // if they answered the question
          // whether or not it is peer-reviewable
           if ( theAnswer.numReviews>0) { %>
-        <a href="/showReviewsOfAnswer/<%= courseId%>/<%= psetId%>/<%=  usersAnswers[0]._id %>" 
+        <a href="/showReviewsOfAnswer/<%= courseId%>/<%= psetId%>/<%=  usersAnswers[0]._id %>?personal=true" 
             class="btn btn-small btn-info">
-          Reviews of your answer</a>
+          Reviews of your answer</a> <br>
       <% } %>
 
     
