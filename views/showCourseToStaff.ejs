@@ -43,7 +43,7 @@
       <%} %>
       <hr>
 
-      <b>Exams
+      <b><%= (courseInfo.courseType=='pra')?"Problem Sets":"Exams" %>
         <% if (isOwner) { %>
           <a href="/addProblemSet/<%= courseInfo._id %>">
             <i class='fas fa-plus' style='font-size:12px'></i> 

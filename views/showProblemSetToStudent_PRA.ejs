@@ -1,0 +1,91 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problemSet.name.trim()%> </li>
+      </ol>
+    </nav>
+    <h1 class="pb-2 border-bottom">
+        PRA: 
+      <%= problemSet.name.trim() || "Problem Set" %>
+    </h1>
+
+                 
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="in-prep") { %>
+              <b>in-prep</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                   href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                  in-prep</a> 
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="released") { %>
+              <b>released</b>
+              <% } else { %>
+                <a style="pointer-events:none; color:gray" 
+                  href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                  released</a>
+              <% } %>
+          </li>
+         
+
+      </ol>
+    </nav>
+
+    <div class="p-2">
+      <% if (problemSet.status=="released"){ %>
+        The problems below are the ones from this problem set on skills
+        that you have not yet mastered. 
+        <br>
+        Click on the link(s) to upload your answers.
+        <%} else {%>
+        Problems
+          <% } %>
+
+      <ul>
+        <% for(i=0; i<problems.length; i++){ 
+          %>
+
+
+          <% if (
+                  (problemSet.status=="released" )
+              ) 
+           { %> 
+            <li>
+              <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                <%= problems[i].description || "no name" %> A
+              </a>
+              <% if (problemsAnswered.includes(problems[i]._id.toString())) { %>
+                <span class="text-danger">ANSWERED</span>
+              
+              <% } %>
+            </li>
+            <% } %>
+      <% } %>
+
+      </ul>
+
+
+      <hr>
+   
+
+          
+    </div>
+
+  </div>
+</div>
+
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>
