@@ -13,6 +13,7 @@ var reviewSchema = Schema( {
   studentId: {type:ObjectId,index:true},
   review: String,
   points: Number,
+  goodFaithEffort: {type:Boolean,default:false},
   skills:[{type:ObjectId,ref:'Skill'}],
   upvoters: [Schema.Types.ObjectId],
   downvoters: [Schema.Types.ObjectId],

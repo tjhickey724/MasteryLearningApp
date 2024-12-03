@@ -3,11 +3,23 @@
 
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showMastery/<%= course._id%>">
+            Show Mastery
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Mastery by Exam</li>
+      </ol>
+    </nav>
+
     <h1 class="pb-2 border-bottom">
      Mastery Summary for <%= exam.name %> in <%= course.name %></h1>
 
-      <hr>
-      <h2>Mastery Results for each student by Exam</h2>
       <table class="table table-bordered table-striped">
         <thead>
             <tr><th>name</th><th>email</th><th>Skills Mastered</th></tr>

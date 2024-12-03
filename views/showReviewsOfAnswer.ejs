@@ -4,7 +4,24 @@
             <div class="container-fluid ">
                 <div class="p-2">
 <script type="text/javascript" src="/js/clickThumb.js"></script>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+          <%= course.name %>
+        </a></li>
+        <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
+          <%= problemSet.name %>
+        </a></li>
+        <li class="breadcrumb-item"><a href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id%>">
+            Grade Problem Set
+          </a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Reviews of Answer <%= problem.description %> </li>
+    </ol>
+  </nav>
     <hr>
+<h1>Reviews of Answer to Graders</h1>
     <h3 class="bg-danger">
     <% let userIsTA = isTA;
        let userIsOwner = user._id.equals(courseInfo.ownerId);
@@ -34,9 +51,12 @@
         <% } %>
 
 
-    <ul>
+
+
+        <ul>
+
     <% let youReviewed = false
-       for(i = 0; i<= reviews.length-1; i++){
+       for(i = 0; i< reviews.length; i++){
         console.log("in reviews i= "+i)
         console.log(reviews[i].upvoters)
         console.log(user._id)
@@ -55,7 +75,7 @@
         let isTAreview = taReviewer.length==1
         let fullskills = reviews[i].skills
         %>
-	<h2>Reviewed by <%= reviews[i].id %>
+	<h2>Reviewed by <%= reviews[i].id %></h2>
         <% if (isOfficial) {%>
             <li style="border:thick solid green; background:lightgreen;margin:10px;padding:10px">
                 <h1>Review for the Grade</h1>
@@ -63,7 +83,7 @@
             <li style="border:thick solid black; margin:10px;padding:10px">
 
         <% } %>
-<pre><%= JSON.stringify(answer) %> </pre>
+
             <% if (isStaff){%>
                 <form method="post" action="/removeReviews/<%=answer.courseId%>">
                      <input type="checkbox" name='deletes'
@@ -72,49 +92,63 @@
                      check box and press delete button to delete
                  </form>
             <% } %>
-            <i  class="<%= fa_prefixU %> fa-thumbs-up"
-                   id='<%= "reviewU"+i %>'
-                   onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','U')"></i>
+            <% if (course.courseType!='pra'){%>
+                    <i  class="<%= fa_prefixU %> fa-thumbs-up"
+                        id='<%= "reviewU"+i %>'
+                        onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','U')"></i>
 
-            <i  class="<%= fa_prefixD %> fa-thumbs-down"
-                  id='<%= "reviewD"+i %>'
-                  onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','D')"></i>
+                    <i  class="<%= fa_prefixD %> fa-thumbs-down"
+                        id='<%= "reviewD"+i %>'
+                        onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','D')"></i>
 
-            <i>
+                    <i>
 
-            likes: <span id='<%="likes"+ i %>'>
-                 <%= numLikesU-numLikesD %>
-               </span>
-            .... grade:
-            <%= reviews[i].points %>/<%= problem.points %>pts
-            <% if (yourReview){%>
-                <b>Your Review!</b>
+                    likes: <span id='<%="likes"+ i %>'>
+                        <%= numLikesU-numLikesD %>
+                    </span>
+                    .... grade:
+                    <%= reviews[i].points %>/<%= problem.points %>pts
+                </i>
+                Skills Mastered:
+                <% if (fullskills.length==0) {%>
+                    <ul>
+                        <li>
+                            no skills mastered!
+                        </li>
+                    </ul>
+                <%}else {%>
+    
+                <ul>
+                <% fullskills.map((x) => {%>
+                    <li>
+                        <span  style="padding:5px;color:red">
+                            <%= x['name']%>
+                        </span>
+                    </li>
+                 <%}) %>
+                 </ul>
+                <% }%>
+    
 
 
             <% } %>
-            </i>
-            <br>
+            <% if (yourReview){%>
+                <b>Your Review!</b>
+                <br>
+            <% } %>
+           
+            <% if (reviews[i].goodFaithEffort){%>
+                <span style="background:lightgreen">
+                    Good Faith Effort
+                </span>
+            <% } else {%>
+                <span style="background:lightcoral">
+                    Minimal Effort
+                </span>
+            <% } %>
+          
 
-            Skills Mastered:
-            <% if (fullskills.length==0) {%>
-                <ul>
-                    <li>
-                        no skills mastered
-                    </li>
-                </ul>
-            <%}else {%>
-
-            <ul>
-            <% fullskills.map((x) => {%>
-                <li>
-                    <span  style="padding:5px;color:red">
-                        <%= x['name']%>
-                    </span>
-                </li>
-             <%}) %>
-             </ul>
-            <% }%>
-
+           
             <% if (yourReview){%>
                 <div style="background:rgb(120,220,155);border:2px solid blue; white-space: pre-wrap; font-family:monospace; padding:1px">
                     <% } else if (isTAreview) {%>
@@ -123,18 +157,7 @@
                     <% } else {%>
                 <div style="background:rgb(120,220,255);border:2px solid blue; white-space: pre-wrap; font-family:monospace; padding:1px">
                     <% } %><%= reviews[i].review %></div>
-            <!-- allow user to request regrades of their answers -->
-            <% if (answer.studentId==user.id) {%>
-                <form method="post" action="/requestRegrade/<%= answer.courseId%>/<%= reviews[i].id %>">
-                    Regrade request:
-                    Reason:<br>
-                    <textarea name="reason" style="width:100%"></textarea>
-                    <hr>
-
-
-                    <input type="submit" value="request regrade">
-                </form>
-            <% } %>
+           
 
         </li>
     <% } %>
@@ -157,6 +180,11 @@
                                >
                         <%= skills[i].shortName %> :: <%= skills[i].name %><br>
                     <% } %>
+                    <select name="goodFaithEffort">
+                        <option value="yes">This was a good faith effort.</option>
+                        <option value="no">This was a minimal effort.</option>
+                    </select>
+                    
 
                       <div class="form-group">
                           <label for="review">Enter your review below:</label>
@@ -183,6 +211,8 @@
             </div>
         <div>
     <% } %>
+
+    <% if (isStaff) {%> 
     <h1 style="margin-top:20px;border-top:thick solid black">
         Regrade Requests</h1>
     <ol>
@@ -225,6 +255,7 @@
        </li>
     <% }%>
     </ul>
+    <% } %>
     <hr>
     <a href="/reviewAnswers/<%= courseId %>/<%= psetId %>/<%= problem._id %>" class="btn btn-small btn-warning">Review others answers</a>
     <a href="/showProblem/<%= courseId %>/<%= psetId%>/<%= problem._id %>" class="btn btn-small btn-danger">Back to the Problem</a>

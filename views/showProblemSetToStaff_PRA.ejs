@@ -1,0 +1,167 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <%= problemSet.name.trim()%> </li>
+      </ol>
+    </nav>
+
+    <h3 class="pb-2 border-bottom">
+      <%= problemSet.name.trim() || "Problem Set" %>
+      <% if (isOwner){%> 
+      <a href="/editProblemSet/<%=courseId%>/<%= psetId %>" >
+        <i class='fas fa-pen' style='font-size:24px'></i> 
+     </a>
+     <% } %>
+    </h3>
+  <% if (isOwner){%>               
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="in-prep") { %>
+              in-prep
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                  in-prep</a> 
+              <% } %>
+          </li>
+          <li class="breadcrumb-item">
+            <% if (problemSet.status=="released") { %>
+              released
+              <% } else { %>
+                <a href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                  released</a>
+              <% } %>
+          </li>
+        
+
+      </ol>
+    </nav>
+<% } else {%>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="in-prep") { %>
+            <b>in-prep</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                 href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
+                in-prep</a> 
+            <% } %>
+        </li>
+        <li class="breadcrumb-item">
+          <% if (problemSet.status=="released") { %>
+            <b>released</b>
+            <% } else { %>
+              <a style="pointer-events:none; color:gray" 
+                href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
+                released</a>
+            <% } %>
+        </li>
+       
+
+    </ol>
+  </nav>
+  <% } %>
+     
+    <div class="p-2">
+      <h3>Problems
+        <% if (isOwner){%> 
+
+
+            <a href="/addProblem_PRA/<%= courseId%>/<%= psetId %>">
+              <i class='fas fa-plus' style='font-size:24px'></i> 
+            </a>
+
+        <% } %>
+      </h3>
+      <ul>
+        <% for(i=0; i<problems.length; i++){  %>
+          <li>
+
+                <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+
+                  <%= problems[i].description || "no name" %> 
+                    <% if (isOwner && (problemSet.status=='in-prep')) { %>
+                      <a href="/removeProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                        <i class='fas fa-trash' style='font-size:24px'></i>
+                        </a>
+                    <% } %>
+
+                </a>
+        </li>
+        <% } %>
+      </ul>
+
+
+      <hr>
+      <% if (false && isOwner && (problemSet.status=='in-prep')){ %>
+        <a href="/downloadAsTexFile/<%=courseId%>/<%= psetId %>" 
+         class="btn btn-sm btn-info">
+         Download as .tex file
+       </a>
+
+    
+   
+      
+        <hr>
+       
+        <form method="post" action="/updatePsetStatus/<%= courseId%>/<%= psetId%>">
+          <input type="hidden" name="status" value="released">
+          <input class="btn btn-sm btn-danger" type="submit" 
+                    value="Show Problem Set to Students">
+        </form>
+        
+        
+       <% } else if (problemSet.status=="released") {%>
+        <p>
+          <br>
+          <b>This problem set has been released. </b>
+            Students can now see the problems and submit their answers.
+
+         
+        </p>
+
+       
+          <% } %>
+
+    </div>
+
+   
+
+     
+
+
+    <% if (problemSet.makeup)  { %>
+      <hr>
+      <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeup%>" 
+        class="btn btn-sm btn-warning">
+        Show Makeup Exam
+        </a>
+      <% } else  if (problemSet.makeupOf) { %>
+        <hr>
+        <a href="/showProblemSet/<%=courseId%>/<%=problemSet.makeupOf%>" 
+          class="btn btn-sm btn-warning">
+          Show Original Exam
+          </a>
+        <% } %> 
+      
+
+
+
+          
+    </div>
+
+  </div>
+</div>
+
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

@@ -1,0 +1,65 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= course.name %>
+          </a></li>
+          <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%=psetId%>">
+            <%= problemSet.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            add problem </li>
+      </ol>
+    </nav>
+<h1>PRA</h1>
+
+ 
+                    <form method="post" action="/saveProblem_PRA/<%= courseId%>/<%= psetId %>">
+     
+        
+                      <div class="mb-3 col-lg-4">
+                        <label for="description" class="form-label">Problem Name</label>
+                        <input type="text" class="form-control" 
+                               name="description" id="description"
+                               value="<%= problem.description%>">
+                      </div>
+                      <div class="mb-3 col-lg-4">
+                        <label for="mimeType" class="form-label">mimeType</label>
+                        <select name="mimeType" id="mimeType">
+                          <option>plain</option>
+                          <option>markdown</option>
+                          <option>tex</option>
+                        </select>
+                      </div>
+                      <div class="mb-3 col-lg-4">
+                        <label for="answerMimeType" class="form-label">
+                          upload format for the answer
+                        </label>
+                        <select name="answerMimeType" id="answerMimeType">
+                          <option>text</option>
+                          <option>image</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="problemText" class="form-label">Problem Description</label>
+                        <textarea name="problemText" class="form-control" 
+                                cols="100" rows="10"><%= problem.problemText %></textarea>
+                      </div>
+                      <b>Rubric:</b><br>
+                      <textarea class="form-control" name="rubric" 
+                            cols="100" rows="10"><%= problem.rubric %></textarea>
+                      <hr>
+                     
+                      <hr>
+                      <input class="btn btn-lg btn-primary" type="submit">
+                    </form>
+
+  </div>
+</div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

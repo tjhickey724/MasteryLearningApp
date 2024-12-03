@@ -5,13 +5,14 @@
                 <div class="p-2">
 <script type="text/javascript" src="/js/clickThumb.js"></script>
     <hr>
-   
+
     <h1>Review of your answer to</h1>
     <h3><%= problem.description %></h3>
     <b>The Question</b>
     <div class="bg-default" style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"
-    ><% if (problem.mimeType != 'tex'){ %><%- markdownText %><%
-    } else { %>Tex answers are hidden.   <%} %></div>
+    ><% if (problem.mimeType != 'tex'){ %>
+           <%- markdownText %><%
+    } else { %>Tex questions are hidden.   <%} %></div>
 
     <b>Submitted Answer</b>
     <small>Submission time and date:<%= answer.createdAt %> </small>
@@ -21,10 +22,13 @@
          style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"
          ><%= answer.answer %></pre>
     <% } else { %>
-    <img src="<%= answer.imageFilePath %>" width="50%">
+        <a href="<%= answer.imageFilePath %>">
+             <img src="<%= answer.imageFilePath %>" width="50%">
+        </a>
         <% } %>
 
 <hr>
+  <% if (course.courseType!="pra" ) {%>
      <b>Official Review</>
 
 
@@ -64,11 +68,23 @@
         </li>
 
     </ul>
+    <% } %>
     <hr>
 
+    <% if (course.courseType=="pra" ) {%>
+        <h2>Reviews</h2>
+        <% for (review of reviews) { %>
+            <div class="p-1 border border-primary border-3 <%=
+                  (review.goodFaithEffort?"":"bg-danger") %>" >
+                <%= review.goodFaithEffort? "":"Not a Good Faith Effort: " %>
+                <%= review.review %><br>
+            </div>
+        <% } %>
+    <% } %>
 
 
-    
+    <% if (course.courseType != "pra" ) {%>
+
     <h3 style="margin-top:20px;border-top:thick solid black">
         Regrade Requests</h4>
     <ul>
@@ -91,7 +107,7 @@
        <hr>
        </li>
     <% }%>
-    <% if ((outstanding==0) && (fullskills.length==0)) {%> 
+    <% if ((outstanding==0) && (review.skills.length==0)) {%> 
         <li><%= outstanding %> outstanding regrade requests<br>
             If you think the grading is incorrect, then you can Submit
             a regrade request. The request will be reviewed by the staff.
@@ -134,6 +150,7 @@
     <% } %> 
 
     </ul>
+    <% } %>
     <hr>
     <a href="/showProblem/<%= courseId %>/<%= psetId%>/<%= problem._id %>" class="btn btn-small btn-danger">Back to the Problem</a>
     <a href="/showProblemSet/<%= courseId %>/<%= psetId %>" class="btn btn-small btn-primary">Back to the Problem Set</a>

@@ -21,9 +21,13 @@
                     </b>
 
                     <hr>
-                    <a href="/showProblemSet/<%= problem.courseId%>/<%= problem.psetId %>"
-                        class="btn btn-small btn-primary">Back to the Problem
-                        Set</a>
+                    <% if (course.courseType!="pra" ) {%>
+                    <a href="/gradeProblemSet/<%= problem.courseId%>/<%= problem.psetId %>"
+                        class="btn btn-small btn-primary">Back to Grade Problem Set</a>
+                    <% } else { %>
+                    <a href="/showProblemSetToStudent/<%= problem.courseId%>/<%= problem.psetId %>"
+                        class="btn btn-small btn-primary">Back to Problem Set</a>
+                    <% } %>
                     <hr>
                 </div>
             </div>

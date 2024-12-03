@@ -920,7 +920,11 @@ app.get("/showCourseToStaff/:courseId", authorize, hasStaffAccess,
     res.locals.stopDate = stopDate;  
     
     if (res.locals.hasCourseAccess) {
-      res.render("showCourseToStaff");
+      if (course.courseType == 'pra'){
+        res.render("showCourseToStaff_PRA");
+      } else {
+        res.render("showCourseToStaff");
+      }
     } else {
       res.send("You do not have access to this course.");
     }
@@ -1016,6 +1020,7 @@ app.get("/showCourseToStudent/:courseId",
   getClassGrades,
   async (req, res, next) => {
   try {
+
     const courseId = req.params.courseId;
     const course =  await Course.findOne({_id: courseId});
     res.locals.courseInfo = course;
@@ -1082,8 +1087,12 @@ app.get("/showCourseToStudent/:courseId",
     }
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  
+    } else if (course.courseType=='mla1') {
+      res.render("showCourseToStudentMLA1");  
+    } else if (course.courseType == "pra") {
+      res.render("showCourseToStudent_PRA");
     } else {
-      res.render("showCourseToStudentMLA1");
+      res.send(`course type not recognized ${course.courseType}`);
     }
   } catch (e) {
     next(e);
@@ -1532,6 +1541,24 @@ app.get("/showProblemSet/:courseId/:psetId", authorize, hasCourseAccess,
 
 app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
   async (req, res, next) => {
+    try {
+      const psetId = req.params.psetId;
+      const courseId = req.params.courseId;
+      const course = await Course.findOne({_id: courseId});
+
+      if (course.courseType == "pra") {
+        res.redirect("/showProblemSetToStaff_PRA/"+courseId+"/"+psetId);
+      } else{
+        res.redirect("/showProblemSetToStaff_MLA/"+courseId+"/"+psetId);
+      }
+    } catch(e) {
+      next(e);
+    } 
+  }
+)
+
+app.get("/showProblemSetToStaff_PRA/:courseId/:psetId", authorize, hasStaffAccess,
+  async (req, res, next) => {
 
   const psetId = req.params.psetId;
   const courseId = req.params.courseId;
@@ -1554,12 +1581,96 @@ app.get("/showProblemSetToStaff/:courseId/:psetId", authorize, hasStaffAccess,
   
   res.locals.skills = await Skill.find({courseId: courseId});
 
-  res.render("showProblemSetToStaff");
+  res.render("showProblemSetToStaff_PRA");
 });
 
 
 
+app.get("/showProblemSetToStaff_MLA/:courseId/:psetId", authorize, hasStaffAccess,
+  async (req, res, next) => {
+
+  const psetId = req.params.psetId;
+  const courseId = req.params.courseId;
+  const userId = req.user._id;
+
+  res.locals.psetId = psetId;
+  res.locals.courseId = courseId;
+  
+  res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
+  res.locals.problems 
+      = await Problem.find({psetId: psetId})
+                      .populate('skills');
+  res.locals.problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
+
+  console.dir(res.locals.problems);
+
+  res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
+ 
+  //const allPsets = await ProblemSet.find({courseId: courseId});
+  //res.locals.makeupSets = allPsets.filter((x) => x._id!=psetId).concat({name: "None", _id: null});  
+  
+  
+  res.locals.skills = await Skill.find({courseId: courseId});
+
+  res.render("showProblemSetToStaff_MLA");
+});
+
+
 app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess,
+  async (req, res, next) => {
+    try {
+      const psetId = req.params.psetId;
+      const courseId = req.params.courseId;
+      const course = await Course.findOne({_id: courseId});
+
+      if (course.courseType == "pra") {
+        res.redirect("/showProblemSetToStudent_PRA/"+courseId+"/"+psetId);
+      } else{
+        res.redirect("/showProblemSetToStudent_MLA/"+courseId+"/"+psetId);
+      }
+    } catch(e) {
+      next(e);
+    } 
+  }
+)
+
+
+app.get("/showProblemSetToStudent_PRA/:courseId/:psetId", authorize, hasCourseAccess,
+  async (req, res, next) => {
+
+  const psetId = req.params.psetId;
+  const courseId = req.params.courseId;
+  const userId = req.user._id;
+
+  res.locals.psetId = psetId;
+  res.locals.courseId = courseId;
+  
+  res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
+  res.locals.problems 
+      = await Problem.find({psetId: psetId});
+
+  res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
+  res.locals.myAnswers = await Answer.find({psetId: psetId, studentId: userId});
+  res.locals.pids = res.locals.myAnswers.map((x) => {
+    if (!x.problemId) {
+      res.json(res.locals.myAnswers);
+      return;
+      //console.log(`problemId is undefined for answer ${JSON.stringify(res.locals.myAnswers)}`);
+    }
+    x.problemId.toString(); 
+  });
+
+  const course = await Course.findOne({_id: courseId});
+
+  res.locals.problemsAnswered = res.locals.myAnswers.map((x) => x.problemId.toString());
+
+  
+  res.render("showProblemSetToStudent_PRA");
+});
+
+
+
+app.get("/showProblemSetToStudent_MLA/:courseId/:psetId", authorize, hasCourseAccess,
   async (req, res, next) => {
 
   const psetId = req.params.psetId;
@@ -1594,7 +1705,7 @@ app.get("/showProblemSetToStudent/:courseId/:psetId", authorize, hasCourseAccess
   res.locals.skills = await Skill.find({courseId: courseId});
 
   
-  res.render("showProblemSetToStudent");
+  res.render("showProblemSetToStudent_MLA");
 });
 
 
@@ -1666,13 +1777,16 @@ const processSkills = (grades) => {
 app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
   async (req, res, next) => {
     try {
+      console.log('in updatePsetStatus');
+      console.dir(req.params);
       const psetId = req.params.psetId;
       // update the status of the problem set, this will return the old pset    
       await ProblemSet.findOneAndUpdate({_id:psetId},{status:req.body.status});
       // lookup the new pset
       const problemSet = await ProblemSet.findOne({_id:psetId});
-
-
+      const course = await Course.findOne({_id: req.params.courseId});
+      console.log(`courseType:${course.courseType}`);
+      console.log(`problemSet.status:${problemSet.status}`);
       // update the status of all problems in the problem set
       if (problemSet.status == "in-prep") {
         // set the status of all problems in the problem set to "in-prep"
@@ -1682,8 +1796,10 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
       } else if (problemSet.status == "released") {
         // set the status of all problems in the problem set to "released"
         // visible=true, submitable=true, answerable=true, peerReviewable=false
+        const isPRA = (course.courseType == 'pra');
+        console.log(`isPRA:${isPRA}`);
         await Problem.updateMany({psetId: psetId}, 
-          {visible: true, submitable: false, answerable: true, peerReviewable: false});
+          {visible: true, submitable: isPRA, answerable: true, peerReviewable: isPRA});
       } else if (problemSet.status == "grading") {
         // set the status of all problems in the problem set to "grading"
         // visible=true, submitable=false, answerable=false, peerReviewable=false
@@ -1713,7 +1829,7 @@ app.get("/updatePsetStatus/:courseId/:psetId/:status", authorize, isOwner,
       await ProblemSet.findOneAndUpdate({_id:psetId},{status:req.params.status});
       // lookup the new pset
       const problemSet = await ProblemSet.findOne({_id:psetId});
-
+      const course = await Course.findOne({_id: req.params.courseId});
 
       // update the status of all problems in the problem set
       if (problemSet.status == "in-prep") {
@@ -1724,8 +1840,9 @@ app.get("/updatePsetStatus/:courseId/:psetId/:status", authorize, isOwner,
       } else if (problemSet.status == "released") {
         // set the status of all problems in the problem set to "released"
         // visible=true, submitable=true, answerable=true, peerReviewable=false
+        const isPRA = course.courseType == 'pra';
         await Problem.updateMany({psetId: psetId}, 
-          {visible: true, submitable: false, answerable: true, peerReviewable: false});
+          {visible: true, submitable: isPRA, answerable: true, peerReviewable: isPRA});
       } else if (problemSet.status == "grading") {
         // set the status of all problems in the problem set to "grading"
         // visible=true, submitable=false, answerable=false, peerReviewable=false
@@ -2167,6 +2284,32 @@ app.get('/downloadAsTexFile/:courseId/:psetId', authorize, hasStaffAccess,
     //res.send('downloadAsTexFile not implemented yet');
   });
 
+
+app.get("/addProblem_PRA/:courseId/:psetId", authorize, isOwner,
+  async (req, res, next) => {
+  try {
+    const pset = await ProblemSet.findOne({_id: req.params.psetId});
+    res.locals.psetId = req.params.psetId;
+    res.locals.courseId = req.params.courseId;
+    //res.locals.skills = await Skill.find({courseId: pset.courseId});
+    res.locals.problem={description:"",problemText:"",points:0,rubric:"",skills:[],visible:true,submitable:true,answerable:true,peerReviewable:true};
+    res.locals.problemSet = await ProblemSet.findOne({_id: req.params.psetId});
+
+
+    let problems = await Problem.find({psetId: req.params.psetId}).populate('skills');
+    //res.locals.psetSkillIds  = problems.map((x) => x.skills[0]._id.toString());
+    res.locals.problems = [];
+    //let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
+    //res.locals.skillIds = skills.map((x) => x.skillId);
+    //res.locals.skill = null;
+    res.locals.newProblems=[];
+    
+    res.render("addProblem_PRA");
+  } catch (e) {
+    next(e);
+  }
+});
+
 app.get("/addProblem/:courseId/:psetId", authorize, isOwner,
   async (req, res, next) => {
   try {
@@ -2186,11 +2329,47 @@ app.get("/addProblem/:courseId/:psetId", authorize, isOwner,
     res.locals.skill = null;
     res.locals.newProblems=[];
     
-    res.render("addProblem");
+    res.render("addProblem_MLA");
   } catch (e) {
     next(e);
   }
 });
+
+
+app.post("/saveProblem_PRA/:courseId/:psetId", authorize, isOwner,
+  async (req, res, next) => {
+  try {
+    const courseId = req.params.courseId;
+    const psetId = req.params.psetId;
+
+    let newProblem = new Problem({
+      courseId: courseId,
+      psetId: psetId,
+      description: req.body.description,
+      problemText: req.body.problemText,
+      mimeType: req.body.mimeType,
+      answerMimeType: req.body.answerMimeType,
+      rubric: req.body.rubric,
+      skills: [],
+      pendingReviews: [],
+      allowAnswers: true,
+      visible: true,
+      submitable: true,
+      answerable: true,
+      peerReviewable: true,
+      parentProblemId: null,
+      variant: false,
+      createdAt: new Date(),
+    });
+
+    await newProblem.save();
+
+    res.redirect("/showProblemSetToStaff_PRA/" +courseId+"/"+ psetId);
+  } catch (e) {
+    next(e);
+  }
+});
+
 
 app.post("/saveProblem/:courseId/:psetId", authorize, isOwner,
   async (req, res, next) => {
@@ -2341,11 +2520,20 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         skills,skillsMastered,
         reviews, reviewCount, averageReview,
         };
-
+    
+    console.log('aaa')
     if (!res.locals.isStaff) {
-      res.render("showProblemToStudentMLA");
+      if (course.courseType == "pra") {
+        res.render("showProblemToStudent_PRA");    
+      } else {
+        res.render("showProblemToStudent_MLA");
+      }
     } else {
-      res.render("showProblemToStaffMLA");
+      if (course.courseType == "pra") {
+        res.render("showProblemToStaff_PRA");    
+      } else {
+        res.render("showProblemToStaff_MLA");
+      }
     }
     
   } catch (e) {
@@ -3239,7 +3427,7 @@ app.get("/showMastery/:courseId",
   const exams = await ProblemSet.find({courseId});
   const csv = req.query.csv;
   res.locals.course = course;
-  const grades = await PostedGrades.find({courseId});
+  const grades = await PostedGrades.find({courseId}).sort({email:1});
   const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
   const sectionDict = {};
   for (let section of sections) {
@@ -3248,7 +3436,7 @@ app.get("/showMastery/:courseId",
   res.locals.sectionDict = sectionDict;
   res.locals.grades = grades;
   res.locals.exams = exams;
-  [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades); 
+  [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades);
   if (csv){ 
     res.set('Content-Type', 'text/csv');
     res.send(ejs.render(masteryCSVtemplate,res.locals));

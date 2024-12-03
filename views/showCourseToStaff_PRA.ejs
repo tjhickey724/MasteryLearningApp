@@ -43,7 +43,7 @@
       <%} %>
       <hr>
 
-      <b><%= (courseInfo.courseType=='pra')?"Problem Sets":"Exams" %>
+      <b>Problem Sets </b>
         <% if (isOwner) { %>
           <a href="/addProblemSet/<%= courseInfo._id %>">
             <i class='fas fa-plus' style='font-size:12px'></i> 
@@ -119,74 +119,13 @@
 
      
     <hr>
-    <b>Skills
-      <% if (isOwner) { %>
-        <a href="/addSkill/<%= courseInfo._id %>">
-          <i class='fas fa-plus' style='font-size:12px'></i> 
-        </a>
-        <a href="/showSkills/<%= courseInfo._id %>" >
-          <i class='fas fa-pen' style='font-size:12px'></i> 
-        </a>
-        <% } %>
-    </b>
-    <br>
-    
-    <ul>
-      <li><i>Fundamental Skills</i></li>
-
-      <% for(i = 0; i< allSkills.length; i++){
-        if (allSkills[i].shortName[0]=='F') { %>
-      <li>
-        <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
-          <%= allSkills[i].shortName %>: <%= allSkills[i].name %> 
-          -- <%= allSkills[i].level %>
-        </a>
-      </li>
-      <% }} %>
-      <hr>
-      <li>General Skills</li>
-      <% for(i = 0; i< allSkills.length; i++){
-        if (allSkills[i].shortName[0]=='G') {
-        %>
-        <li>
-          <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
-            <%= allSkills[i].shortName %>: <%= allSkills[i].name %> 
-            -- <%= allSkills[i].level %>
-          </a>
-        </li>
-        <% }} %>
-    </ul>
-
-  
-
       
       <hr>
-      <% if (course.courseType != 'mla0') { %>
-
-
      
-        <hr>
-        <h2>Grading</h2>
-        <ul><li>
-      <a 
-         href="/showRegradeRequests/<%= courseInfo.id %>"
-         >
-         Show Regrade requests (<%= regradeRequests.length %> outstanding)
-      </a>
-      </li></ul>  
-
-      <% } %>
-      <hr>
-      
-
 
       <br>
 
 
-
-      <a href="/" class="btn btn-sm btn-danger">
-        Back to Home
-      </a>
 
 
 
