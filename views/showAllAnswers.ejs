@@ -24,7 +24,7 @@
           <div class="col-md-12">
             <%= answers[i].createdAt %>
               <br>
-              <h3>ANSWER</h3>
+              
               <% if (isTA) {%>
                  <div>
               <% if (!(answers[i].reviewers.includes(user._id))){  %>
@@ -41,7 +41,7 @@
                     style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"><%= answers[i].answer %></pre>
           </div>
         </div>
-        <h3> REVIEWS</h3>
+        
         <% let numReviews=0 %>
 
           <% for (let j=0; j<reviews.length; j++){ 

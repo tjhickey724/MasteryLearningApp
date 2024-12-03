@@ -4,6 +4,22 @@
             <div class="container-fluid ">
                 <div class="p-2">
 <script type="text/javascript" src="/js/clickThumb.js"></script>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+          <%= course.name %>
+        </a></li>
+        <li class="breadcrumb-item"><a href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
+          <%= problemSet.name %>
+        </a></li>
+        <li class="breadcrumb-item"><a href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id%>">
+            Grade Problem Set
+          </a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Reviews of Answer <%= problem.description %> </li>
+    </ol>
+  </nav>
     <hr>
 <h1>Reviews of Answer to Graders</h1>
     <h3 class="bg-danger">
@@ -76,29 +92,51 @@
                      check box and press delete button to delete
                  </form>
             <% } %>
-            <i  class="<%= fa_prefixU %> fa-thumbs-up"
-                   id='<%= "reviewU"+i %>'
-                   onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','U')"></i>
+            <% if (course.courseType!='pra'){%>
+                    <i  class="<%= fa_prefixU %> fa-thumbs-up"
+                        id='<%= "reviewU"+i %>'
+                        onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','U')"></i>
 
-            <i  class="<%= fa_prefixD %> fa-thumbs-down"
-                  id='<%= "reviewD"+i %>'
-                  onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','D')"></i>
+                    <i  class="<%= fa_prefixD %> fa-thumbs-down"
+                        id='<%= "reviewD"+i %>'
+                        onclick="clickThumb('<%= problem.courseId%>',<%= i %>,'<%= reviews[i]._id %>','<%= user._id %>','D')"></i>
 
-            <i>
+                    <i>
 
-            likes: <span id='<%="likes"+ i %>'>
-                 <%= numLikesU-numLikesD %>
-               </span>
-            .... grade:
-            <%= reviews[i].points %>/<%= problem.points %>pts
-            
-            <% if (yourReview){%>
-                <b>Your Review!</b>
+                    likes: <span id='<%="likes"+ i %>'>
+                        <%= numLikesU-numLikesD %>
+                    </span>
+                    .... grade:
+                    <%= reviews[i].points %>/<%= problem.points %>pts
+                </i>
+                Skills Mastered:
+                <% if (fullskills.length==0) {%>
+                    <ul>
+                        <li>
+                            no skills mastered!
+                        </li>
+                    </ul>
+                <%}else {%>
+    
+                <ul>
+                <% fullskills.map((x) => {%>
+                    <li>
+                        <span  style="padding:5px;color:red">
+                            <%= x['name']%>
+                        </span>
+                    </li>
+                 <%}) %>
+                 </ul>
+                <% }%>
+    
 
 
             <% } %>
-            </i>
-            <br>
+            <% if (yourReview){%>
+                <b>Your Review!</b>
+                <br>
+            <% } %>
+           
             <% if (reviews[i].goodFaithEffort){%>
                 <span style="background:lightgreen">
                     Good Faith Effort
@@ -108,27 +146,9 @@
                     Minimal Effort
                 </span>
             <% } %>
+          
 
-            Skills Mastered:
-            <% if (fullskills.length==0) {%>
-                <ul>
-                    <li>
-                        no skills mastered
-                    </li>
-                </ul>
-            <%}else {%>
-
-            <ul>
-            <% fullskills.map((x) => {%>
-                <li>
-                    <span  style="padding:5px;color:red">
-                        <%= x['name']%>
-                    </span>
-                </li>
-             <%}) %>
-             </ul>
-            <% }%>
-
+           
             <% if (yourReview){%>
                 <div style="background:rgb(120,220,155);border:2px solid blue; white-space: pre-wrap; font-family:monospace; padding:1px">
                     <% } else if (isTAreview) {%>

@@ -61,24 +61,28 @@
 
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
+         <% if (skillsMastered.length==problems.length){ %>
+          <b>You have mastered all the problems in this exam!</b>
+        <%} else {%>
         The problems below are the ones from this problem set on skills
         that you have not yet mastered. 
         <br>
         Click on the link(s) to upload your answers.
+          <% } %>
+        
         <%} else {%>
+        
         Problems
           <% } %>
-
       <ul>
         <% for(i=0; i<problems.length; i++){ 
           const numSkillsToMaster=
             problems[i].skills
             .filter( 
                     (skill)=>
-                      !skillsMastered.includes(skill.toString())
+                      !skillsMastered.includes(skill._id.toString())
                   ).length; 
           %>
-
 
           <% if (
                   (problemSet.status=="released" && numSkillsToMaster>0)

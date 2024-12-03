@@ -67,6 +67,7 @@ const converter = new showdown.Converter();
 // Models!
 
 const Problem = require("../models/Problem");
+const ProblemSet = require("../models/ProblemSet");
 const Course = require("../models/Course");
 const CourseMember = require("../models/CourseMember");
 const Answer = require("../models/Answer");
@@ -497,6 +498,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
 
       const psetId = req.params.psetId;
       res.locals.psetId = psetId;
+      res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
 
       const answerId = req.params.answerId;
       res.locals.answerId = answerId;

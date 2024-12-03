@@ -1087,7 +1087,7 @@ app.get("/showCourseToStudent/:courseId",
     }
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  
-    } else if (course.coursetype=='mla1') {
+    } else if (course.courseType=='mla1') {
       res.render("showCourseToStudentMLA1");  
     } else if (course.courseType == "pra") {
       res.render("showCourseToStudent_PRA");
@@ -1599,8 +1599,10 @@ app.get("/showProblemSetToStaff_MLA/:courseId/:psetId", authorize, hasStaffAcces
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
   res.locals.problems 
       = await Problem.find({psetId: psetId})
-                      .populate('skills')
-                      .sort({'skills.shortName':1});
+                      .populate('skills');
+  res.locals.problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
+
+  console.dir(res.locals.problems);
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
  
@@ -2289,17 +2291,17 @@ app.get("/addProblem_PRA/:courseId/:psetId", authorize, isOwner,
     const pset = await ProblemSet.findOne({_id: req.params.psetId});
     res.locals.psetId = req.params.psetId;
     res.locals.courseId = req.params.courseId;
-    res.locals.skills = await Skill.find({courseId: pset.courseId});
+    //res.locals.skills = await Skill.find({courseId: pset.courseId});
     res.locals.problem={description:"",problemText:"",points:0,rubric:"",skills:[],visible:true,submitable:true,answerable:true,peerReviewable:true};
     res.locals.problemSet = await ProblemSet.findOne({_id: req.params.psetId});
 
 
     let problems = await Problem.find({psetId: req.params.psetId}).populate('skills');
-    res.locals.psetSkillIds = problems.map((x) => x.skills[0]._id.toString());
+    //res.locals.psetSkillIds  = problems.map((x) => x.skills[0]._id.toString());
     res.locals.problems = [];
-    let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
-    res.locals.skillIds = skills.map((x) => x.skillId);
-    res.locals.skill = null;
+    //let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
+    //res.locals.skillIds = skills.map((x) => x.skillId);
+    //res.locals.skill = null;
     res.locals.newProblems=[];
     
     res.render("addProblem_PRA");
@@ -2519,7 +2521,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         reviews, reviewCount, averageReview,
         };
     
-    
+    console.log('aaa')
     if (!res.locals.isStaff) {
       if (course.courseType == "pra") {
         res.render("showProblemToStudent_PRA");    
@@ -3425,7 +3427,7 @@ app.get("/showMastery/:courseId",
   const exams = await ProblemSet.find({courseId});
   const csv = req.query.csv;
   res.locals.course = course;
-  const grades = await PostedGrades.find({courseId});
+  const grades = await PostedGrades.find({courseId}).sort({email:1});
   const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
   const sectionDict = {};
   for (let section of sections) {
@@ -3434,7 +3436,7 @@ app.get("/showMastery/:courseId",
   res.locals.sectionDict = sectionDict;
   res.locals.grades = grades;
   res.locals.exams = exams;
-  [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades); 
+  [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades);
   if (csv){ 
     res.set('Content-Type', 'text/csv');
     res.send(ejs.render(masteryCSVtemplate,res.locals));
