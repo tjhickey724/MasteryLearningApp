@@ -3223,7 +3223,7 @@ app.post("/addTA/:courseId", authorize, isOwner,
 });
 
 app.post("/removeTAs/:courseId", authorize, isOwner, 
-  async (req, res, next) => {
+  async (req, res, next) => { 
   try {
 
     if (req.body.ta == null) {

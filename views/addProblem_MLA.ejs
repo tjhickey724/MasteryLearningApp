@@ -103,9 +103,10 @@
                       <hr>
                       <% for(let i=0; i<skills.length; i++){ %>
 
-                        <% if (!psetSkillIds.includes(skills[i]._id.toString())) { %>
+                        <% if (true || !psetSkillIds.includes(skills[i]._id.toString())) { %>
                           <div class="form-check">
-                            <input class="form-check-input" type="radio" name="skills" value="<%= skills[i]._id %>" id="check<%= skills[i]._id %>">
+                            <input class="form-check-input" type="radio" name="skills" required
+                                   value="<%= skills[i]._id %>" id="check<%= skills[i]._id %>">
                             <label class="form-check-label" for="check<%= skills[i]._id %>">
                               <%= skills[i].shortName %> :: <%= skills[i].name %>
                               
@@ -138,7 +139,7 @@
                       
                      
                       Select the skill for these problems: 
-                      <select name="skill">
+                      <select name="skill" required>
                         <% for (let i=0; i<skills.length; i++){ %>
                           <option 
                                 <%= psetSkillIds.includes(skills[i]._id.toString()) ? 'disabled' : '' %>

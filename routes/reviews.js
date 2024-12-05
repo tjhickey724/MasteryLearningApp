@@ -107,7 +107,7 @@ const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isAdmin, authorize}
       res.locals.probId = probId;
 
       const course = await Course.findOne({_id: courseId});
-
+      res.locals.course = course;
 
       let problem = await Problem.findOne({_id: probId});
   
