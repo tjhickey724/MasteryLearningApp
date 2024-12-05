@@ -2293,13 +2293,21 @@ const generateTex = (problems) => {
           Copy in the files title.tex and preamble.tex from the course directory to the directory where you are compiling the exams.  
           The minimal preamble.tex file should contain the following:
           
-          \\documentclass{article}
+          \\documentclass[12pt]{article}
 
           and title.tex can be empty.
           
           Compile these into LaTeX using the following command:
 
           for file in exam_*.tex; do pdflatex "$file"; done
+
+          If you have markdown in your code, you will need to use luatex
+          to compile, and you'll need to use lualatex instead of pdflatex.
+          and you'll need to add the luatexja pacakge to your preamble
+
+          \\documentclass{article}
+          \\usepackage{luatexja}
+
           `, { name: "readme.txt" });
          
 

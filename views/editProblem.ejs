@@ -14,34 +14,7 @@
     <h1 class="pb-2 border-bottom">Edit Problem</h1>
     <div class="p-2">
       <form method="post" action="/updateProblem/<%=problem.courseId%>/<%= problem._id %>">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" <% if (problem.visible) {%> checked <% }%> value='visible' name='visible' id="visible">
-          <label class="form-check-label" for="visible">
-            Visible: students can see the problem.
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name='answerable' id="answerable" <% if
-                    (problem.answerable) {%> checked <% }%> value='answerable'>
-          <label class="form-check-label" for="answerable">
-            Answerable: students can type in an answer to the problem and either
-            save it or submit it. </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name='submitable' id="submitable" <% if
-                    (problem.submitable) {%> checked <% }%> value='submitable'>
-          <label class="form-check-label" for="submitable">
-            Submitable: students can submit their answer (otherwise they can only save)
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name='peerReviewable' id="peerReviewable" <% if
-                    (problem.peerReviewable) {%> checked <% }%> value='peerReviewable'> <label class="form-check-label" for="peerReviewable">
-            Peer Reviewable: students who have submitted their answer can review the
-            answers of their peers in a doubly blind anonymous fashion
-          </label>
-        </div>
-        <hr>
+    
         <div class="mb-3 col-lg-4">
           <label for="description" class="form-label">Problem Title</label>
           <input type="text" class="form-control" name="description" id="description" value="<%= problem.description %>">
