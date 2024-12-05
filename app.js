@@ -17,6 +17,8 @@ const multer = require("multer");
 const csv = require('csv-parser')
 const streamifier = require("streamifier");
 
+const archiver = require('archiver'); // to create zip files of personalized exams
+
 const aws = require('aws-sdk'); //"^2.2.41"
 const multerS3 = require("multer-s3");
 const cors = require("cors")();
@@ -2099,169 +2101,219 @@ const generateTex = (problems) => {
   }
 
 
-  app.get("/downloadPersonalizedExamsAsTexFile/:courseId/:psetId", authorize, hasStaffAccess,
-    /* this route will generate a large latex file with a personalized exam
-       for the specified problemset in the specified course with one exam for
-       each student in the course. Also each exam has questions only for those skills
-       that that particular students has not yet mastered at this point in the course.
+    app.get("/downloadPersonalizedExamsAsZipFile/:courseId/:psetId", authorize, hasStaffAccess,
+      /* this route will generate a large latex file with a personalized exam
+         for the specified problemset in the specified course with one exam for
+         each student in the course. Also each exam has questions only for those skills
+         that that particular students has not yet mastered at this point in the course.
+    
+         The list of mastered skills is obtained from the MGA database!
   
-       The list of mastered skills is obtained from the MGA database!
-
-       Currently the latex file requires a few additional tex files:
-       preamble.tex  - a latex file importing all necessary packages 
-       title.tex - a file containing the first explanation page(s) for the exam,
-          for example, the honesty pledge, the instructions, the grading policy, etc. 
-          This needs to be customized for each class. 
-       
-       If this problem set is a makeup, then we only include students who have not
-       taken the specified exam for which this is a makeup. 
-  
-    */
-    async (req, res, next) => {
-      const courseId = req.params.courseId;
-      const course = await Course.findOne({_id: courseId});
-        /*
-        First we calculate the set of skills that each student has mastered
-        and some other things we don't need yet!
-        */
-        const {skillsMastered,skillCounts,enrolledStudents} 
-           = await getSkillsMastered(courseId);
-        console.dir(`skillsMastered:${JSON.stringify(skillsMastered)}`);
-        console.dir(`skillCounts:${JSON.stringify(skillCounts)}`);
-        console.dir(`enrolledStudents:${JSON.stringify(enrolledStudents)}`);
-
-
-        /*
-        Now we create a dictionary skillIdsMastered: studentEmail -> [skillId]
-        which maps each student to a list of skillIds that the student has mastered
-        We will use this to create the personalized exams.
-        */
-        let allSkills = await Skill.find({courseId});
- 
-        let skillIdMap = {}
-        for (let skillName in skillCounts) {
-          let skill = await Skill.findOne({courseId,shortName: skillName});
-          if (skill) skillIdMap[skillName] = skill._id+"";
-        }
-
-        let skillIdsMastered = {}
-        for (let student in skillsMastered) {
-          skillIdsMastered[student] 
-            = skillsMastered[student].map((x) => skillIdMap[x]);
-        }
-
-        /*
-        Next we get the problems for this problem set
-        */
-        const psetId = req.params.psetId;
-        const pset = await ProblemSet.findOne({_id: psetId});
-        const problems = await Problem.find({psetId: psetId}).populate('skills');
-    
-
-    
-        /* Next, we create a dictionary problemDict indexed by skills which
-           maps each skill to the list of problems containing that skill
-           In practice each skill will correspond to exactly one problem,
-           but we can make this code a little more general.
-        */
-       let problemDict = {};
-       for (let p of problems){
-        if (p.skills.length!=1){
-          continue; // this shouldn't happen
-        } else {
-          problemDict[p.skills[0]['_id']] = p;
-        }
-       }
-    
-       /*
-       This exam might be a makeup of another exam. If so, we need to
-       find the students who have already taken the original exam
-       and not include them in the makeup exam.
-       So studentsWhoCanTakeExam is initially all enrolled students,
-       but if this is a makeup exam, then it will be the students
-       who skipped the original exam.
-       */
-
-       let studentsWhoCanTakeExam = enrolledStudents;
-       let tookExamEmails=[];
-       if (pset.makeupOf) { 
-
-         const makeupOf = pset.makeupOf; // the id of the Exam that this exam is a makeup for
-         let tookExamEmails0 
-             = (await PostedGrades
-                      .find({examId: makeupOf}));
-         tookExamEmails
-             = (await PostedGrades
-                      .find({examId: makeupOf})
-                      .sort({email:1})) 
-                      .map((x) => x.email);
-         studentsWhoCanTakeExam 
-            = enrolledStudents.filter(x => !(tookExamEmails.includes(x)));
-          
-        }
-      
-
-        /*
-        Now we process the list of students who can take the exam
-        and generate a personalized exam for each student
-        but we don't generate exams for students who have mastered
-        all of the skills, we put them into a list studentsWithFullMastery
-        */
-       let studentsWithFullMastery = [];
-       let result = "";
-        for (let studentEmail of studentsWhoCanTakeExam){
-          /* generate a personalized exam for student s with only
-             the problems for skills that s has not yet mastered,
-             as determined by the skillList.
-          */
+         Currently the latex file requires a few additional tex files:
+         preamble.tex  - a latex file importing all necessary packages 
+         title.tex - a file containing the first explanation page(s) for the exam,
+            for example, the honesty pledge, the instructions, the grading policy, etc. 
+            This needs to be customized for each class. 
          
-         let studentSkills = 
-             skillIdsMastered[studentEmail];
-         if (!studentSkills) {
-           studentSkills = [];
-         }
+         If this problem set is a makeup, then we only include students who have not
+         taken the specified exam for which this is a makeup. 
     
-         let testProblems = [];
-         for (let p of problems){
-          if (studentSkills.includes(p.skills[0]['_id']+"")) {
-            // skip the problem if they have mastered it
-          } else {
-            testProblems = testProblems.concat(p);
+      */
+      async (req, res, next) => {
+        const courseId = req.params.courseId;
+        const course = await Course.findOne({_id: courseId});
+          /*
+          First we calculate the set of skills that each student has mastered
+          and some other things we don't need yet!
+          */
+          const {skillsMastered,skillCounts,enrolledStudents} 
+             = await getSkillsMastered(courseId);
+          console.dir(`skillsMastered:${JSON.stringify(skillsMastered)}`);
+          console.dir(`skillCounts:${JSON.stringify(skillCounts)}`);
+          console.dir(`enrolledStudents:${JSON.stringify(enrolledStudents)}`);
+  
+  
+          /*
+          Now we create a dictionary skillIdsMastered: studentEmail -> [skillId]
+          which maps each student to a list of skillIds that the student has mastered
+          We will use this to create the personalized exams.
+          */
+          let allSkills = await Skill.find({courseId});
+   
+          let skillIdMap = {}
+          for (let skillName in skillCounts) {
+            let skill = await Skill.findOne({courseId,shortName: skillName});
+            if (skill) skillIdMap[skillName] = skill._id+"";
           }
-        }
+  
+          let skillIdsMastered = {}
+          for (let student in skillsMastered) {
+            skillIdsMastered[student] 
+              = skillsMastered[student].map((x) => skillIdMap[x]);
+          }
+  
+          /*
+          Next we get the problems for this problem set
+          */
+          const psetId = req.params.psetId;
+          const pset = await ProblemSet.findOne({_id: psetId});
+          const problems = await Problem.find({psetId: psetId}).populate('skills');
       
   
-       const exam =  
-          personalizedPreamble(studentEmail,course.name,(new Date()).toISOString().slice(0,10))
-          + generateTex(testProblems);
-       
-       if (testProblems.length>0) {
-          result += exam;
-       } else {
-          studentsWithFullMastery.push(studentEmail);
-       }
       
-       
+          /* Next, we create a dictionary problemDict indexed by skills which
+             maps each skill to the list of problems containing that skill
+             In practice each skill will correspond to exactly one problem,
+             but we can make this code a little more general.
+          */
+         let problemDict = {};
+         for (let p of problems){
+          if (p.skills.length!=1){
+            continue; // this shouldn't happen
+          } else {
+            problemDict[p.skills[0]['_id']] = p;
+          }
+         }
+      
+         /*
+         This exam might be a makeup of another exam. If so, we need to
+         find the students who have already taken the original exam
+         and not include them in the makeup exam.
+         So studentsWhoCanTakeExam is initially all enrolled students,
+         but if this is a makeup exam, then it will be the students
+         who skipped the original exam.
+         */
   
-        }
-        const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
-        const endTex = '\\end{document}\n';
-        const fullMasteryReport = `
-        \\newpage
-        \\section{Students with Full Mastery}
-        \\begin{itemize}
-        `
-        + studentsWithFullMastery.map((x) => `\\item ${x}`).join("\n") 
-        + "\\end{itemize}\n\\newpage\n";
+         let studentsWhoCanTakeExam = enrolledStudents;
+         let tookExamEmails=[];
+         if (pset.makeupOf) { 
+  
+           const makeupOf = pset.makeupOf; // the id of the Exam that this exam is a makeup for
+           let tookExamEmails0 
+               = (await PostedGrades
+                        .find({examId: makeupOf}));
+           tookExamEmails
+               = (await PostedGrades
+                        .find({examId: makeupOf})
+                        .sort({email:1})) 
+                        .map((x) => x.email);
+           studentsWhoCanTakeExam 
+              = enrolledStudents.filter(x => !(tookExamEmails.includes(x)));
+            
+          }
+        
+  
+          /*
+          Now we process the list of students who can take the exam
+          and generate a personalized exam for each student
+          but we don't generate exams for students who have mastered
+          all of the skills, we put them into a list studentsWithFullMastery
+          */
+         let studentsWithFullMastery = [];
+         let result = [];
 
-        if (studentsWithFullMastery.length>0) {
-          result += fullMasteryReport;
-        }
 
-        res.setHeader('Content-type', 'text/plain');
-        res.send(startTex+result+ endTex);
-    });
+          for (let studentEmail of studentsWhoCanTakeExam){
+            /* generate a personalized exam for student s with only
+               the problems for skills that s has not yet mastered,
+               as determined by the skillList.
+            */
+           
+           let studentSkills = 
+               skillIdsMastered[studentEmail];
+           if (!studentSkills) {
+             studentSkills = [];
+           }
+      
+           let testProblems = [];
+           for (let p of problems){
+            if (studentSkills.includes(p.skills[0]['_id']+"")) {
+              // skip the problem if they have mastered it
+            } else {
+              testProblems = testProblems.concat(p);
+            }
+          }
+        
+    
+         const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
+         const endTex = '\\end{document}\n';
 
+         const exam =  
+            personalizedPreamble(studentEmail,course.name,(new Date()).toISOString().slice(0,10))
+            + generateTex(testProblems);
+         
+         if (testProblems.length>0) {
+            const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
+            const filecontents = startTex + exam + endTex;
+            const fileObject = {filename,filecontents};
+            result = result.concat(fileObject);
+            //result += exam;
+         } else {
+            studentsWithFullMastery.push(studentEmail);
+         }
+        
+         
+    
+          }
+
+          //res.json(result);
+
+         
+        // Set headers for zip file download
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', 'attachment; filename=files.zip');
+    
+        // Create zip archive
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Maximum compression
+        });
+    
+        // Pipe archive data to response
+        archive.pipe(res);
+    
+        // Add each file to the archive
+        result.forEach(file => {
+            archive.append(file.filecontents, { name: "exam_"+file.filename });
+        });
+
+        archive.append(JSON.stringify(studentsWithFullMastery,null,5), { name: "studentsWithFullMastery.json" });  
+        archive.append(`
+\\documentclass{article}
+\\usepackage{amsmath}
+\\usepackage{amssymb}`,{name: "preamble.tex"});
+        archive.append(``, { name: "title.tex" });
+        archive.append(`for file in exam_*.tex; do pdflatex "$file"; done`,
+          { name: "compile.sh" }
+        );
+        archive.append(`Instuctions:
+          This zip file contains a personalized exam for each student in the course.
+          Each exam contains only the problems for the skills that the student has not yet mastered.
+          The file studentsWithFullMastery.json contains a list of students who have already mastered all of the skills.
+          
+          Copy in the files title.tex and preamble.tex from the course directory to the directory where you are compiling the exams.  
+          The minimal preamble.tex file should contain the following:
+          
+          \\documentclass{article}
+
+          and title.tex can be empty.
+          
+          Compile these into LaTeX using the following command:
+
+          for file in exam_*.tex; do pdflatex "$file"; done
+          `, { name: "readme.txt" });
+         
+
+        // Handle archive errors
+        archive.on('error', (err) => {
+            console.error('Archive error:', err);
+            res.status(500).end();
+        });
+    
+        // Finalize the archive
+        archive.finalize();
+
+      });
+  
 
 app.get('/downloadAsTexFile/:courseId/:psetId', authorize, hasStaffAccess,
   async (req, res, next) => {
