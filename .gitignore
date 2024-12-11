@@ -2,6 +2,7 @@ jnk
 *~
 private
 answerImages
+public/images
 .DS_Store
 devnotes.txt
 apikey.js
