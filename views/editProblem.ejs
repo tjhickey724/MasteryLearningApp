@@ -23,21 +23,9 @@
           <label for="problemText" class="form-label">Problem Description</label>
           <textarea name="problemText" class="form-control" cols="100" rows="10"><%= problem.problemText %></textarea>
         </div>
-        <div class="mb-3 col-lg-4">
-          <label for="mimeType" class="form-label">mimeType</label>
-          <select name="mimeType" id="mimeType">
-            <option <%= isSelectedProblem('plain')%> > plain</option>
-            <option <%= isSelectedProblem('markdown')%> >markdown</option>
-            <option <%= isSelectedProblem('tex')%> >tex</option>
-          </select>
-        </div>
-        <div class="mb-3 col-lg-4"></div>
-          <label for="answerMimeType" class="form-label">answerMimeType</label>
-          <select name="answerMimeType" id="mimeType">
-            <option <%= isSelectedAnswer('text')%> > text</option>
-            <option <%= isSelectedAnswer('image')%> >image</option>
-          </select>
-        </div>
+        <input type="hidden" name="mimeType" value="<%= problem.mimeType %>"> 
+        <input type="hidden" name="answerMimeType" value="<%= problem.answerMimeType %>">
+        
         <b>Rubric:</b><br>
        
         <textarea class="form-control" name="rubric" cols="100" rows="10"><%= problem.rubric %></textarea>
