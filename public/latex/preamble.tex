@@ -1,13 +1,76 @@
-
 \documentclass[12pt]{article} 
 
-% Required packages                                                                                 \
-\usepackage[hybrid]{markdown}
+\usepackage{amsfonts}
+\usepackage{amstext}
 \usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx} %adds pictures!
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{rotating}
 
-% Configure markdown to properly handle math delimiters                                             \
-\def\markdownRendererInlineMath#1{$#1$}
-\def\markdownRendererDisplayMath#1{\[#1\]}
+\usepackage{enumitem}
+\usepackage{multicol}
+
+\usepackage{comment}
+
+\usepackage{array}
+	\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+	\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+	\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+	\newcolumntype{N}{@{}m{0pt}@{}}
+	
+\PassOptionsToPackage{hyphens}{url}\usepackage[colorlinks=TRUE, urlcolor=blue, pdfborderstyle={/S/U/W 1}]{hyperref}
+	
+
+\def\vitem{\vskip 1.1in}
+\def\vitema{\vskip 1.7in}
+
+\def\abs#1{\left\lvert#1\right\rvert}  % Simon's laziness
+
+\newenvironment{enum}[1]{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{#1 em}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+ 
+
+\newcommand{\blank}[2] {$\underset{\text{#1}}{\underline{\hspace{#2}}}$}  %% for G18, P22-23
+
+
+\newif\ifsolns
+%\solnstrue   %%  UNCOMMENT THIS if you want the solutions to print
+
+
+%%  ADDED TO PREAMBLE  TO GET REVIEW MATERIAL TO COMPILE
+\usepackage{multicol}
+\usepackage{tikz}
+%\usepackage[colorlinks=TRUE, urlcolor=blue, pdfborderstyle={/S/U/W 1}]{hyperref}
+
+\def\ds{\displaystyle}  % Becci's laziness
+
+% these are Susan's:
+\def\dfrac#1#2{{\strut\displaystyle\thinspace        
+	#1\thinspace\over\strut\displaystyle\thinspace 
+	#2\thinspace}}
+\def\Int{\displaystyle\int}
+\def\Sum{\displaystyle\sum}
+\def\ra{\ \Rightarrow \ }
+
+\def\rtarrow{\raisebox{-3.1pt}{\hspace{-8pt} \mbox{{\Huge  $\rightarrow$}}}} 
+\def\lftarrow{\raisebox{-3.1pt}{\mbox{{\Huge  $\leftarrow$}}}\hspace{-10pt} }
+%%  END: ADDED TO PREAMBLE  TO GET REVIEW MATERIAL TO COMPILE
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%  CHANGE ME:  for 5a/10a/10b  %%%%%%%%%%%%%%%%%%%%%%%
+%%%%  Put all the images in one folder.
+%\graphicspath{{M5a_ProblemBank/M5a_images/}}
+%\graphicspath{{M10a_ProblemBank/M10a_images/}}
+%\graphicspath{{M10b_ProblemBank/M10b_images/}}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BEGIN: set margins
@@ -32,7 +95,7 @@
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\fancyhead[L]{Mastery Learning App exam}
+\fancyhead[L]{Brandeis, Math 5a Friday Assessment}
 \fancyhead[R]{page \thepage}
 \cfoot{}
 
@@ -48,11 +111,9 @@
 
 %% headers
 \pagestyle{fancy}
-\lhead[\thepage]{Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad MLA course, F24}      
+\lhead[\thepage]{Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad M5a, F24}      
 \lfoot{}
-\rhead[Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad MLA course, Fall2024 ]%{page \thepage \, of \pageref{LastPage}}
+\rhead[Name/Initials: \rule{1.5 in}{.2 pt} Section \#: \rule{.3 in}{.2 pt}\qquad M5a, F24 ]%{page \thepage \, of \pageref{LastPage}}
 \rfoot{}
-
-
 
 
