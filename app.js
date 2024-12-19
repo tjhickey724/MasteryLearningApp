@@ -17,6 +17,8 @@ const multer = require("multer");
 const csv = require('csv-parser')
 const streamifier = require("streamifier");
 
+const fsPromises = require('fs').promises;
+
 const archiver = require('archiver'); // to create zip files of personalized exams
 
 const aws = require('aws-sdk'); //"^2.2.41"
@@ -109,6 +111,7 @@ const Review = require("./models/Review");
 const User = require("./models/User");
 const CourseMember = require("./models/CourseMember");
 const Skill = require("./models/Skill");
+const SupportFile = require("./models/SupportFile.js");
 const RegradeRequest = require("./models/RegradeRequest");
 const PostedGrades = require("./models/PostedGrades.js");
 const Instructor = require("./models/Instructor");
@@ -588,6 +591,37 @@ app.post("/createNewCourse", isLoggedIn,
     let cm = new CourseMember(registration);
     await cm.save();
 
+    const title = await fsPromises.readFile(
+      path.join(__dirname, 'public', 'latex','title.tex'), 
+      'utf8'
+    );
+
+    const preamble = await fsPromises.readFile(
+      path.join(__dirname, 'public', 'latex','preamble.tex'), 
+      'utf8'
+    );
+
+    console.dir(['supportfiles',title,preamble]);
+
+    // store the title and preamble support files
+    const titleFile 
+     = new SupportFile(
+      {name:'title',
+       courseId:theCourse._id,
+       createdAt: new Date(),
+       text:title});
+
+    const preambleFile 
+       = new SupportFile(
+          {name:'preamble',
+           courseId:theCourse._id,
+           createdAt: new Date(),
+           text:preamble});
+
+    await titleFile.save();
+    await preambleFile.save();
+
+
     res.redirect("/showCourseToStaff/" + theCourse._id);
   } catch (e) {
     next(e);
@@ -962,6 +996,54 @@ app.post("/editCourse/:courseId", authorize, isOwner,
     course.courseType = courseType;
     course.guestAccess = guestAccess;
     await course.save();
+    res.redirect("/showCourse/"+req.params.courseId);
+});
+
+
+
+app.get('/editSupportFiles/:courseId',authorize,isOwner,
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.find({_id: courseId});
+      const title = await SupportFile.findOne({courseId,name:'title'});
+      const preamble = await SupportFile.findOne({courseId,name:'preamble'});
+
+
+      const titleData = await fsPromises.readFile(
+        path.join(__dirname, 'public', 'latex','title.tex'), 
+        'utf8'
+      );
+
+      const preambleData = await fsPromises.readFile(
+        path.join(__dirname, 'public', 'latex','preamble.tex'), 
+        'utf8'
+     );
+
+
+        res.render("editSupportFiles", 
+          {course,courseId,preamble,title});
+        //res.json({courseId,supportFiles,course,preamble,title});
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+app.post("/editSupportFiles/:courseId", authorize, isOwner,
+  async (req, res) => {
+    // better to use Course.findOneAndUpdate ...
+    const title = req.body.title;
+    const preamble = req.body.preamble;
+    const courseId = req.params.courseId;
+    console.log('posting support files');
+    console.dir([preamble,title,courseId]);
+
+    await SupportFile.findOneAndUpdate(
+      {name:'title',   courseId},{$set:{text:title}},   {upsert:true});
+    await SupportFile.findOneAndUpdate(
+      {name:'preamble',courseId},{$set:{text:preamble}},{upsert:true});
+
     res.redirect("/showCourse/"+req.params.courseId);
 });
 
@@ -2263,6 +2345,7 @@ const generateTex = (problems) => {
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', 'attachment; filename=files.zip');
     
+
         // Create zip archive
         const archive = archiver('zip', {
             zlib: { level: 9 } // Maximum compression
@@ -2277,12 +2360,17 @@ const generateTex = (problems) => {
         });
 
         archive.append(JSON.stringify(studentsWithFullMastery,null,5), { name: "studentsWithFullMastery.json" });  
-        archive.append(`
-\\documentclass{article}
-\\usepackage{amsmath}
-\\usepackage{amssymb}`,{name: "preamble.tex"});
-        archive.append(``, { name: "title.tex" });
-        archive.append(`mkdir originals;mkdir exam;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exam;cd ..`,
+        
+        
+        // get preamble and title files and add to archive
+        const preamble = await SupportFile.findOne({courseId,name:'preamble'});
+        const title = await SupportFile.findOne({courseId,name:'title'});
+        console.dir(['supportfiles for zip',preamble,title])
+        archive.append( preamble.get('text',""), {name: "preamble.tex"});
+        archive.append(title.get('text',""), { name: "title.tex" });
+
+        // add compile shell script to archive
+        archive.append(`mkdir originals;mkdir exams;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exams;mv *.tex *.sh ..; cd ..; rm -r originals`,
           { name: "compile.sh" }
         );
         archive.append(`Instuctions:
