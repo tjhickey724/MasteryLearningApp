@@ -2360,8 +2360,6 @@ const generateTex = (problems) => {
         });
 
         archive.append(JSON.stringify(studentsWithFullMastery,null,5), { name: "studentsWithFullMastery.json" });  
-        
-        
         // get preamble and title files and add to archive
         const preamble = await SupportFile.findOne({courseId,name:'preamble'});
         const title = await SupportFile.findOne({courseId,name:'title'});
