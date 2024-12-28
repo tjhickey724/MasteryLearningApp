@@ -2282,7 +2282,7 @@ const generateTex = (problems) => {
 \\usepackage{amsmath}
 \\usepackage{amssymb}`,{name: "preamble.tex"});
         archive.append(``, { name: "title.tex" });
-        archive.append(`mkdir originals;mkdir exam;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exam;cd ..`,
+        archive.append(`mkdir originals;mkdir exam;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exam;cd ..; rm -r originals`,
           { name: "compile.sh" }
         );
         archive.append(`Instuctions:
