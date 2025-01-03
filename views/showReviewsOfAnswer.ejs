@@ -24,7 +24,7 @@
 <h1>Reviews of Answer to Graders</h1>
     <h3 class="bg-danger">
     <% let userIsTA = isTA;
-       let userIsOwner = user._id.equals(courseInfo.ownerId);
+       let userIsOwner = isOwner;
        if (userIsTA) {
            %>
           <%= student.googlename %> <%= student.googleemail %>

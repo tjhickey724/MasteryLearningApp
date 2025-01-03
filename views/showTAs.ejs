@@ -22,7 +22,7 @@
         <ul>
           <% for(i=0; i< tas.length; i++){ %>
           <li>
-            <% if (user._id.equals(courseInfo.ownerId)) { %>
+            <% if (isOwner) { %> 
             <input type="checkbox" name="ta" value="<%= tas[i]._id %>">
             <% } %>
             <b>
@@ -35,12 +35,12 @@
           </li>
           <% } %>
         </ul>
-        <% if (user._id.equals(courseInfo.ownerId)) { %>
+        <% if (isOwner) { %>
         <input class="btn btn-primary" type="submit" value="remove selected TAs">
         <% } %>
       </form>
       <hr>
-      <% if (user._id.equals(courseInfo.ownerId)) { %>
+      <% if (isOwner) { %>
       <form method="post" action="/addTA/<%= courseInfo._id%>" class="col-lg-8">
         <div class="input-group"><label for="email" class="input-group-text">Email</label><input class="form-control" type="text" name="email">
           <input class="btn btn-warning" type="submit" value="add specified TA">

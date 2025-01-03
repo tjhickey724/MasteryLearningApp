@@ -69,7 +69,9 @@ const isLoggedIn = async (req, res, next) => {
               {studentId: req.user._id, 
                 courseId: res.locals.courseInfo._id});
          
-        
+        const instructor 
+                = await Instructor.findOne({userId: req.user._id, status: "active"});
+             
 
         if (!member){
             // these should all be false for new courses
@@ -99,7 +101,9 @@ const isLoggedIn = async (req, res, next) => {
         res.locals.isOwner 
                  = res.locals.isOwner
                 || res.locals.isAdmin 
-                || res.locals.courseInfo.ownerId == req.user._id+"";
+                || res.locals.courseInfo.ownerId == req.user._id+""
+                || (instructor && res.locals.isTA)
+                ;
 
         res.locals.hasCourseAccess 
             = res.locals.isEnrolled 
