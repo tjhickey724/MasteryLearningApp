@@ -8,7 +8,7 @@
     <div class="p-2">
 
 
-      <% if (user._id.equals(ownerId)) { %>
+      <% if (isOwner) { %>
       <p>You own this course.</p>
       <form method="post" action="/saveProblemSet/<%= courseId %>">
         <div class="input-group">
