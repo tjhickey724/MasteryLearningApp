@@ -1006,8 +1006,8 @@ app.get('/editSupportFiles/:courseId',authorize,isOwner,
     try {
       const courseId = req.params.courseId;
       const course = await Course.find({_id: courseId});
-      const title = await SupportFile.findOne({courseId,name:'title'});
-      const preamble = await SupportFile.findOne({courseId,name:'preamble'});
+      let title = await SupportFile.findOne({courseId,name:'title'});
+      let preamble = await SupportFile.findOne({courseId,name:'preamble'});
 
 
       const titleData = await fsPromises.readFile(
@@ -1018,10 +1018,20 @@ app.get('/editSupportFiles/:courseId',authorize,isOwner,
       const preambleData = await fsPromises.readFile(
         path.join(__dirname, 'public', 'latex','preamble.tex'), 
         'utf8'
-     );
+       );
+
+      if (!title) {
+        title = new SupportFile({name:'title',courseId,text:titleData});
+        await title.save();
+      }
+      if (!preamble) {
+          preamble = new SupportFile({name:'preamble',courseId,text:preambleData});
+        await preamble.save();
+      }
 
 
-        res.render("editSupportFiles", 
+
+      res.render("editSupportFiles", 
           {course,courseId,preamble,title});
         //res.json({courseId,supportFiles,course,preamble,title});
     } catch (e) {
