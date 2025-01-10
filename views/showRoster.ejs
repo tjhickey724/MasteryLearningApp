@@ -44,17 +44,17 @@
           <% for(i=0; i< memberList.length; i++){ %>
           <tr>
             <td>
-              <%= memberList[i].studentId.googlename %>
+              <%= memberList[i].studentId?.googlename %>
             </td>
             <td>
-              <%= memberList[i].studentId.googleemail %>
+              <%= memberList[i].studentId?.googleemail %>
             </td>
             
             <td>
-              <%= memberList[i].role %>
+              <%= memberList[i]?.role %>
             </td>
             <td>
-              <%= memberList[i].section %>
+              <%= memberList[i]?.section %>
             </td>
             <td>
               <%= memberList[i].createdAt.toISOString().slice(0,10) %>

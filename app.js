@@ -738,6 +738,7 @@ app.post("/addStudents/:courseId", authorize, isOwner,
 
 
 const updateCourseMembers = async (sectionDocuments) => {
+  try {
   /*
     for each student in the section, update the courseMember collection.
     First lookup their user id in the User collection.
@@ -802,7 +803,9 @@ const updateCourseMembers = async (sectionDocuments) => {
     await CourseMember.updateMany(
       {courseId:course._id,studentId:{$nin:userIds},role:"student"},
     {$set:{role:"dropped"}});
-
+    } catch (e) {
+      console.log(`error updating course members ${e}`);
+    }
 
 }
 
@@ -833,7 +836,7 @@ app.post("/uploadRoster/:courseId",
     .on("end", async (rowCount) => {
       try {
 
-        // read section data
+        // read section data 
         let documents = []
         dataFromRows.forEach(async (row) => {
             const email = row.email;
@@ -1204,10 +1207,11 @@ const flatten = (vals) => {
 
 /* 
   this route is used to proess a request to join a course 
-  by entering the course pin 
+  by entering the course pin. 
 */
 
-app.post("/joinCourse", isLoggedIn,
+app.post("/joinCourse", isLoggedIn, 
+  (req,res,next) => {res.send("joining by PIN is not allowed")}, //comment out this line to enable course joining
   async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -2378,7 +2382,7 @@ const generateTex = (problems) => {
         archive.append(title.get('text',""), { name: "title.tex" });
 
         // add compile shell script to archive
-        archive.append(`mkdir originals;mkdir exams;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exams;mv *.tex *.sh ..; cd ..; rm -r originals`,
+        archive.append(`mkdir originals;mkdir exams;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exams;mv *.tex *.sh *.txt *.json ..; cd ..; rm -r originals`,
           { name: "compile.sh" }
         );
         archive.append(`Instuctions:
@@ -3557,6 +3561,7 @@ app.get("/postGrades/:courseId/:psetId", authorize, hasStaffAccess,
             gradesDict[id].skillsMastered.map(x => x.shortName),
         skillsSkipped: 
             gradesDict[id].skillsSkipped.map(x => x.shortName),
+        createdAt: new Date(),
       };
       postedGrades.push(pg);
     }

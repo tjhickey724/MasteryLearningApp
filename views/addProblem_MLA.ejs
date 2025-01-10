@@ -130,7 +130,7 @@
                       <select name="skill" required>
                         <% for (let i=0; i<skills.length; i++){ %>
                           <option 
-                                <%= psetSkillIds.includes(skills[i]._id.toString()) ? 'disabled' : '' %>
+                                <%= (false && psetSkillIds.includes(skills[i]._id.toString())) ? 'disabled' : '' %>
                                 value="<%= skills[i]._id %>">
                             <%= skills[i].shortName %> ::  <%= skills[i].name %>
                           </option>

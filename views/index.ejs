@@ -4,7 +4,7 @@
 <% } %>
 
 
-<div class="p-lg-5 p-4 mb-lg-3 mb-0 bg-light border">
+<div class="p-lg-5 p-4 mb-lg-3 mb-0 bg-light border" >
   <div class="container-fluid">
 
     <h1>Mastery Learning App</h1>
@@ -59,7 +59,10 @@
       <% } %>
     </ul>
     <% } %>
-    <form method="post" action="/joinCourse">
+    <!-- uncomment this is you want students to be able to join courses 
+         you also need to modify the /joinCourse route
+    -->
+    <form method="post" action="/joinCourse" style="display:none">
       <input required type="input" 
             name="coursePin" 
             placeholder="Enter 7 digit pin">
