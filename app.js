@@ -115,7 +115,7 @@ const SupportFile = require("./models/SupportFile.js");
 const RegradeRequest = require("./models/RegradeRequest");
 const PostedGrades = require("./models/PostedGrades.js");
 const Instructor = require("./models/Instructor");
-const ejsLint = require("ejs-lint");
+//const ejsLint = require("ejs-lint");
 
 
 const upload_to = process.env.UPLOAD_TO; // AWS or LOCAL
@@ -3356,7 +3356,24 @@ app.post("/addTA/:courseId", authorize, isOwner,
   async (req, res, next) => {
   try {
     const course = await Course.findOne({_id: req.params.courseId});
-    let ta = await User.findOne({googleemail: req.body.email});
+    //let ta = await User.findOne({googleemail: req.body.email});
+    let email = req.body.email;
+    let name = req.body.name;
+    let section = req.body.section;
+
+    let user = await User.findOne({googleemail:email});
+    if (!user) {
+      // create a new user with the email as the googleemail
+      const userJSON = {
+        googleemail:email,
+        googlename:name,
+        createdAt: new Date(),
+      }
+      user = new User(userJSON);
+      user = await user.save();
+    }
+    const ta=user;
+
     if (ta._id+""==course.ownerId) {
       res.send("You can't add the course owner as a TA");
     } else {
@@ -3364,6 +3381,7 @@ app.post("/addTA/:courseId", authorize, isOwner,
       let courseMember = new CourseMember({
         courseId: req.params.courseId,
         studentId: ta._id,
+        section: section,
         role: "ta",
         createdAt: new Date(),
       });

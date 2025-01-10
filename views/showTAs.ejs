@@ -14,6 +14,7 @@
       </ol>
     </nav>
 
+
     <div class="p-2">
 
       <hr>
@@ -31,6 +32,9 @@
             <i>
               <%= tas[i].googleemail %>
             </i>
+            <span>
+              <%= tas[i]?.section %>
+            </span>
 
           </li>
           <% } %>
@@ -42,8 +46,12 @@
       <hr>
       <% if (isOwner) { %>
       <form method="post" action="/addTA/<%= courseInfo._id%>" class="col-lg-8">
-        <div class="input-group"><label for="email" class="input-group-text">Email</label><input class="form-control" type="text" name="email">
-          <input class="btn btn-warning" type="submit" value="add specified TA">
+        <div class="input-group"><label for="email" class="input-group-text">Email</label>
+          <input class="form-control" type="text" name="email" placeholder="email"><br>
+          <input class="form-control" type="text" name="name" placeholder="name"><br>
+          <input class="form-control" type="text" name="section" placeholder="section number"><br>
+          <input class="btn btn-warning" type="submit" value="add specified TA"><br>
+
         </div>
       </form>
       <% } else { %>
@@ -54,6 +62,7 @@
         Back to Home
       </a>
     </div>
+
   </div>
 </div>
 
