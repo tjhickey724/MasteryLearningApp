@@ -44,12 +44,24 @@ app.get("/loginerror", function (req, res) {
   });
   
   // route for logging out
-  app.get("/logout", function (req, res) {
-    req.session.destroy((error) => {
-      console.log("Error in destroying session: " + error);
+  // app.get("/logout", function (req, res, next) {
+  //   req.session.destroy((error) => {
+  //     console.log("Error in destroying session: " + error);
+  //   });
+  //   req.logout(function(err) {
+  //     if (err) { return next(err); }
+  //     res.redirect('/');
+  //   });
+
+  // });
+
+  app.get("/logout", function(req, res, next) {
+    req.logout(function(err) {
+      if (err) {
+        return next(err);
+      }
+      res.redirect("/");
     });
-    req.logout();
-    res.redirect("/");
   });
   
   // =====================================
