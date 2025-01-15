@@ -2204,6 +2204,7 @@ const generateTex = (problems) => {
   }
 
 
+
     app.get("/downloadPersonalizedExamsAsZipFile/:courseId/:psetId", authorize, hasStaffAccess,
       /* this route will generate a large latex file with a personalized exam
          for the specified problemset in the specified course with one exam for
@@ -2429,6 +2430,121 @@ const generateTex = (problems) => {
 
       });
   
+
+
+
+      app.get("/downloadExamAsZipFile/:courseId/:psetId", authorize, hasStaffAccess,
+        /* this route will generate a zipped folder containing
+           a latex file with all exam questions
+           and a latex file with the answers to all exam questions
+           and a command.sh file to generate the pdfs for these two files        
+    
+           Currently the latex file requires a few additional tex files:
+           preamble.tex  - a latex file importing all necessary packages 
+           title.tex - a file containing the first explanation page(s) for the exam,
+              for example, the honesty pledge, the instructions, the grading policy, etc. 
+              This needs to be customized for each class. 
+      
+        */
+        async (req, res, next) => {
+          const courseId = req.params.courseId;
+          const course = await Course.findOne({_id: courseId});
+           
+    
+    
+            /*
+            Next we get the problems for this problem set
+            */
+            const psetId = req.params.psetId;
+            const pset = await ProblemSet.findOne({_id: psetId});
+            const problems = await Problem.find({psetId: psetId}).populate('skills');
+        
+    
+        
+    
+          
+      
+           const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
+           const endTex = '\\end{document}\n';
+           const showSolutions = '\\newif\\ifsolns\n\\solnstrue\n';
+           const hideSolutions = '\\newif\\ifsolns\n\n';
+  
+           const exam =  
+              personalizedPreamble("",course.name,(new Date()).toISOString().slice(0,10))
+              + generateTex(problems);
+            
+           const result = [
+              {filename: "exam.tex", filecontents: startTex + hideSolutions+exam + endTex},
+              {filename: "answers.tex", filecontents: startTex + showSolutions+exam + endTex}
+           ]
+
+           
+          // Set headers for zip file download
+          res.setHeader('Content-Type', 'application/zip');
+          res.setHeader('Content-Disposition', 'attachment; filename=fullExam.zip');
+      
+  
+          // Create zip archive
+          const archive = archiver('zip', {
+              zlib: { level: 9 } // Maximum compression
+          });
+      
+          // Pipe archive data to response
+          archive.pipe(res);
+      
+          // Add each file to the archive
+          result.forEach(file => {
+              archive.append(file.filecontents, { name: "exam_"+file.filename });
+          });
+  
+          // get preamble and title files and add to archive
+          const preamble = await SupportFile.findOne({courseId,name:'preamble'});
+          const title = await SupportFile.findOne({courseId,name:'title'});
+          console.dir(['supportfiles for zip',preamble,title])
+          archive.append( preamble.get('text',""), {name: "preamble.tex"});
+          archive.append(title.get('text',""), { name: "title.tex" });
+  
+          // add compile shell script to archive
+          archive.append(`mkdir originals;mkdir exams;mv *.tex *.txt *.json *.sh originals;cd originals;for file in exam_*.tex; do pdflatex "$file"; done;mv *.pdf ../exams;mv *.tex *.sh *.txt *.json ..; cd ..; rm -r originals`,
+            { name: "compile.sh" }
+          );
+          archive.append(`Instuctions:
+            This zip file contains a personalized exam for each student in the course.
+            Each exam contains only the problems for the skills that the student has not yet mastered.
+            The file studentsWithFullMastery.json contains a list of students who have already mastered all of the skills.
+            
+            Copy in the files title.tex and preamble.tex from the course directory to the directory where you are compiling the exams.  
+            The minimal preamble.tex file should contain the following:
+            
+            \\documentclass[12pt]{article}
+  
+            and title.tex can be empty.
+            
+            Compile these into LaTeX using the following command:
+  
+            for file in exam_*.tex; do pdflatex "$file"; done
+  
+            If you have markdown in your code, you will need to use luatex
+            to compile, and you'll need to use lualatex instead of pdflatex.
+            and you'll need to add the luatexja pacakge to your preamble
+  
+            \\documentclass{article}
+            \\usepackage{luatexja}
+  
+            `, { name: "readme.txt" });
+           
+  
+          // Handle archive errors
+          archive.on('error', (err) => {
+              console.error('Archive error:', err);
+              res.status(500).end();
+          });
+      
+          // Finalize the archive
+          archive.finalize();
+  
+        });
+    
 
 app.get('/downloadAsTexFile/:courseId/:psetId', authorize, hasStaffAccess,
   async (req, res, next) => {
