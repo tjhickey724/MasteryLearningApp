@@ -1628,14 +1628,18 @@ app.get("/uploadProblems/:courseId/:psetId", authorize, hasCourseAccess,
 app.get("/showProblemSet/:courseId/:psetId", authorize, hasCourseAccess,
   async (req, res, next) => {
     try {
+      console.log('in showProblemSet');
       const studentId = req.user._id;
       const courseId = req.params.courseId;
       const member = await CourseMember.findOne({studentId, courseId});
+      console.dir(member);
       const role = member?member.role:"none";
       if (['student','audit','guest'].includes(role)) {
         res.redirect("/showProblemSetToStudent/"+req.params.courseId+"/"+req.params.psetId);
-      } else if (['ta','instructor','owner'].includes(role)) {
+      } else if (['ta','instructor','owner'].includes(role) || isAdmin) {
         res.redirect("/showProblemSetToStaff/"+req.params.courseId+"/"+req.params.psetId);
+      } else {
+        res.send("You do not have access to this course.");
       }
     } catch (e) {
       next(e);
@@ -1700,11 +1704,14 @@ app.get("/showProblemSetToStaff_MLA/:courseId/:psetId", authorize, hasStaffAcces
 
   res.locals.psetId = psetId;
   res.locals.courseId = courseId;
-  
+  console.log('in SPSTS-A');
+
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
+  console.log('in SPSTS-B');
   res.locals.problems 
       = await Problem.find({psetId: psetId})
                       .populate('skills');
+  console.log('in SPSTS-C');
   res.locals.problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
 
   console.dir(res.locals.problems);
