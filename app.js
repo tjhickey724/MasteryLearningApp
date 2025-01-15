@@ -781,6 +781,7 @@ const updateCourseMembers = async (sectionDocuments) => {
         {
         courseMember.section = sectionMember.section;
         courseMember.role = 'student';
+        courseMember.createdAt = new Date();
         courseMember = await courseMember.save();
       }
     } else {
@@ -854,6 +855,7 @@ app.post("/uploadRoster/:courseId",
             if (email && name && section){
                  documents.push(sectionJSON);
             }
+
 
 
         });

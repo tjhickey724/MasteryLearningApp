@@ -61,7 +61,11 @@
             <a href="/reviewAnswers/<%= courseId%>/<%= psetId%>/<%= probId %>" 
               class="btn btn-small btn-warning">
               Review others answers</a>
-        <hr>
+            <hr>
+            <a href="/showAllAnswers/<%= courseId %>/<%= problem._id %>" 
+              class="btn btn-small btn-danger">
+              Show all answers</a>
+            <hr>
       <% } %>
 
 
@@ -73,6 +77,8 @@
             class="btn btn-small btn-info">
           Reviews of your answer</a> <br>
       <% } %>
+
+      
 
     
 

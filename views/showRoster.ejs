@@ -33,6 +33,7 @@
       <table class="table table-bordered table-striped js-sort-table" id="table1">
         <thead style="position: sticky;top: 0">
           <tr>
+            <th class="header" scope="col">N</th>
             <th class="header" scope="col">Name</th>
             <th class="header" scope="col">Email</th>
             <th class="header" scope="col">Role</th>
@@ -43,6 +44,9 @@
         <tbody>
           <% for(i=0; i< memberList.length; i++){ %>
           <tr>
+            <td>
+              <%= i+1 %>
+            </td>
             <td>
               <%= memberList[i].studentId?.googlename %>
             </td>
