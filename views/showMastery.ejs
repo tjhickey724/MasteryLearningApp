@@ -62,7 +62,11 @@
             <% for (let email in mastery) {
               %>
                 <tr>
-                    <td><%= mastery[email]['name'] %></td>
+                    <td>
+                      <a href="/showStudentCoursePage/<%= course._id %>/<%= email %>">
+                         <%= mastery[email]['name'] %>
+                      </a> 
+                    </td>
                     <td class="<%= !email.endsWith("@brandeis.edu")?"":
                     "bg-warning" %>"
 
