@@ -23,7 +23,7 @@
       </ol>
     </nav>
     <h1 class="pb-2 border-bottom">
-       Skill Mastery 
+       Skill Mastery
     </h1>
 
 
@@ -51,6 +51,7 @@
                            style="font-weight:bold;color:rgb(<%= r %>,0,<%= b %>)"
                         <% } %>
                        >
+                       <a href="/showStudentsMissingSkill/<%= course._id%>/<%= skill %>">
                       <%= skill %>
                     <br>
                     <%= skillCounts[skill] %>/<%= studentCount %>
@@ -62,15 +63,15 @@
             <% for (let email in mastery) {
               %>
                 <tr>
-                    <td>
-                      <a href="/showStudentCoursePage/<%= course._id %>/<%= email %>">
+                    <td>          
                          <%= mastery[email]['name'] %>
-                      </a> 
+                      
                     </td>
                     <td class="<%= !email.endsWith("@brandeis.edu")?"":
                     "bg-warning" %>"
-
-                        ><%= email %></td>
+                        ><a href="/showCourseToStudent/<%= course._id %>/?studentEmail=<%= email %>">
+                          <%= email %>
+                        </a></td>
                     <td><%= parseInt(sectionDict[email]||"0") %></td>
                     <td><%= parseInt(mastery[email]['Fskills']) %></td>
                     <td><%= parseInt(mastery[email]['Gskills']) %></td>
@@ -90,7 +91,9 @@
                     %>
                     <tr class="bg-warning">
                         <td> ... </td>
-                        <td><%= email %></td>
+                        <td><a href="/showCourseToStudent/<%= course._id %>/?studentEmail=<%= email %>">
+                          <%= email %>
+                        </a></td>
                         <td><%= sectionDict[email] %></td>
                         <td>0</td>
                         <td>0</td>

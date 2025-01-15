@@ -2,6 +2,16 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseId%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Add Exam</li>
+      </ol>
+    </nav>
+
     <h1 class="pb-2 border-bottom">
       <%= name %>
     </h1>
@@ -12,7 +22,7 @@
       <p>You own this course.</p>
       <form method="post" action="/saveProblemSet/<%= courseId %>">
         <div class="input-group">
-          <label for="" class="input-group-text">Problem Set Name</label>
+          <label for="" class="input-group-text">Exam Name</label>
           <input type="text" name="name" class="form-control"><br>
           <input class="btn btn-primary" type="submit" value="Save">
         </div>

@@ -1,0 +1,34 @@
+<%- include('bootheader') -%>
+<%- include('menubar') -%>
+    <div class="p-3 mb-4 bg-light">
+      <div class="container-fluid ">
+        <div class="p-2">
+
+            <h1 class="pb-2 border-bottom">
+              <%= skill.name %>
+            </h1>
+             
+              <h2>Skill Short Name: <%= skill.shortName %>
+              </h2>
+              <h3><%= skill.name %></h3>
+              <hr>
+              <%= skill.description %>
+              
+              <h2>Students who have not mastered this skill</h2>
+              <% usersWhoDidNotMasterSkill.map((u) => { %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="/showCourseToStudent/<%= courseId %>?studentEmail=<%= u.googleemail %>">
+                             <%= u.googlename %>
+                        </a>
+                        
+                        <%= u.googleemail %>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+        </div>
+    </div>
+
+<%- include('bootfooter') -%>
+<%- include('htmlfoot') -%>

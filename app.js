@@ -1119,11 +1119,15 @@ app.get("/showCourseToStudent/:courseId",
   getClassGrades,
   async (req, res, next) => {
   try {
-
+    let theUser = req.user;
+    let userQuery = req.query.studentEmail;
+    if (userQuery && res.locals.isStaff) {
+      theUser = await User({googleemail:userQuery});
+    }
     const courseId = req.params.courseId;
     const course =  await Course.findOne({_id: courseId});
     res.locals.courseInfo = course;
-    const memberList = await CourseMember.find({studentId: req.user._id, courseId});
+    const memberList = await CourseMember.find({studentId: theUser._id, courseId});
     res.locals.isEnrolled = memberList.length > 0;
     const problemSets = await ProblemSet.find({courseId});
 
@@ -1131,19 +1135,19 @@ app.get("/showCourseToStudent/:courseId",
     // next we create maps to find the number of problems and user's answers
     // in each problem set so the user will know if they have finished a problemset
     
-    let grade = await PostedGrades.findOne({email:req.user.googleemail,courseId});
+    let grade = await PostedGrades.findOne({email:theUser.googleemail,courseId});
     if (!grade) {
       grade={};
     }
 
     let grades 
         = await PostedGrades
-                .find({courseId,email:req.user.googleemail})
+                .find({courseId,email:theUser.googleemail})
                 .populate('examId')
                 .sort({'examId.name': 1});
     //res.json(grades);
 
-    if (req.user.googleemail == grade.email) {
+    if (theUser.googleemail == grade.email) {
       // if the user has been graded in the course
       res.locals.course = course;
       //res.locals.exam = exam;
@@ -1168,14 +1172,14 @@ app.get("/showCourseToStudent/:courseId",
       res.locals.numGskills = res.locals.skillsMastered.filter(skill => skill[0] == "G").length;
     
       res.locals.course = course;
-      res.locals.name=req.user.googlename;
-      res.locals.email=req.user.googleemail;
+      res.locals.name=theUser.googlename;
+      res.locals.email=theUser.googleemail;
 
       
     } else {
       res.locals.course = course;
-      res.locals.name=req.user.googlename;
-      res.locals.email=req.user.googleemail;
+      res.locals.name=theUser.googlename;
+      res.locals.email=theUser.googleemail;
       res.locals.grade = grade;
       res.locals.skillsMastered = [];
       res.locals.numFskills = 0;
@@ -1249,7 +1253,8 @@ Skill routes
 ********************************************************************* 
 */
 
-app.get("/showSkills/:courseId", authorize, hasCourseAccess,
+app.get("/showSkills/:courseId", 
+  authorize, hasCourseAccess,
   async (req, res, next) => {
   try {
     const courseId = req.params.courseId;
@@ -3626,6 +3631,36 @@ app.get("/showMastery/:courseId",
     res.render('showMastery'); 
   }
 })
+
+app.get('/showStudentsMissingSkill/:courseId/:skill',
+  authorize, hasStaffAccess,
+  async (req,res,next) => {
+    try{
+      /*
+        This code needs to be cleaned up and refactored and optimized
+      */
+      const courseId = req.params.courseId;
+      const skillName=req.params.skill;
+      const skill = await Skill.findOne({courseId,shortName:skillName});
+      const studentsWhoMasteredSkill =
+        await PostedGrades.distinct("email",{courseId,skillsMastered:skillName});
+      const studentIdsWhoMasteredSkillA =
+        await User.distinct('_id',{googleemail:{$in:studentsWhoMasteredSkill}});
+      const studentIdsWhoMasteredSkill =
+        studentIdsWhoMasteredSkillA.map((x) => x+"");
+      const studentIdsInClass =
+        await CourseMember.distinct('studentId',{courseId,role:'student'});
+      const result = studentIdsInClass.filter(x => !studentIdsWhoMasteredSkill.includes(x+""));
+      const usersWhoDidNotMasterSkill = 
+        await User.find({_id:{$in:result}});
+      res.render('showStudentsMissingSkill',{courseId,skill,usersWhoDidNotMasterSkill});
+      //res.json('usersWhoDidNotMasterSkill');   
+    }
+    catch(e){
+      next(e);
+    }
+  }
+)
 
 app.get("/showExamMastery/:courseId/:examId", 
   authorize, hasStaffAccess, 

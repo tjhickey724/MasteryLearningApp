@@ -2,6 +2,16 @@
 <%- include('menubar') -%>
 <div class="p-3 mb-4 bg-light">
   <div class="container-fluid ">
+
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= courseInfo._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Show Skills</li>
+      </ol>
+    </nav>
    
 
 
@@ -20,11 +30,15 @@
         <% for(i=0; i<=courseSkills.length-1; i++){ %>
         <li>
 
-
-          <%= courseSkills[i].skillId.shortName %>:
-          <a href="/editSkill/<%= courseId %>/<%= courseSkills[i].skillId._id %>">
-            <%= courseSkills[i].skillId.name %>
-          </a>
+          <% if (isStaff) {%> 
+            <%= courseSkills[i].skillId.shortName %>:
+            <a href="/editSkill/<%= courseId %>/<%= courseSkills[i].skillId._id %>">
+               <%= courseSkills[i].skillId.name %>
+            </a>
+          <% } else {%> 
+              <%= courseSkills[i].skillId.shortName %>:
+              <%= courseSkills[i].skillId.name %>
+             <% } %>
           <% if (isOwner) { %>
             <a href="/removeSkill/<%= courseId %>/<%= courseSkills[i].skillId._id %>">
               <i class='fas fa-trash-can' style='font-size:12px'></i> 
