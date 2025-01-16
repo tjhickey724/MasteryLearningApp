@@ -38,7 +38,6 @@ if (process.env.UPLOAD_TO == "AWS") {
     accessKeyId: process.env.AWS_ACCESS_KEY,
     region: process.env.AWS_REGION,
   };
-  console.dir(aws_config);
   aws.config.update(aws_config);
 
   s3 = new aws.S3();
@@ -60,14 +59,10 @@ if (process.env.UPLOAD_TO == "AWS") {
 
 const storageLocal = multer.diskStorage({
   destination: function(req, file, cb) {
-      console.log('in storageLocal.destination');
       cb(null, 'public')
   },
   filename: function(req, file, cb) {
       req.suffix = file.originalname.slice(file.originalname.lastIndexOf('.'));
-
-      console.log('in storageLocal.filename');
-      console.log(`file=${JSON.stringify([req.filepath,file])}`);
       //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
       cb(null, req.filepath+req.suffix)//+file.originalname)
   }
@@ -385,46 +380,7 @@ app.get("/deleteStudentData/:courseId", isAdmin,
       const courseId = req.params.courseId;
 
       await deleteStudentData(courseId);
-      // const answers 
-      //    = await Answer.find({courseId});
-
       
-      // console.log("deleting student data");
-      // console.log(answers.length);
-      // console.dir(req.params);
-
-      // // now delete all of the images in the answers
-      // for (let answer of answers) {
-      //   console.dir(['deleting',answer]);
-      //   if (answer.imageFilePath) {
-      //     if (answer.imageFilePath.startsWith("https://")) {
-      //       try {
-      //           // remove the https://domain_name/ from the imageFilePath to get the key
-      //           const imageKey = answer.imageFilePath.split("/").slice(3).join("/");
-      //           console.log(`deleting AWS file ${imageKey}`);
-      //           await s3.deleteObject({
-      //             Bucket: process.env.AWS_BUCKET_NAME,
-      //             Key: imageKey
-      //           }).promise();
-      //         } catch (e) {
-      //           console.log(`error deleting AWS file ${answer.imageFilePath}`);
-      //           console.log(`with key ${imageKey}`);
-      //           console.log(`error=${e}`);
-      //       }
-      //     } else {
-      //       const localPath = path.resolve("public"+answer.imageFilePath);
-      //       console.log(`deleting local file ${localPath}`);
-      //       try{
-      //         // delete the local file
-      //         await unlinkAsync(localPath);  
-      //       } catch (e) {
-      //         console.log(`error deleting file ${answer.imageFilePath}`);
-      //         console.log(`error=${e}`);
-      //       }
-      //     }
-      //   }
-      // }
-
       // now delete all of the grades for the course
       await PostedGrades.deleteMany({courseId: courseId});
 
@@ -477,7 +433,6 @@ app.get("/mla_home/:show", isLoggedIn,
   if (!req.user) next();
 
   const show = (req.params.show=="showAll")?'showAll':'currentOnly';
-  console.log(`show is ${show}`);
 
   const userId = req.user._id;
   const coursesOwned = 
@@ -504,7 +459,6 @@ app.get("/mla_home/:show", isLoggedIn,
     show,
   };
 
-  console.dir(res.locals);
   res.render("index");
 });
 
@@ -601,7 +555,6 @@ app.post("/createNewCourse", isLoggedIn,
       'utf8'
     );
 
-    console.dir(['supportfiles',title,preamble]);
 
     // store the title and preamble support files
     const titleFile 
@@ -678,7 +631,7 @@ app.get("/showRoster/:courseId", authorize, hasStaffAccess,
     const members = memberList.map((x) => x.studentId);
 
     if (!members.includes(res.locals.courseInfo.ownerId)) {
-      console.log("adding owner to course");
+      //console.log("adding owner to course");
     }
     res.locals.members = members;//await User.find({_id: {$in: memberIds}});
     res.locals.memberList = memberList;
@@ -1051,8 +1004,7 @@ app.post("/editSupportFiles/:courseId", authorize, isOwner,
     const title = req.body.title;
     const preamble = req.body.preamble;
     const courseId = req.params.courseId;
-    console.log('posting support files');
-    console.dir([preamble,title,courseId]);
+
 
     await SupportFile.findOneAndUpdate(
       {name:'title',   courseId},{$set:{text:title}},   {upsert:true});
@@ -1483,14 +1435,11 @@ app.get("/addProblemSet/:courseId", authorize, isOwner,
        ownerId: courseInfo.ownerId, 
        courseId: courseInfo._id};
 
-  console.dir(res.locals);
   res.render("addProblemSet");
 });
 
 app.post("/saveProblemSet/:courseId", authorize, isOwner,
   async (req, res, next) => {
-    console.log('in saveProblemSet');
-    console.dir(req.body);
   try {
     const id = req.params.courseId;
     let newProblemSet = new ProblemSet({
@@ -1501,8 +1450,7 @@ app.post("/saveProblemSet/:courseId", authorize, isOwner,
       pendingReviews: [],
       makeupOf: req.body.makeupOf,
     });
-    console.log('in saveProblemSet');
-    console.dir(newProblemSet);
+
 
     await newProblemSet.save();
 
@@ -1628,11 +1576,9 @@ app.get("/uploadProblems/:courseId/:psetId", authorize, hasCourseAccess,
 app.get("/showProblemSet/:courseId/:psetId", authorize, hasCourseAccess,
   async (req, res, next) => {
     try {
-      console.log('in showProblemSet');
       const studentId = req.user._id;
       const courseId = req.params.courseId;
       const member = await CourseMember.findOne({studentId, courseId});
-      console.dir(member);
       const role = member?member.role:"none";
       if (['student','audit','guest'].includes(role)) {
         res.redirect("/showProblemSetToStudent/"+req.params.courseId+"/"+req.params.psetId);
@@ -1704,17 +1650,13 @@ app.get("/showProblemSetToStaff_MLA/:courseId/:psetId", authorize, hasStaffAcces
 
   res.locals.psetId = psetId;
   res.locals.courseId = courseId;
-  console.log('in SPSTS-A');
 
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
-  console.log('in SPSTS-B');
   res.locals.problems 
       = await Problem.find({psetId: psetId})
                       .populate('skills');
-  console.log('in SPSTS-C');
   res.locals.problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
 
-  console.dir(res.locals.problems);
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
  
@@ -1767,7 +1709,6 @@ app.get("/showProblemSetToStudent_PRA/:courseId/:psetId", authorize, hasCourseAc
     if (!x.problemId) {
       res.json(res.locals.myAnswers);
       return;
-      //console.log(`problemId is undefined for answer ${JSON.stringify(res.locals.myAnswers)}`);
     }
     x.problemId.toString(); 
   });
@@ -1804,7 +1745,6 @@ app.get("/showProblemSetToStudent_MLA/:courseId/:psetId", authorize, hasCourseAc
     if (!x.problemId) {
       res.json(res.locals.myAnswers);
       return;
-      //console.log(`problemId is undefined for answer ${JSON.stringify(res.locals.myAnswers)}`);
     }
     x.problemId.toString(); 
   });
@@ -1889,16 +1829,14 @@ const processSkills = (grades) => {
 app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
   async (req, res, next) => {
     try {
-      console.log('in updatePsetStatus');
-      console.dir(req.params);
+
       const psetId = req.params.psetId;
       // update the status of the problem set, this will return the old pset    
       await ProblemSet.findOneAndUpdate({_id:psetId},{status:req.body.status});
       // lookup the new pset
       const problemSet = await ProblemSet.findOne({_id:psetId});
       const course = await Course.findOne({_id: req.params.courseId});
-      console.log(`courseType:${course.courseType}`);
-      console.log(`problemSet.status:${problemSet.status}`);
+
       // update the status of all problems in the problem set
       if (problemSet.status == "in-prep") {
         // set the status of all problems in the problem set to "in-prep"
@@ -1909,7 +1847,6 @@ app.post("/updatePsetStatus/:courseId/:psetId", authorize, isOwner,
         // set the status of all problems in the problem set to "released"
         // visible=true, submitable=true, answerable=true, peerReviewable=false
         const isPRA = (course.courseType == 'pra');
-        console.log(`isPRA:${isPRA}`);
         await Problem.updateMany({psetId: psetId}, 
           {visible: true, submitable: isPRA, answerable: true, peerReviewable: isPRA});
       } else if (problemSet.status == "grading") {
@@ -1976,7 +1913,6 @@ app.get("/updatePsetStatus/:courseId/:psetId/:status", authorize, isOwner,
 )    
 
 app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
-  //(req,res,next) => {("in uploadGrades");next(console.log);},
   memoryUpload.single('grades'),
  async (req, res, next) => {
   try{
@@ -2239,9 +2175,7 @@ const generateTex = (problems) => {
           */
           const {skillsMastered,skillCounts,enrolledStudents} 
              = await getSkillsMastered(courseId);
-          console.dir(`skillsMastered:${JSON.stringify(skillsMastered)}`);
-          console.dir(`skillCounts:${JSON.stringify(skillCounts)}`);
-          console.dir(`enrolledStudents:${JSON.stringify(enrolledStudents)}`);
+
   
   
           /*
@@ -2392,7 +2326,6 @@ const generateTex = (problems) => {
         // get preamble and title files and add to archive
         const preamble = await SupportFile.findOne({courseId,name:'preamble'});
         const title = await SupportFile.findOne({courseId,name:'title'});
-        console.dir(['supportfiles for zip',preamble,title])
         archive.append( preamble.get('text',""), {name: "preamble.tex"});
         archive.append(title.get('text',""), { name: "title.tex" });
 
@@ -2507,7 +2440,6 @@ const generateTex = (problems) => {
           // get preamble and title files and add to archive
           const preamble = await SupportFile.findOne({courseId,name:'preamble'});
           const title = await SupportFile.findOne({courseId,name:'title'});
-          console.dir(['supportfiles for zip',preamble,title])
           archive.append( preamble.get('text',""), {name: "preamble.tex"});
           archive.append(title.get('text',""), { name: "title.tex" });
   
@@ -2738,6 +2670,11 @@ app.post("/updateProblem/:courseId/:probId", authorize, isOwner,
   }
 });
 
+/*
+Refactor notes -- 
+this is doing much more work than it needs to.
+Students only need to see the problem, not the progress, etc.
+*/
 app.get("/showProblem/:courseId/:psetId/:probId", 
   authorize, hasCourseAccess,
   async (req, res, next) => {
@@ -2811,7 +2748,6 @@ app.get("/showProblem/:courseId/:psetId/:probId",
         reviews, reviewCount, averageReview,
         };
     
-    console.log('aaa')
     if (!res.locals.isStaff) {
       if (course.courseType == "pra") {
         res.render("showProblemToStudent_PRA");    
@@ -2820,6 +2756,10 @@ app.get("/showProblem/:courseId/:psetId/:probId",
       }
     } else {
       if (course.courseType == "pra") {
+        const answers = await Answer.find({problemId: probId});
+        const reviews = await Review.find({problemId: probId});
+        res.locals.numAnswers = answers.length;
+        res.locals.numReviews = reviews.length;
         res.render("showProblemToStaff_PRA");    
       } else {
         res.render("showProblemToStaff_MLA");
@@ -3142,7 +3082,6 @@ const addImageFilePath = (req,res,next) => {
   // couldn't find a students answer by getting their
   // user_id and the course,pset, and problem Ids
   // this is a kind of salt.. 
-  console.dir(req.params);
   const uniqueSuffix = //Date.now() + '_' + 
       (Math.round(Math.random() * 1E9)).toString();
       if (process.env.UPLOAD_TO=='AWS'){
@@ -3157,7 +3096,6 @@ const addImageFilePath = (req,res,next) => {
           process.env.AWS_BUCKET_NAME +
           ".s3.us-east-2.amazonaws.com/"+
           req.filepath;
-        console.log(`req.urlpath: ${req.urlpath}`);
       } else {
         req.filepath=
           "/answerImages/" +
@@ -3196,17 +3134,11 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
           // then we have to delete it from AWS S3
           // otherwise we delete it from the local filesystem
           if ( answers.length > 0) {
-            console.log(`deleting old answer: ${answers[0]._id}`);
-            //if (process.env.UPLOAD_TO=='AWS'){
             if (process.env.UPLOAD_TO=='AWS'){
-              console.log(`deleting AWS file: ${answers[0].imageFilePath}`);
               try {
                 let imageFilePath = answers[0].imageFilePath;
-                console.log(`deleting file: ${imageFilePath}`); 
                 if (imageFilePath) {
                   let key = imageFilePath.split('//').slice(-1)[0];
-                  console.log(`imageFilePath: ${imageFilePath}`);
-                  console.log(`deleting file with key: ${key}`);
                   await s3.deleteObject({
                     Bucket: process.env.AWS_BUCKET_NAME,
                     Key: key
@@ -3216,12 +3148,9 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                 console.log('error deleting AWS file: ' + e);
               }
             } else {
-              console.log(`deleting local file: ${answers[0].imageFilePath}`);
               try {
                   let imageFilePath = 
                     __dirname+"/public/"+answers[0].imageFilePath;
-                  console.log(`deleting file: ${imageFilePath}`);
-                  console.log(`answers[0].imageFilePath: ${answers[0].imageFilePath}`);
                   if (imageFilePath) {
                     try {
                       await unlinkAsync(imageFilePath);
@@ -3234,7 +3163,6 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                 }
             }
           }
-          console.log('creating a new answer');
           // now create a new answer with the new photo
           // and store in the database
           let newAnswerJSON = {
@@ -3248,7 +3176,6 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
             pendingReviewers: [],
             createdAt: new Date(),
           };
-          console.dir(newAnswerJSON);
           let newAnswer = new Answer(newAnswerJSON);
   
           // we need to delete any previous answers for this problem

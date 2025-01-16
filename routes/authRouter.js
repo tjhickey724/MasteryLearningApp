@@ -117,7 +117,7 @@ app.get("/loginerror", function (req, res) {
             console.log("user registered!");
             res.redirect("/login/local");
           });
-    } else {
+    } else if (req.body.username.endsWith("@stemmla.com")) {
       User.register(new User({googleemail: req.body.username, googlename: req.body.name}), req.body.password, function (err) {
         if (err) {
           console.log("error while user register!", err);
@@ -126,6 +126,8 @@ app.get("/loginerror", function (req, res) {
         console.log("user registered!");
         res.redirect("/login/local");
       });
+    } else {
+      res.render("loginerror", {message: "Invalid email"});
     }
   } catch (err) {
     console.log("error while user register!", err);
@@ -133,7 +135,15 @@ app.get("/loginerror", function (req, res) {
   }
   });
   
-  app.post("/auth/local/login", passport.authenticate("local", {failureRedirect: "/loginerror"}), function (req, res) {
+  app.post("/auth/local/login", 
+    ((req,res,next) => {
+      if (req.body.username.endsWith("@stemmla.com")) {
+        next();
+      } else {
+        res.render("loginerror", {message: "Invalid email"});
+      }
+    }),
+    passport.authenticate("local", {failureRedirect: "/loginerror"}), function (req, res) {
     res.redirect("/");
   });
 

@@ -29,10 +29,10 @@
         </a>
       <% } %>
     </h3>
-    <div class="p-2">
+    <!--
                 mimeType=<%= problem.mimeType %><br>
                 answerMimeType=<%= problem.answerMimeType %>
-    </div>
+      -->
 
       <% if (problem.mimeType=='markdown') { %>
         <div class="bg-default border border-dark rounded border-2 p-3"
@@ -44,15 +44,12 @@
             ><%= problem.problemText %>
         </div>
       <% } %>
-
-    <% if (course.courseType=="mla1" ) {%>
       <hr>
-      <h3>Plagiarism detection:on</h3>
-        <a href="/downloadAnswers/<%= courseId%>/<%= problem.id %>">
-          download answers to check for plagiarism</a>
-        <br>
-    <% } %>
-<hr>
+      <h3><%= numAnswers %> answers submitted  and <%= numReviews %> reviews submitted 
+      </h3>
+      <hr>
+  
+
     <a href="/reviewAnswers/<%= courseId%>/<%= psetId%>/<%= probId %>" 
       class="btn btn-small btn-warning">
       Review others answers</a>
