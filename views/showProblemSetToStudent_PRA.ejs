@@ -18,30 +18,7 @@
     </h1>
 
                  
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <% if (problemSet.status=="in-prep") { %>
-              <b>in-prep</b>
-              <% } else { %>
-                <a style="pointer-events:none; color:gray" 
-                   href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/in-prep">
-                  in-prep</a> 
-              <% } %>
-          </li>
-          <li class="breadcrumb-item">
-            <% if (problemSet.status=="released") { %>
-              <b>released</b>
-              <% } else { %>
-                <a style="pointer-events:none; color:gray" 
-                  href="/updatePsetStatus/<%= courseId%>/<%= psetId%>/released">
-                  released</a>
-              <% } %>
-          </li>
-         
-
-      </ol>
-    </nav>
+  
 
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
