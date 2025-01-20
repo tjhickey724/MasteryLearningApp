@@ -47,8 +47,12 @@ if (process.env.UPLOAD_TO == "AWS") {
     //acl: 'public-read',
     bucket: process.env.AWS_BUCKET_NAME,
     key: function (req, file, cb) {
-        req.suffix = file.originalname.slice(file.originalname.lastIndexOf('.'));
-
+        // req.suffix 
+        //     = file.originalname.slice(file.originalname.lastIndexOf('.'))
+        //        || '.???';
+        
+        const extension = path.extname(file.originalname).toLowerCase();
+        req.suffix = extension; 
         
         cb(null, req.filepath+req.suffix); //use Date.now() for unique file keys
 
@@ -62,7 +66,11 @@ const storageLocal = multer.diskStorage({
       cb(null, 'public')
   },
   filename: function(req, file, cb) {
-      req.suffix = file.originalname.slice(file.originalname.lastIndexOf('.'));
+      // req.suffix 
+      //    = file.originalname.slice(file.originalname.lastIndexOf('.'))
+      //       || '.???';
+      const extension = path.extname(file.originalname).toLowerCase();
+      req.suffix = extension; 
       //const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
       cb(null, req.filepath+req.suffix)//+file.originalname)
   }
@@ -626,7 +634,7 @@ app.get("/showRoster/:courseId", authorize, hasStaffAccess,
 
     const memberList = 
         await CourseMember
-              .find({courseId})
+              .find({courseId,role:{$ne:"dropped"}})
               .populate('studentId');
     const members = memberList.map((x) => x.studentId);
 
@@ -1909,14 +1917,44 @@ app.get("/updatePsetStatus/:courseId/:psetId/:status", authorize, isOwner,
       next(e);
     }
   }
-)    
+)  
+/* a typical gradescope row has the form:
+Name,SID,Email,Total Score,Max Points,Status,Submission ID,Submission Time,Lateness (H:M:S),View Count,Submission Count,1: Honor Pledge (0.0 pts),2: F1 (1.0\
+ pts),3: F2 (1.0 pts),4: F3 (1.0 pts),5: F4 (1.0 pts)
+ and we want to transform it to
+ name,email,F1,F2,F3,F4
+and remove the other columns
+*/
+const transform_from_gradescope = (row) => {
+  let newRow = {};
+
+  for (let key in row) {
+    switch (key) {
+      case 'Name': newRow['name'] = row['Name']; break;
+      case 'Email': newRow['email'] = row['Email']; break;
+      default:
+        if ("123456789".includes(key[0])) {
+          let p1 = key.indexOf(":");
+          let p2 = key.indexOf("(");
+          let newKey = key.substring(p1+1,p2).trim();
+          newRow[newKey] = row[key];
+        }  
+      }
+  }
+
+  return newRow;
+}
+
 
 app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
   memoryUpload.single('grades'),
  async (req, res, next) => {
   try{
 
+
     const courseId = req.params.courseId;
+    const csvMode = req.body.csvMode;
+
     const course = await Course.findOne({_id:courseId})
     res.locals.course = course;
 
@@ -1944,8 +1982,13 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
     .on("end", async (rowCount) => {
       try {
         let documents = []
+
         dataFromRows.forEach(async (row) => {
-            if (!row.name) return; // skip empty rows
+
+            //if (!row.name || !row.Name) return; // skip empty rows
+            if (csvMode=='gradescope') {
+              row = transform_from_gradescope(row);
+            }
 
             const email = row.email;
             const name = row.name;
@@ -1980,7 +2023,7 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
     });
 
  //res.json({message:"grades uploaded"});
- res.redirect(`/showCourse/${courseId}`);
+ res.redirect(`/showMastery/${courseId}`);
   } catch (e) {
     next(e);
   }
