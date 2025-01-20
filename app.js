@@ -700,74 +700,77 @@ app.post("/addStudents/:courseId", authorize, isOwner,
 
 const updateCourseMembers = async (sectionDocuments) => {
   try {
-  /*
-    for each student in the section, update the courseMember collection.
-    First lookup their user id in the User collection.
-    Then update the courseMember collection with the new section and role.
-    and generate a list of their userIds. 
-    Finally, change the role of all students in the course
-    who are not in the section to "dropped".
-    When the sectionData is uploaded this is the official list of students
-    in the class.
-  */
-  let userIds = [];
-  let course = {}; // will be the Course object from the section docs
-  for (let sectionMember of sectionDocuments) {
-    // update section data for existing students
-    // and add new students to the CourseMember collection
-    const email = sectionMember.email;
-    const courseId = sectionMember.courseId;
-    course = await Course.findOne({_id:courseId});
-    let user = await User.findOne({googleemail:email});
-    if (!user) {
-      // create a new user with the email as the googleemail
-      const userJSON = {
-        googleemail:email,
-        googlename:sectionMember.name,
-        createdAt: new Date(),
+      /*
+        for each student in the section, update the courseMember collection.
+        First lookup their user id in the User collection.
+        Then update the courseMember collection with the new section and role.
+        and generate a list of their userIds. 
+        Finally, change the role of all students in the course
+        who are not in the section to "dropped".
+        When the sectionData is uploaded this is the official list of students
+        in the class.
+      */
+      let userIds = [];
+      let course = {}; // will be the Course object from the section docs
+      for (let sectionMember of sectionDocuments) {
+        // update section data for existing students
+        // and add new students to the CourseMember collection
+        const email = sectionMember.email;
+        const courseId = sectionMember.courseId;
+        course = await Course.findOne({_id:courseId});
+        let user = await User.findOne({googleemail:email});
+        if (!user) {
+          // create a new user with the email as the googleemail
+          const userJSON = {
+            googleemail:email,
+            googlename:sectionMember.name,
+            createdAt: new Date(),
+          }
+          user = new User(userJSON);
+          user = await user.save();
+        }
+        userIds.push(user._id);
+        let courseMember 
+            = await CourseMember.findOne(
+                      {studentId:user._id,
+                        courseId:course._id});
+        if (courseMember) {
+          // update their section and role if they changed
+          if ((courseMember.section != sectionMember.section) 
+                ||
+              (courseMember.role != "student"))
+            {
+            courseMember.section = sectionMember.section;
+            courseMember.role = 'student';
+            courseMember.createdAt = new Date();
+            courseMember = await courseMember.save();
+          }
+        } else {
+          // add them to the class
+          const courseMemberJSON = {
+            studentId:user._id,
+            courseId:course._id,
+            section:sectionMember.section,
+            role:"student",
+            createdAt: new Date(),
+          }
+          courseMember = new CourseMember(courseMemberJSON);
+          courseMember = await courseMember.save();
+        }
       }
-      user = new User(userJSON);
-      user = await user.save();
-    }
-    userIds.push(user._id);
-    let courseMember 
-        = await CourseMember.findOne(
-                  {studentId:user._id,
-                    courseId:course._id});
-    if (courseMember) {
-      // update their section and role if they changed
-      if ((courseMember.section != sectionMember.section) 
-            ||
-          (courseMember.role != "student"))
-        {
-        courseMember.section = sectionMember.section;
-        courseMember.role = 'student';
-        courseMember.createdAt = new Date();
-        courseMember = await courseMember.save();
-      }
-    } else {
-      // add them to the class
-      const courseMemberJSON = {
-        studentId:user._id,
-        courseId:course._id,
-        section:sectionMember.section,
-        role:"student",
-        createdAt: new Date(),
-      }
-      courseMember = new CourseMember(courseMemberJSON);
-      courseMember = await courseMember.save();
-    }
-  }
 
-  // for all users in the course who are not in the section, 
-  // change their role to "dropped"
-  const courseMembers = 
-    await CourseMember.updateMany(
-      {courseId:course._id,studentId:{$nin:userIds},role:"student"},
-    {$set:{role:"dropped"}});
-    } catch (e) {
-      console.log(`error updating course members ${e}`);
-    }
+      /* all users in the course who are not in the section, 
+          are removed from the course.
+          They still have ther grades in PostedGrades and can
+          easily he re-added to the course.
+      */
+      //const courseMembers = 
+      await CourseMember.deleteMany(
+          {courseId:course._id,studentId:{$nin:userIds},role:"student"});
+
+  } catch (e) {
+    console.log(`error updating course members ${e}`);
+  }
 
 }
 
