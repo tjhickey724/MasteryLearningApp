@@ -2218,7 +2218,19 @@ const generateTex = (problems) => {
           const {skillsMastered,skillCounts,enrolledStudents} 
              = await getSkillsMastered(courseId);
 
-  
+          /*
+          We want to use the student's full name,
+          with underscores replacing spaces,
+          for the filename of the personalized exam.
+          So we need to create a dictionary whose keys are emails
+          and whose values are the User objects for the students
+          */
+          const students = await User.find({googleemail: {$in: enrolledStudents}});
+          const studentEmailToName = {};
+          for (let student of students) {
+            studentEmailToName[student.googleemail] = student.googlename.replace(/ /g,'_');
+          }
+
   
           /*
           Now we create a dictionary skillIdsMastered: studentEmail -> [skillId]
@@ -2330,7 +2342,8 @@ const generateTex = (problems) => {
             + generateTex(testProblems);
          
          if (testProblems.length>0) {
-            const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
+            //const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
+            const filename = studentEmailToName[studentEmail]+'.tex';
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};
             result = result.concat(fileObject);
