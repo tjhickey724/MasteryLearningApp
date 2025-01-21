@@ -67,7 +67,7 @@
                          <%= mastery[email]['name'] %>
                       
                     </td>
-                    <td class="<%= !email.endsWith("@brandeis.edu")?"":
+                    <td class="<%= email.endsWith("@brandeis.edu")?"":
                     "bg-warning" %>"
                         ><a href="/showCourseToStudent/<%= course._id %>/?studentEmail=<%= email %>">
                           <%= email %>
