@@ -46,20 +46,23 @@
          ><%= answer.answer %></pre>
     <% } else { %>
         <br>
-        IMAGE ANSWER:<br>
+        IMAGE ANSWER:
+        <br>
+    <img src="<%= answer.imageFilePath %>" width="50%">
+    <br>
         <% if (isStaff) {
             // generate a form to allow the staff to upload a new image 
             %>
-            <form method="post" action="/updateAnswerImage/<%= answer._id %>">
-                If the image quality is poor then the TAs can upload a new image here.
-                here <br>
-                <input type="file" name="image" accept="image/*">
-                <input type="submit" value="upload new image">
+            <form method="post" 
+                  action="/uploadAnswerPhoto/<%= courseId%>/<%= psetId%>/<%= problem._id %>?theStudentId=<%= student._id %>" 
+                  enctype="multipart/form-data">
 
+                If the image quality is poor then the TAs can upload a new image here.
+                This will delete their old answer. <br>
+                <input type="file" id="picture" name="picture" accept="image/*" capture="environment" />
+                <input class="btn btn-lg btn-danger" type="submit" value="reupload answer photo by TA">
             </form>
              <% } %>
-        <br>
-    <img src="<%= answer.imageFilePath %>" width="50%">
         <% } %>
 
 

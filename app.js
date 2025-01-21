@@ -3166,22 +3166,38 @@ const addImageFilePath = (req,res,next) => {
       next();
 };
 
+
+
+
 app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId", 
           authorize, hasCourseAccess,
           addImageFilePath,
           upload.single('picture'),
     async (req, res, next) => {
       try {
+        console.log('uploading answer photo');
+        console.dir(req.params);
+        console.dir(req.body);
+        console.dir(req.query);
+        console.dir(res.locals);
+        console.log('showed params, body, query, locals');
+
         const probId = req.params.probId;
         const psetId = req.params.psetId;
         const courseId = req.params.courseId;
-  
-        const answers = await Answer.find({studentId: req.user._id, problemId: probId});
-  
+        let studentId = req.user._id;
+        const answers = await Answer.find({studentId, problemId: probId});
+        if (res.locals.isStaff && req.query.theStudentId) {
+          studentId = req.query.theStudentId
+          console.log(`staff ${req.user._id} reuploading answer for student: ` + studentId);
+        } else {
+          console.log('not staff');
+        }
+
         const answerIds = answers.map((x) => x._id);
         const reviews = await Review.find({answerId: {$in: answerIds}});
   
-        if (reviews.length > 0) {
+        if (reviews.length > 0 && !req.locals.isStaff) {
           res.redirect("/showReviewsOfAnswer/" + courseId +"/" + psetId+"/"+ answerIds[0]);
         } else {
 
@@ -3224,7 +3240,7 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
           // now create a new answer with the new photo
           // and store in the database
           let newAnswerJSON = {
-            studentId: req.user._id,
+            studentId: studentId,
             courseId: courseId,
             psetId: psetId,
             problemId: probId,
@@ -3238,11 +3254,14 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
   
           // we need to delete any previous answers for this problem
           // each problem should have at most one answer per student
-          await Answer.deleteMany({studentId: req.user._id, problemId: probId});
+          await Answer.deleteMany({studentId, problemId: probId});
   
           await newAnswer.save();
-  
-          res.redirect("/showProblem/" +courseId+"/" + psetId+"/"+probId);
+          if (res.locals.isStaff) {
+            res.redirect('/showReviewsOfAnswer/' + courseId + '/' + psetId + '/' + newAnswer._id);
+          } else {
+            res.redirect("/showProblem/" +courseId+"/" + psetId+"/"+probId);
+          }
         }
       
       } catch (e) {

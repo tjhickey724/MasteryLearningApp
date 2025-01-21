@@ -52,7 +52,7 @@
                         // find the scores of the reviews of this problem
                      const studentAnswers =
                          answers.filter(a =>{
-                             return a.studentId.equals(studentsInfo[i]._id) &&
+                             return a.studentId?.equals(studentsInfo[i]._id) &&
                                     a.problemId.equals(problems[j]._id)
                          })
                      //console.log(`\n\n${i} ${j} studentAnswers= ${JSON.stringify(studentAnswers)}`)
