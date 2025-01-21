@@ -47,6 +47,18 @@
     <% } else { %>
         <br>
         IMAGE ANSWER:<br>
+        <% if (isStaff) {
+            // generate a form to allow the staff to upload a new image 
+            %>
+            <form method="post" action="/updateAnswerImage/<%= answer._id %>">
+                If the image quality is poor then the TAs can upload a new image here.
+                here <br>
+                <input type="file" name="image" accept="image/*">
+                <input type="submit" value="upload new image">
+
+            </form>
+             <% } %>
+        <br>
     <img src="<%= answer.imageFilePath %>" width="50%">
         <% } %>
 
