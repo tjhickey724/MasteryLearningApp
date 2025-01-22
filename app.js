@@ -3167,7 +3167,12 @@ const addImageFilePath = (req,res,next) => {
 };
 
 
-
+/*
+uploadAnswerPhoto is called when a student uploads an image as an answer
+and it is also called by a TA when they are reuploading an image for a student.
+In the latter case, the new image should simply replace the old image in 
+the student's answer and the route should redirect to the showReviewsOfAnswer page.
+*/
 
 app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId", 
           authorize, hasCourseAccess,
@@ -3237,30 +3242,40 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                 }
             }
           }
-          // now create a new answer with the new photo
-          // and store in the database
-          let newAnswerJSON = {
-            studentId: studentId,
-            courseId: courseId,
-            psetId: psetId,
-            problemId: probId,
-            imageFilePath: req.urlpath+req.suffix,
-            reviewers: [],
-            numReviews: 0,
-            pendingReviewers: [],
-            createdAt: new Date(),
-          };
-          let newAnswer = new Answer(newAnswerJSON);
-  
-          // we need to delete any previous answers for this problem
-          // each problem should have at most one answer per student
-          await Answer.deleteMany({studentId, problemId: probId});
-  
-          await newAnswer.save();
+
+          // if user is staff, then we are reuploading an image
+          // so we just modify the imageFilePath of the existing answer
+          // and save it to the database
+
           if (res.locals.isStaff) {
-            res.redirect('/showReviewsOfAnswer/' + courseId + '/' + psetId + '/' + newAnswer._id);
+            let imageFilePath = req.urlpath+req.suffix;
+            const theAnswer = await Answer.findOneAndUpdate(
+              {studentId, problemId: probId},
+              {$set:{imageFilePath}});
+            res.redirect('/showReviewsOfAnswer/' + courseId + '/' + psetId + '/' + theAnswer._id);
           } else {
-            res.redirect("/showProblem/" +courseId+"/" + psetId+"/"+probId);
+              // in this case the user is a student uploading an image
+              // so, now create a new answer with the new photo
+              // and store in the database
+              let newAnswerJSON = {
+                studentId: studentId,
+                courseId: courseId,
+                psetId: psetId,
+                problemId: probId,
+                imageFilePath: req.urlpath+req.suffix,
+                reviewers: [],
+                numReviews: 0,
+                pendingReviewers: [],
+                createdAt: new Date(),
+              };
+              let newAnswer = new Answer(newAnswerJSON);
+      
+              // we need to delete any previous answers for this problem
+              // each problem should have at most one answer per student
+              await Answer.deleteMany({studentId, problemId: probId});
+      
+              await newAnswer.save();
+              res.redirect("/showProblem/" +courseId+"/" + psetId+"/"+probId);
           }
         }
       
