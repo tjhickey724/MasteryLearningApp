@@ -490,6 +490,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
   app.get("/showReviewsOfAnswer/:courseId/:psetId/:answerId", authorize, hasCourseAccess,
     async (req, res, next) => {
     try {
+      console.log('in routes/reviews.js');
       const personal = req.query.personal;
       console.dir(req.query);
       const courseId = req.params.courseId;
