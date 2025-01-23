@@ -1,4 +1,4 @@
-/*     routes/reviews.js
+/*     
 
 These routes handle the peer review and grading features of the app.
 See the README.md file for a discussion of the algorithm. The key idea
@@ -66,15 +66,15 @@ const converter = new showdown.Converter();
 
 // Models!
 
-const Problem = require("../models/Problem");
-const ProblemSet = require("../models/ProblemSet");
-const Course = require("../models/Course");
-const CourseMember = require("../models/CourseMember");
-const Answer = require("../models/Answer");
-const Review = require("../models/Review");
-const User = require("../models/User");
-const Skill = require("../models/Skill");
-const RegradeRequest = require("../models/RegradeRequest");
+const Problem = require("../models/Problem.js");
+const ProblemSet = require("../models/ProblemSet.js");
+const Course = require("../models/Course.js");
+const CourseMember = require("../models/CourseMember.js");
+const Answer = require("../models/Answer.js");
+const Review = require("../models/Review.js");
+const User = require("../models/User.js");
+const Skill = require("../models/Skill.js");
+const RegradeRequest = require("../models/RegradeRequest.js");
 
 // const {method, otherMethod} = require('./myModule.js');
 const {isLoggedIn, hasCourseAccess, hasStaffAccess, isOwner, isAdmin, authorize} = require('./authFunctions.js');
