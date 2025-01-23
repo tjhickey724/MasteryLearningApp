@@ -3172,6 +3172,10 @@ uploadAnswerPhoto is called when a student uploads an image as an answer
 and it is also called by a TA when they are reuploading an image for a student.
 In the latter case, the new image should simply replace the old image in 
 the student's answer and the route should redirect to the showReviewsOfAnswer page.
+
+This is tricky because we are allowing the TA to upload a photo after a review
+has been done.  This is not allowed for students, but we are allowing it for TAs
+
 */
 
 app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId", 
@@ -3191,28 +3195,38 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
         const psetId = req.params.psetId;
         const courseId = req.params.courseId;
         let studentId = req.user._id;
-        const answers = await Answer.find({studentId, problemId: probId});
         if (res.locals.isStaff && req.query.theStudentId) {
           studentId = req.query.theStudentId
-          console.log(`staff ${req.user._id} reuploading answer for student: ` + studentId);
-        } else {
-          console.log('not staff');
         }
 
+
+
+        // look to see if the user has already uploaded an answer
+        // to this problem and if that answer has been reviewed
+        const answers = await Answer.find({studentId, problemId: probId});
         const answerIds = answers.map((x) => x._id);
         const reviews = await Review.find({answerId: {$in: answerIds}});
   
-        if (reviews.length > 0 && !req.locals.isStaff) {
+        if (reviews.length > 0 && !res.locals.isStaff) {
+          // if the answer has already been reviewed, then we can't update it
+          // unless the user is a staff member, in which case they can
+          // change the image in the answer
           res.redirect("/showReviewsOfAnswer/" + courseId +"/" + psetId+"/"+ answerIds[0]);
         } else {
+          // in this case there are either no answers
+          // or an answer but no reviews
+          // or an answer and reviews but the user is staff
 
           // before uploading a new answer
           // first look for an old answer 
-          // and delete the image file if it exists
+
+          if ( answers.length > 0 && (reviews.length==0 || res.locals.isStaff)) {
+          // if there is an answer, but no reviews, or the user is staff
+          // then replace the image file
+          // So first, delete the image file if it exists
           // if the imageFilePath starts with https://
           // then we have to delete it from AWS S3
           // otherwise we delete it from the local filesystem
-          if ( answers.length > 0) {
             if (process.env.UPLOAD_TO=='AWS'){
               try {
                 let imageFilePath = answers[0].imageFilePath;
@@ -3241,19 +3255,27 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                   console.log('error deleting LOCAL file: ' + e);
                 }
             }
-          }
-
-          // if user is staff, then we are reuploading an image
-          // so we just modify the imageFilePath of the existing answer
-          // and save it to the database
-
-          if (res.locals.isStaff) {
+            // now we can store the new image path in the answer
+            
             let imageFilePath = req.urlpath+req.suffix;
             const theAnswer = await Answer.findOneAndUpdate(
               {studentId, problemId: probId},
               {$set:{imageFilePath}});
-            res.redirect('/showReviewsOfAnswer/' + courseId + '/' + psetId + '/' + theAnswer._id);
+            if (res.locals.isStaff) {
+              res.redirect('/showReviewsOfAnswer/' + courseId + '/' + psetId + '/' + theAnswer._id);
+            } else {
+              res.redirect('/showProblem/' + courseId + '/' + psetId + '/' + probId);
+            }
           } else {
+            // in this case either there are no answers, or
+            // there is an answer and it has been reviewed and the user is not staff
+            // in the later case we should redirect back to showReviewsOfAnswer
+            // as we can't have the user changing their answer after it has been reviewed
+            // in the former case, we will create a new answer
+            if (answers.length > 0) {
+              res.redirect("/showReviewsOfAnswer/" + courseId +"/" + psetId+"/"+ answerIds[0]);
+            } else {
+
               // in this case the user is a student uploading an image
               // so, now create a new answer with the new photo
               // and store in the database
@@ -3278,13 +3300,14 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
               res.redirect("/showProblem/" +courseId+"/" + psetId+"/"+probId);
           }
         }
-      
-      } catch (e) {
-        console.log("error in uploadAnswerPhoto: " + e);
-        next(e);
       }
-
+      
+    } catch (e) {
+      console.log("error in uploadAnswerPhoto: " + e);
+      next(e);
     }
+
+  }
 
 );
   

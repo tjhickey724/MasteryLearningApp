@@ -491,8 +491,12 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
     async (req, res, next) => {
     try {
       console.log('in routes/reviews.js');
+      console.dir(req.params);
+      
+      console.dir(req.user.id);
+
       const personal = req.query.personal;
-      console.dir(req.query);
+      
       const courseId = req.params.courseId;
       res.locals.courseId = courseId;
       const course = await Course.findOne({_id: courseId});
@@ -509,6 +513,11 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       const answer = await Answer.findOne({_id: answerId});
       res.locals.answer = answer;
       res.locals.courseInfo = await Course.findOne({_id: courseId});
+
+      console.log('in showReviewsOfAnswer');
+      console.dir(answer);
+
+
       const problem = await Problem.findOne({_id: answer.problemId});
       res.locals.problem = problem;
       res.locals.student = await User.findOne({_id: answer.studentId});
