@@ -3184,12 +3184,12 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
           upload.single('picture'),
     async (req, res, next) => {
       try {
-        console.log('uploading answer photo');
-        console.dir(req.params);
-        console.dir(req.body);
-        console.dir(req.query);
-        console.dir(res.locals);
-        console.log('showed params, body, query, locals');
+        // console.log('uploading answer photo');
+        // console.dir(req.params);
+        // console.dir(req.body);
+        // console.dir(req.query);
+        // console.dir(res.locals);
+        // console.log('showed params, body, query, locals');
 
         const probId = req.params.probId;
         const psetId = req.params.psetId;
