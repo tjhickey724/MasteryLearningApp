@@ -54,6 +54,7 @@ if (process.env.UPLOAD_TO == "AWS") {
         
         const extension = path.extname(file.originalname).toLowerCase();
         req.suffix = extension; 
+        console.log(`in key:${file.originalname} suffix:${extension})`);
         
         cb(null, req.filepath+req.suffix); //use Date.now() for unique file keys
 
