@@ -2231,8 +2231,11 @@ const generateTex = (problems) => {
           */
           const students = await User.find({googleemail: {$in: enrolledStudents}});
           const studentEmailToName = {};
+          const studentEmailToFileName = {};
           for (let student of students) {
-            studentEmailToName[student.googleemail] = student.googlename.replace(/ /g,'_');
+            studentEmailToFileName[student.googleemail] = student.googlename.replace(/ /g,'_');
+            studentEmailToName[student.googleemail] = student.googlename;
+
           }
 
   
@@ -2340,14 +2343,15 @@ const generateTex = (problems) => {
     
          const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
          const endTex = '\\end{document}\n';
+         const studentName = studentEmailToName[studentEmail];
 
          const exam =  
-            personalizedPreamble(studentEmail,course.name,(new Date()).toISOString().slice(0,10))
+            personalizedPreamble(studentName+" : "+studentEmail,course.name,(new Date()).toISOString().slice(0,10))
             + generateTex(testProblems);
          
          if (testProblems.length>0) {
             //const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
-            const filename = studentEmailToName[studentEmail]+'.tex';
+            const filename = studentEmailToFileName[studentEmail]+'.tex';
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};
             result = result.concat(fileObject);
