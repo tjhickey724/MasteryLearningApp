@@ -211,6 +211,14 @@
               <input class="btn btn-lg btn-danger" type="submit" 
                     value="End the Exam and start grading">
             </form>
+<hr>
+            <% if (course.courseType!="mla0") {%>
+          
+              <a class="btn btn-sm btn-danger" 
+                href="/gradeProblemSet/<%= courseId%>/<%= problemSet._id %>">
+                ReGrade Problem Set
+              </a>
+              <% } %>
             <% } %>
 
          

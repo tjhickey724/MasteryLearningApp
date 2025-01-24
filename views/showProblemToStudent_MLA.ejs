@@ -142,9 +142,9 @@
                  <input class="btn btn-lg btn-danger" type="submit" value="submit answer photo">
                  <% } else{%>
                     <% if (theAnswer.imageFilePath){%>
-                      <input class="btn btn-lg btn-warning" type="submit" value="retake photo"> OR
+                      <input class="btn btn-lg btn-warning" type="submit" value="upload photo"> OR
                       <a class="btn btn-lg btn-info" href="/showProblemSet/<%= courseId%>/<%= problemSet._id%>">
-                        upload answer to next problem
+                        go to next problem
                       </a>
                     <% }else { %>
                  <input class="btn btn-lg btn-warning" type="submit" value="save answer photo">

@@ -3281,7 +3281,9 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
             if (answers.length > 0) {
               res.redirect("/showReviewsOfAnswer/" + courseId +"/" + psetId+"/"+ answerIds[0]);
             } else {
-
+              if (!req.suffix){
+                req.suffix = '.jpg';
+              }
               // in this case the user is a student uploading an image
               // so, now create a new answer with the new photo
               // and store in the database
