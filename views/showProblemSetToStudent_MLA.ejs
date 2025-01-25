@@ -62,16 +62,22 @@
 
     <div class="p-2">
       <% if (problemSet.status=="released"){ %>
-         <% if (skillsMastered.length==problems.length){ %>
-          <b>You have mastered all the problems in this exam!</b>
-        <%} else {%>
-        The problems below are the ones from this problem set on skills
-        that you have not yet mastered. 
-        <br>
-        Click on the link(s) to upload your answers.
-          <% } %>
+            <% if (skillsMastered.length==problems.length){ 
+                // this test makes many assumptions
+                // I should revise this code to be more general  
+              %>
+              <b>You have mastered all the problems in this exam!</b>
+            <%} else {
+                // this also should be revised to check for status
+                // being graded or grading.
+              %>
+                  The problems below are the ones from this problem set on skills
+                  that you have not yet mastered. 
+                  <br>
+                  Click on the link(s) to upload your answers.
+            <% } %>
         
-        <%} else {%>
+      <%} else {%>
         
         Problems
           <% } %>
@@ -86,11 +92,12 @@
           %>
 
           <% if (
-                  (problemSet.status=="released" && numSkillsToMaster>=0)
+                  (problemSet.status=="released" && numSkillsToMaster>0)
                   // if the problem set is released, only show problems they have not mastered              
               ) 
            { %> 
             <li>
+
               <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
                 <%= problems[i].skills[0].shortName || "no skill" %>:
                 <%= problems[i].description || "no name" %> A
@@ -100,20 +107,32 @@
               
               <% } %>
             </li>
-        <% } else if ((problemSet.status!="released")  
-                     && problemsAnswered.includes(problems[i]._id.toString())) {
-      // if the problem set is not released, only show problems they have answered %>
+        <% } else if (["grading","graded"].includes(problemSet.status) ) { %>
+                     
             <li >
-              <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
-                <%= problems[i].description || "no name" %> 
-                </a>
-                <% if (numSkillsToMaster==0){ %> 
-                   <span class="text-info">MASTERED</span>  
+              <% if (problemsAnswered.includes(problems[i]._id.toString())) {
+                // if the problem set is graded or being graded, only show problems they have answered %>
+                    <a href="/showProblem/<%= courseId%>/<%= psetId %>/<%= problems[i]._id %>">
+                      <%= problems[i].skills[0].shortName || "no skill" %>:
+                      <%= problems[i].description || "no name" %> 
+                      </a>
+
+                      <% if (numSkillsToMaster==0){ %> 
+                        <span class="text-info">MASTERED</span>  
+                      <% } else { %>
+                        <span class="text-danger">NOT MASTERED YET</span>  
+                        <br>
+                      <% } %>
                 <% } else { %>
-                  <span class="text-danger">not mastered yet</span>  
-                  <br>
                   <%= problems[i].skills[0].shortName || "no skill" %>:
-                <%= problems[i].skills[0].description || "no name" %> A
+                  <%= problems[i].description || "no name" %> 
+                  <% if (numSkillsToMaster==0){ %> 
+                    <span class="text-info">MASTERED IN AN EARLIER EXAM</span>  
+                  <% } else { %>
+                    <span class="text-secondary">(NOT ANSWERED)</span>
+                    <br>
+                  <% } %>
+                  
                 <% } %>
 
               

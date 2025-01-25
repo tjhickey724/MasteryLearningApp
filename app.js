@@ -54,7 +54,6 @@ if (process.env.UPLOAD_TO == "AWS") {
         
         const extension = path.extname(file.originalname).toLowerCase();
         req.suffix = extension; 
-        console.log(`in key:${file.originalname} suffix:${extension})`);
         
         cb(null, req.filepath+req.suffix); //use Date.now() for unique file keys
 
@@ -331,36 +330,32 @@ const deleteStudentData = async (courseId) => {
       const answers 
          = await Answer.find({courseId});
 
-      console.log("deleting student data");
-      console.log(answers.length);
+
 
       // now delete all of the images in the answers
       for (let answer of answers) {
-        console.dir(['deleting',answer]);
         if (answer.imageFilePath) {
           if (answer.imageFilePath.startsWith("https://")) {
             try {
                 // remove the https://domain_name/ from the imageFilePath to get the key
                 const imageKey = answer.imageFilePath.split("/").slice(3).join("/");
-                console.log(`deleting AWS file ${imageKey}`);
                 await s3.deleteObject({
                   Bucket: process.env.AWS_BUCKET_NAME,
                   Key: imageKey
                 }).promise();
               } catch (e) {
-                console.log(`error deleting AWS file ${answer.imageFilePath}`);
-                console.log(`with key ${imageKey}`);
-                console.log(`error=${e}`);
+                console.error(`error deleting AWS file ${answer.imageFilePath}`);
+                console.error(`with key ${imageKey}`);
+                console.error(`error=${e}`);
             }
           } else {
             const localPath = path.resolve("public"+answer.imageFilePath);
-            console.log(`deleting local file ${localPath}`);
             try{
               // delete the local file
               await unlinkAsync(localPath);  
             } catch (e) {
-              console.log(`error deleting file ${answer.imageFilePath}`);
-              console.log(`error=${e}`);
+              console.error(`error deleting file ${answer.imageFilePath}`);
+              console.error(`error=${e}`);
             }
           }
         }
@@ -409,7 +404,7 @@ app.get("/deleteStudentData/:courseId", isAdmin,
       
       res.redirect("/showCourse/" + courseId);
     } catch (e) {
-      console.log(`error deleting student data ${e}`);
+      console.error(`error deleting student data ${e}`);
       next(e);
     }
   }
@@ -641,7 +636,7 @@ app.get("/showRoster/:courseId", authorize, hasStaffAccess,
     const members = memberList.map((x) => x.studentId);
 
     if (!members.includes(res.locals.courseInfo.ownerId)) {
-      //console.log("adding owner to course");
+      // do nothing for now
     }
     res.locals.members = members;//await User.find({_id: {$in: memberIds}});
     res.locals.memberList = memberList;
@@ -771,7 +766,7 @@ const updateCourseMembers = async (sectionDocuments) => {
           {courseId:course._id,studentId:{$nin:userIds},role:"student"});
 
   } catch (e) {
-    console.log(`error updating course members ${e}`);
+    console.error(`error updating course members ${e}`);
   }
 
 }
@@ -829,7 +824,7 @@ app.post("/uploadRoster/:courseId",
         //res.json({ rowCount, dataFromRows });
         res.redirect(`/showRoster/${courseId}`);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         //res.json({ error});
       }
     });
@@ -1310,7 +1305,7 @@ app.get("/showSkill/:courseId/:skillId", authorize, hasCourseAccess,
 
     res.render("showSkill");
   } catch (e) {
-    console.log("Error in showSkill: " + e);
+    console.error("Error in showSkill: " + e);
     next(e);
   }
 });
@@ -1561,8 +1556,7 @@ const getStudentSkills = async (courseId,studentId) => {
     const skills = await Answer.find({courseId:courseId,studentId: studentId}).distinct("skills");
     return skills.map((c) => c.toString());
   } catch (e) {
-    console.log("error in skills");
-    console.dir(e);
+    console.error("error in skills",error.message);
     throw e;
   }
 };
@@ -1742,9 +1736,11 @@ app.get("/showProblemSetToStudent_MLA/:courseId/:psetId", authorize, hasCourseAc
   const psetId = req.params.psetId;
   const courseId = req.params.courseId;
   const userId = req.user._id;
+  const skillsMastered = await getStudentSkills(courseId,userId);
 
   res.locals.psetId = psetId;
   res.locals.courseId = courseId;
+
   
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
   res.locals.problems 
@@ -1807,7 +1803,7 @@ const trimSkillString = (skill) => {
 
   const skillName = skill.substring(firstColon+1,firstParen).trim();
   if (skillName == ''){
-    console.log(`empty skill name for skill:${skill}`);
+    console.error(`empty skill name for skill:${skill}`);
   }
   return skillName;
 }
@@ -2022,7 +2018,7 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
         problemSet.status = "graded";
         await problemSet.save();
       } catch (error) {
-        console.log(error);
+        console.error(error);
         //res.json({ error});
       }
     });
@@ -2115,6 +2111,21 @@ const generateTex = (problems) => {
   tex += "\\end{enumerate}\n";
   return tex;
 };
+
+  /*
+    getSkillsMasteredByStudent returns a list of shortnames of the skills mastered by the student
+  */
+  const getSkillsMasteredByStudent = async (studentEmail,courseId) => {
+    const grades = await PostedGrades.find({courseId:courseId,email:studentEmail});
+    if (grades.length == 0) return [];
+    let skillsMastered = [];
+    for (let grade of grades) {
+      skillsMastered = skillsMastered.concat(grade.skillsMastered);
+    }
+    return skillsMastered;
+  }
+
+
 
 
 
@@ -2831,7 +2842,7 @@ app.get("/showProblem/:courseId/:psetId/:probId",
     }
     
   } catch (e) {
-    console.log("Error in showProblem: " + e);
+    console.error('Error in showProblem:', e);
     next(e);
   }
 });
@@ -3190,12 +3201,7 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
           upload.single('picture'),
     async (req, res, next) => {
       try {
-        // console.log('uploading answer photo');
-        // console.dir(req.params);
-        // console.dir(req.body);
-        // console.dir(req.query);
-        // console.dir(res.locals);
-        // console.log('showed params, body, query, locals');
+
 
         const probId = req.params.probId;
         const psetId = req.params.psetId;
@@ -3244,7 +3250,7 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                   }).promise();
                  }
               } catch(e){
-                console.log('error deleting AWS file: ' + e);
+                console.error('error deleting AWS file: ', e);
               }
             } else {
               try {
@@ -3254,11 +3260,11 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
                     try {
                       await unlinkAsync(imageFilePath);
                     } catch (e){
-                      console.log('error ulinking file: ' + e);
+                      console.error('error ulinking file: ',e.message);
                     }
                   }
                 } catch (e) {
-                  console.log('error deleting LOCAL file: ' + e);
+                  console.error('error deleting LOCAL file: ',e.message);
                 }
             }
             // now we can store the new image path in the answer
@@ -3311,7 +3317,7 @@ app.post("/uploadAnswerPhoto/:courseId/:psetId/:probId",
       }
       
     } catch (e) {
-      console.log("error in uploadAnswerPhoto: " + e);
+      console.error("error in uploadAnswerPhoto: ",e.message);
       next(e);
     }
 
@@ -4285,8 +4291,7 @@ app.post("/saveReview2/:courseId/:psetId/:probId/:answerId",authorize, hasCourse
 
       // but we need to adjust numreviews and pendingReviewers
       // if this was a pending review
-      console.log('updated answer');
-      console.dir(await Answer.findOne({_id: answer._id}));
+
       if (answer.pendingReviewers.find(
              (x) => x.equals(req.user._id)) ) {
         await Answer.findByIdAndUpdate(answer._id,
@@ -4392,10 +4397,7 @@ function removeElements(slist, rems) {
 app.get("/showReviewsOfAnswer/:courseId/:psetId/:answerId", authorize, hasCourseAccess,
   async (req, res, next) => {
   try {
-    console.log('in routes/reviews.js');
-    console.dir(req.params);
-    
-    console.dir(req.user.id);
+
 
     const personal = req.query.personal;
     
@@ -4416,8 +4418,7 @@ app.get("/showReviewsOfAnswer/:courseId/:psetId/:answerId", authorize, hasCourse
     res.locals.answer = answer;
     res.locals.courseInfo = await Course.findOne({_id: courseId});
 
-    console.log('in showReviewsOfAnswer');
-    console.dir(answer);
+
 
 
     const problem = await Problem.findOne({_id: answer.problemId});

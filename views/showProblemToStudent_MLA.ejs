@@ -135,7 +135,7 @@
                 <h3> Submit a photo of your answer</h3>
                 
                 <form method="post" action="/uploadAnswerPhoto/<%= courseId%>/<%= psetId%>/<%= problem._id %>" enctype="multipart/form-data">
-                  <input type="file" id="picture" name="picture" accept="image/*" capture="environment" />
+                  <input class="btn btn-lg btn-secondary" type="file" id="picture" name="picture" accept="image/*" capture="environment" />
           
                   <% // draw a save or submit button
                   if(status=='submitable'){%>
