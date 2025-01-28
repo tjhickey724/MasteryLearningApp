@@ -2275,7 +2275,13 @@ const generateTex = (problems) => {
           */
           const psetId = req.params.psetId;
           const pset = await ProblemSet.findOne({_id: psetId});
-          const problems = await Problem.find({psetId: psetId}).populate('skills');
+          let problems
+             = await Problem
+                    .find({psetId: psetId})
+                    .populate('skills');
+          problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
+       
+         
       
   
       
