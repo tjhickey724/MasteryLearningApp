@@ -54,6 +54,12 @@ if (process.env.UPLOAD_TO == "AWS") {
         
         const extension = path.extname(file.originalname).toLowerCase();
         req.suffix = extension; 
+        if (!req.suffix || !req.filepath) {
+          console.error('*********'+`error with file ${file.originalname}`);
+          console.error('*********'+`req.suffix=${req.suffix}`);
+          console.error('*********'+`req.filepath=${req.filepath}`);
+          req.suffix = '.jnk'; // flag for error!
+        }
         
         cb(null, req.filepath+req.suffix); //use Date.now() for unique file keys
 
@@ -3166,7 +3172,6 @@ const addImageFilePath = (req,res,next) => {
   const uniqueSuffix = //Date.now() + '_' + 
       (Math.round(Math.random() * 1E9)).toString();
       if (process.env.UPLOAD_TO=='AWS'){
-        let path = 
         req.filepath =
           "studentImages/"
           +req.user._id+"/"
