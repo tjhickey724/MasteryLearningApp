@@ -2247,6 +2247,13 @@ const generateTex = (problems) => {
           So we need to create a dictionary whose keys are emails
           and whose values are the User objects for the students
           */
+          const studentEmailToSection = {};
+          const studentRoster = await CourseMember.find({courseId,role:'student'}).populate('studentId');
+          for (let student of studentRoster) {
+            studentEmailToSection[student.studentId.googleemail] = student.section;
+          }
+
+
           const students = await User.find({googleemail: {$in: enrolledStudents}});
           const studentEmailToName = {};
           const studentEmailToFileName = {};
@@ -2368,14 +2375,23 @@ const generateTex = (problems) => {
          const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
          const endTex = '\\end{document}\n';
          const studentName = studentEmailToName[studentEmail];
+         const studentSection = studentEmailToSection[studentEmail];
+         const problemSet = await ProblemSet.findOne({_id: psetId});
 
          const exam =  
-            personalizedPreamble(studentName+" : "+studentEmail,course.name,(new Date()).toISOString().slice(0,10))
+            personalizedPreamble(
+              studentName+" : "
+              +studentEmail +" : Section "
+              +studentSection ,
+              course.name+"/"+problemSet.name,
+              (new Date()).toISOString().slice(0,10))
             + generateTex(testProblems);
          
          if (testProblems.length>0) {
             //const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
-            const filename = studentEmailToFileName[studentEmail]+'.tex';
+            const filename 
+               = studentEmailToSection[studentEmail] + "_"
+                  + studentEmailToFileName[studentEmail]+'.tex';
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};
             result = result.concat(fileObject);
