@@ -7,16 +7,23 @@
 
       
       <li class="list-group-item list-group-item-light">
-        <%= courses.length %> courses created
         <br>
         Select a course to possibly import skills from:
-        <ol>
+        <ol> 
           <% for(let i=0; i<courses.length; i++){ %>
-          <li>
-            <a href="/showSkillsToImport/<%= courseId%>/<%= courses[i]._id %>">
-              <%= courses[i].name %>
-            </a>
-          </li>
+            <% if (courses[i].guestAccess != "none"
+                    || courses[i].ownerId.equals(user._id)
+                  ) {  
+                    // let the owner import skills from their own courses
+                    // or courses with guest access
+             %>
+            <li>
+              <a href="/showSkillsToImport/<%= courseId%>/<%= courses[i]._id %>">
+                <%= courses[i].name %>
+              </a>
+              <%= courses[i].guestAccess %>
+            </li>
+           <% } %>
           <% } %>
 
         </ol>
