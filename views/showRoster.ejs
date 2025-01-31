@@ -35,6 +35,7 @@
           <tr>
             <th class="header" scope="col">N</th>
             <th class="header" scope="col">Name</th>
+            <th class="header" scope="col">RosterName</th>
             <th class="header" scope="col">Email</th>
             <th class="header" scope="col">Role</th>
             <th class="header" scope="col">Section</th>
@@ -49,6 +50,9 @@
             </td>
             <td>
               <%= memberList[i].studentId?.googlename %>
+            </td>
+            <td>
+              <%= memberList[i].studentName %>
             </td>
             <td>
               <%= memberList[i].studentId?.googleemail %>

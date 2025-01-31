@@ -6,6 +6,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 var courseMemberSchema = Schema( {
   studentId: {type:ObjectId,index:true,ref:"User"},
   courseId: {type:ObjectId,index:true},
+  studentName: String, // might be different from their googlename
   section: String,
   createdAt: Date,
   status: String, // I think we can delete this field!!

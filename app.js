@@ -741,10 +741,13 @@ const updateCourseMembers = async (sectionDocuments) => {
           // update their section and role if they changed
           if ((courseMember.section != sectionMember.section) 
                 ||
-              (courseMember.role != "student"))
+              (courseMember.role != "student")
+                ||
+              !(courseMember.studentName))
             {
             courseMember.section = sectionMember.section;
             courseMember.role = 'student';
+            courseMember.studentName = sectionMember.name;
             courseMember.createdAt = new Date();
             courseMember = await courseMember.save();
           }
@@ -753,6 +756,7 @@ const updateCourseMembers = async (sectionDocuments) => {
           const courseMemberJSON = {
             studentId:user._id,
             courseId:course._id,
+            studentName:sectionMember.name,
             section:sectionMember.section,
             role:"student",
             createdAt: new Date(),
