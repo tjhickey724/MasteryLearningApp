@@ -2396,10 +2396,11 @@ const generateTex = (problems) => {
             + generateTex(testProblems);
          
          if (testProblems.length>0) {
-            //const filename = studentEmail.replace(/@/g,'_').replace(/\./g,'_')+'.tex';
+            const emailfilename = studentEmail.replace(/@/g,'_').replace(/\./g,'_');
             const filename 
                = studentEmailToSection[studentEmail] + "_"
-                  + studentEmailToFileName[studentEmail]+'.tex';
+                  + studentEmailToFileName[studentEmail]+ "_"
+                  + emailfilename +'.tex';
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};
             result = result.concat(fileObject);
