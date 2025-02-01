@@ -98,11 +98,7 @@
 
     <ul>
       <% for(i=0; i<=coursesOwned.length-1; i++){ 
-        console.log(`now=${now}`);
-        console.log(`stopDate=${coursesOwned[i].stopDate}`);
-        console.log(`${now  < coursesOwned[i].stopDate }`);
-        console.log(coursesOwned[i].name);
-        console.log('active='+coursesOwned[i].active);
+
         if (show=='currentOnly' 
         && (!coursesOwned[i].stopDate 
            || (coursesOwned[i].stopDate < now))) {

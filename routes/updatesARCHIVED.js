@@ -71,11 +71,9 @@ const updateToVersion =
   const createCourseSkills =
     async (req, res, next) => {
       try {
-        console.log('deleting all CourseSkills');
         await CourseSkill.deleteMany({});
         const courses = await Course.find({});
         for (let c of courses) {
-          console.log(c.name);
           let skills = await Skill.find({courseId: c._id});
           for (let s of skills) {
             const courseSkillData = {
@@ -89,7 +87,7 @@ const updateToVersion =
         }
         next();
       } catch (e) {
-        console.log(`error in createCourseSkills: ${e}`);
+        console.error(`error in createCourseSkills: ${e}`);
         next(e);
       }
     };

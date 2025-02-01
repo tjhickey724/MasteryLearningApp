@@ -108,7 +108,7 @@ const unlinkAsync = promisify(fs.unlink)
 //const reviews = require('./routes/reviews');
 const auth = require('./routes/authRouter');
 const similarity = require('./routes/similarity');
-const updates = require('./routes/updates');
+const updates = require('./routes/updatesARCHIVED.js');
 
 
 // Models!
@@ -155,9 +155,9 @@ mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true, useUnifiedTopo
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
-  console.log("we are connected!!!");
-  console.log(`process.env.MONGODB_URL=${process.env.MONGODB_URL}`);
-  console.log(`db.name=${db.name}`);
+  console.error("we are connected!!!");
+  console.error(`process.env.MONGODB_URL=${process.env.MONGODB_URL}`);
+  console.error(`db.name=${db.name}`);
 });
 
 /*
@@ -242,7 +242,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(auth);
 app.use(similarity);
-app.use(updates);
+// app.use(updates); // I don't want to be checking for updates all the time;
 
 
 
@@ -2262,7 +2262,7 @@ const generateTex = (problems) => {
             studentEmailToFileName[student.studentId.googleemail] = student.studentName.replace(/ /g,'_');
 
           }
-          console.dir(studentEmailToName);
+         
 
           const students = await User.find({googleemail: {$in: enrolledStudents}});
 
@@ -2346,7 +2346,10 @@ const generateTex = (problems) => {
               = enrolledStudents.filter(x => !(tookExamEmails.includes(x)));
             
           }
-        
+        /*
+           add a fake student "allquestions" to the studentsWhoCanTakeExam list
+        */
+        studentsWhoCanTakeExam.push("allquestions");
   
           /*
           Now we process the list of students who can take the exam
@@ -2382,8 +2385,8 @@ const generateTex = (problems) => {
     
          const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
          const endTex = '\\end{document}\n';
-         const studentName = studentEmailToName[studentEmail];
-         const studentSection = studentEmailToSection[studentEmail];
+         const studentName = studentEmailToName[studentEmail] || "";
+         const studentSection = studentEmailToSection[studentEmail] || "";
          const problemSet = await ProblemSet.findOne({_id: psetId});
 
          const exam =  
@@ -2398,8 +2401,8 @@ const generateTex = (problems) => {
          if (testProblems.length>0) {
             const emailfilename = studentEmail.replace(/@/g,'_').replace(/\./g,'_');
             const filename 
-               = studentEmailToSection[studentEmail] + "_"
-                  + studentEmailToFileName[studentEmail]+ "_"
+               = (studentEmailToSection[studentEmail]||"") + "_"
+                  + (studentEmailToFileName[studentEmail]||"")+ "_"
                   + emailfilename +'.tex';
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};

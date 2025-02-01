@@ -20,7 +20,8 @@
 
           <% let answers = usersReviewedAnswers.filter((a)=> (a._id.equals(usersReviews[i].answerId)))
              let answer = answers[0] 
-            console.log(answer)%>
+            
+            %>
           <pre class="bg-warning" style="border:thin solid black; white-space: pre-wrap; font-family:monospace; padding:10px"><%= answer.answer %></pre>
           Reviews:<br>
           <ul>

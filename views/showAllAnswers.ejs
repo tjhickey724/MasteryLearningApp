@@ -16,12 +16,7 @@
        <% if (canView) { %>
           <h2>All <%= answers.length %> Answers with <%= reviews.length %> Reviews, total
           </h2>
-          <% for(let i=0; i<answers.length; i++){ 
-            console.log('debugging answers '+i);
-            console.dir(answers[i]);
-            console.log(answers[i]._id);
-        
-          %>
+
           
           <div class="row" style="padding-top:20px; margin-top:20px; border-top:thick solid black">
             
@@ -51,21 +46,13 @@
         <% let numReviews=0 %>
 
         <% for (let j=0; j<reviews.length; j++){ 
-            console.log('debugging reviews '+j);
-            //console.dir(reviews[j]);
-            console.log(reviews[j].answerId);
-            console.log(answers[i]._id);
-            console.log(reviews[j].answerId.equals(answers[i]._id));
             %>
 
           <% if (reviews[j].answerId.equals(answers[i]._id)) {
-             console.log('inside if');
              numReviews += 1
              let rev=reviews[j]
              let skills = reviews[j].skills
-             console.log('skills');
-             console.dir(skills);
-             console.dir(skills.map((s) => getSkill(s,allSkills)));
+
              let skillnames = skills//.map((s) => getSkill(s,allSkills)['name'])
              let numLikesU = reviews[j].upvoters.length
              let userLikesU = reviews[j].upvoters.includes(user._id)

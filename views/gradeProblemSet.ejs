@@ -58,7 +58,6 @@
                              return a.studentId?.equals(studentsInfo[i]._id) &&
                                     a.problemId.equals(problems[j]._id)
                          })
-                     //console.log(`\n\n${i} ${j} studentAnswers= ${JSON.stringify(studentAnswers)}`)
 
 
 
@@ -68,7 +67,6 @@
                            r =>{
                                let zz = (r.problemId && r.problemId.equals(problems[j]._id))
                                    && (r.studentId && r.studentId.equals(studentsInfo[i]._id))
-                                   //console.log(`${zz} ${i} ${j} ${r.problemId} ${problems[j]._id} ${studentsInfo[i]._id} ${r.studentId}`)
 
                                return(zz)
                            })

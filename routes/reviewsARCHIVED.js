@@ -383,8 +383,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
 
         // but we need to adjust numreviews and pendingReviewers
         // if this was a pending review
-        console.log('updated answer');
-        console.dir(await Answer.findOne({_id: answer._id}));
+
         if (answer.pendingReviewers.find(
                (x) => x.equals(req.user._id)) ) {
           await Answer.findByIdAndUpdate(answer._id,
@@ -490,10 +489,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
   app.get("/showReviewsOfAnswer/:courseId/:psetId/:answerId", authorize, hasCourseAccess,
     async (req, res, next) => {
     try {
-      console.log('in routes/reviews.js');
-      console.dir(req.params);
-      
-      console.dir(req.user.id);
+
 
       const personal = req.query.personal;
       
@@ -514,8 +510,7 @@ app.get("/gradeProblemWithoutAnswer/:courseId/:psetId/:probId/:studentId", autho
       res.locals.answer = answer;
       res.locals.courseInfo = await Course.findOne({_id: courseId});
 
-      console.log('in showReviewsOfAnswer');
-      console.dir(answer);
+
 
 
       const problem = await Problem.findOne({_id: answer.problemId});

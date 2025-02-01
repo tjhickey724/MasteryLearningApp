@@ -24,7 +24,7 @@ app.get("/downloadAnswers/:courseId/:probId", hasCourseAccess,
       res.json(['testing']);
     
     } catch (e) {
-      console.log("Error in showProblem: " + e);
+      console.error("Error in showProblem: " + e);
       next(e);
     }
   });
