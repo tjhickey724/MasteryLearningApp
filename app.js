@@ -2252,18 +2252,22 @@ const generateTex = (problems) => {
           and whose values are the User objects for the students
           */
           const studentEmailToSection = {};
+          const studentEmailToName = {};
+          const studentEmailToFileName = {};
           const studentRoster = await CourseMember.find({courseId,role:'student'}).populate('studentId');
           for (let student of studentRoster) {
             studentEmailToSection[student.studentId.googleemail] = student.section;
-          }
+            studentEmailToName[student.studentId.googleemail] = student.studentName;
+            student.studentName ||= student.studentId.googleemail;
+            studentEmailToFileName[student.studentId.googleemail] = student.studentName.replace(/ /g,'_');
 
+          }
+          console.dir(studentEmailToName);
 
           const students = await User.find({googleemail: {$in: enrolledStudents}});
-          const studentEmailToName = {};
-          const studentEmailToFileName = {};
+
+          
           for (let student of students) {
-            studentEmailToFileName[student.googleemail] = student.googlename.replace(/ /g,'_');
-            studentEmailToName[student.googleemail] = student.googlename;
 
           }
 
