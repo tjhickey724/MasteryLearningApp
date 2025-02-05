@@ -17,7 +17,7 @@
           <h2>All <%= answers.length %> Answers with <%= reviews.length %> Reviews, total
           </h2>
 
-          
+        <% for (let i=0; i<answers.length; i++){ %>   
           <div class="row" style="padding-top:20px; margin-top:20px; border-top:thick solid black">
             
             <div class="col-md-12">
@@ -141,7 +141,7 @@
             <b>no reviews yet</b>
           <%}%>
 
-       <%} %>
+      <% } %>
 
     <% } else { %>
         <h1>More Reviews Needed</h1>
