@@ -1943,6 +1943,7 @@ const transform_from_gradescope = (row) => {
     switch (key) {
       case 'Name': newRow['name'] = row['Name']; break;
       case 'Email': newRow['email'] = row['Email']; break;
+      case 'Status': newRow['status'] = row['Status']; break;
       default:
         if ("123456789".includes(key[0])) {
           let p1 = key.indexOf(":");
@@ -1999,6 +2000,8 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
             //if (!row.name || !row.Name) return; // skip empty rows
             if (csvMode=='gradescope') {
               row = transform_from_gradescope(row);
+            } else {
+              row['status'] = 'Graded';
             }
 
             const email = row.email;
@@ -2018,7 +2021,9 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
                 createdAt: new Date(),
                 grades: row
             }
-            documents.push(gradeJSON);
+            if (row['status']=='Graded') {
+              documents.push(gradeJSON);
+            }
  
 
         });
