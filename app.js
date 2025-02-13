@@ -2975,12 +2975,11 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
       .populate('courseId')
       .sort({createdAt: -1});
 
-    // get the Ids of the usedProblems
+    // get the parent Ids of the usedProblems
     const usedProblemIds = usedProblems.map((x) => x.parentProblemId+"");
-    console.log(usedProblemIds);
 
     // get the problems that have that skill in their list of skills
-    // and for which the user is the owner or is a TA
+    // (and eventually, for which the user is the owner or is a TA)
     // and populate the courseId field
     // we use $elemMatch to find problems whose skills list
     // contains any of the variant skills
