@@ -2942,6 +2942,9 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
       and sort the problems by the first (latest) date in that list.
       Eventually, we will narrow this search to the problems
       used in a set of courses, or in an organization...
+
+      2/11/2025 - we want to show the newly created problems at the top of the list..
+      so we'll need to change the sorting algorithm 
     */
     const courseId = req.params.courseId;
     const psetId = req.params.psetId;
@@ -2961,24 +2964,42 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     const variantIds = variants.map((x) => x._id);
 
 
+    // get the problems for that skill or a variant thereof,
+    // which have already been used in this class
+    const usedProblems =
+      await Problem
+      .find(
+        {skills: {$elemMatch:{$in:variantIds}},
+        courseId
+        })
+      .populate('courseId')
+      .sort({createdAt: -1});
+
+    // get the Ids of the usedProblems
+    const usedProblemIds = usedProblems.map((x) => x.parentProblemId+"");
+    console.log(usedProblemIds);
 
     // get the problems that have that skill in their list of skills
     // and for which the user is the owner or is a TA
     // and populate the courseId field
     // we use $elemMatch to find problems whose skills list
     // contains any of the variant skills
+    // don't show the problems that have already been used in this course
 
     // For now we will show any problems based on that skill
     const problems =
         await Problem
               .find(
                 {skills: {$elemMatch:{$in:variantIds}},
-                 //courseId: {$in: visibleCourses}
-                })
+                 parentProblemId: {$nin: usedProblemIds},
+                 _id: {$nin: usedProblemIds},
+                }
+              )
               .populate('courseId')
               .sort({createdAt: -1});
 
-    
+
+
     
     // get the list of skills for this course
     let courseSkillObjects = 
@@ -3029,10 +3050,11 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     res.locals.psetSkillIds = currentProblems.map((x) => x.skills[0]._id.toString());
     res.locals.problemSet = await ProblemSet.findOne({_id: req.params.psetId});
 
+
     res.locals = 
       {...res.locals, 
         courseId, psetId, skillId, 
-        problems, newProblems, 
+        problems, newProblems, usedProblems,
         psetMap,
         skill, skills};
 
