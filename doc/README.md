@@ -22,7 +22,7 @@ which has four key components:
 4. **Personalized proctored exams on paper** The exams are given on paper, with one page per question, in a proctored exam. Each student has a personalized exam with their name on the title page and only those problems they have not yet mastered appear in their copy of the exam. Once they complete the exam they walk over to the "uploading" part of the room, take photos of their exam pages with their phone, and upload the photos to the cloud for grading.
 
 ## M.A.P. provides the right incentives to enhance student learing
-![M.A.P. incentives](./doc/MasteryGoalsVersusIncentives.png)
+![M.A.P. incentives](./MasteryGoalsVersusIncentives.png)
 
 ## Challenges with teaching a M.A.P. class
 We have used this style of teaching in courses in Discrete Math and it has been used in PreCalculus and Calculus courses. There are a number of bookkeeping challenges that the MLA is designed to simplify.
