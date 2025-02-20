@@ -21,7 +21,8 @@ which has four key components:
 3. **Pass/Fail grading on skills** The student answers are graded pass/fail, where a pass means the student has clearly demonstrated mastery of the specified skill. After the exam, the student is given access to a fully worked out solution, and they may receive some minimal feedback about where they went wrong or how to study to pass this skill in the next exam. If a student demonstrates mastery on a skill by answering the question correctly, they will no longer be questioned on that skill. Thus each week the questions on the quiz will vary from student to student. Those students who have mastered all skills so far will only see the new skills introduced that week. Other students will have questions on skills they have previously attempted but not mastered.
 4. **Personalized proctored exams on paper** The exams are given on paper, with one page per question, in a proctored exam. Each student has a personalized exam with their name on the title page and only those problems they have not yet mastered appear in their copy of the exam. Once they complete the exam they walk over to the "uploading" part of the room, take photos of their exam pages with their phone, and upload the photos to the cloud for grading.
 
-
+## M.A.P. provides the right incentives to enhance student learing
+![M.A.P. incentives](./doc/MasteryGoalsVersusIncentives.png)
 
 ## Challenges with teaching a M.A.P. class
 We have used this style of teaching in courses in Discrete Math and it has been used in PreCalculus and Calculus courses. There are a number of bookkeeping challenges that the MLA is designed to simplify.
@@ -32,6 +33,7 @@ We have used this style of teaching in courses in Discrete Math and it has been 
 4. Clearly communicating to the students which skills they have mastered and which they have not.
 
 There are several ways that this app can be used, depending on how much of the course you want the app to handle. We'll review the basic approaches below.
+
 
 ## MGA - the Mastery Grading App
 Some faculty may already have developed a method for creating personalized exams based on a list of their own skills, and may simply want a way to clearly communicate to the students what their status is, as well as to review the progress of the entire class.  For this approach, faculty can use the Mastery Grading App, which is one component of the MLA.  It requires the faculty to upload 
