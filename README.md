@@ -9,6 +9,7 @@ The key idea is that the MasteryLearningApp makes it relatively easy for faculty
 2. Creating and proctoring personalized exams (and possibly personalized makeup exams) every week,
   with one challenging question for each skill
 3. Rapidly grading the personalized exams so students can see which skills they must study for next week. 
+  Student answers are graded pass/fail with a pass only if mastery of the skill has been demonstrated. 
   Students only have to answer questions on skills they haven't yet mastered.
 4. Clearly communicating to the students which skills they have mastered and which they have not.
 
