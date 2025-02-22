@@ -1,7 +1,6 @@
 # MLA Architecture
 
-The current version of the MLA is design to support a Mastery Assessement Pedagogy (MAP) style class
-which meets the following criteria
+The current version of the MLA is design to support a Mastery Assessement Pedagogy (MAP) style class which meets the following criteria
 * a student's course grade is determined by the number of course skills they master
 * there is a weekly exam where each student has a personalized exam with one question for each skill that has been introduced but which they have not yet mastered.
 * the exams are printed out on paper with one problem/skill per page. Students write their answers on the exam and upload a picture of each page to the app
@@ -10,14 +9,21 @@ which meets the following criteria
 ## Current Version
 We are currently redesigning the MLA so that it fully supports the Mastery Assessment Protocol  described in Ella Tuson's dissertation
 and the MAP-style pre-calculus and Calculus courses that are being taught at Brandeis University by Rebecca Torry and Keith Merrill.
-This version (3.*.*) is still in the process of being written and we expect it to be completdd by January 2025.
+
+There are three versions of MLA courses the instructor can create:
+* MLA1 - this is the full MLA as described below
+* MLA0 - this is a version in which grading is done outside the app and the results are upload via grades.csv files
+* PRA - this is a peer review app mean to be used in class, the instructor creates questions, students answer them, then anonymously view all of their peers answers, and anonymously review some of their peers. We don't describe it on this page as it is pretty self-explanatory!
+
+The rest of this document describes the current MLA1 version.
+
 
 ## Features
 The MLA supports this pedadogy by offering the following features.
 
 ## Course Creation
-* instructors (who are whitelisted by contacting tjhickey@brandeis.edu) can create a class in the MLA with a unique 7 digit PIN code for students to register
-* students register for a course by using their gmail address and entering the 7 digit PIN for the class
+* instructors (who are whitelisted in app.js) can create a class in the MLA 
+* instructors upload a roster.csv file to enroll students in the course
 * instructors can add Teaching Assistants to a class to help with the grading
 
 ## Skill Lists
@@ -42,8 +48,6 @@ The MLA supports this pedadogy by offering the following features.
 * students can see which skills they have mastered and which they still need to master
 * instructors can see mastery data for all students in the class
 
-## Peer Review
-* the instructor can specify that a particular problem can be peer reviewed by students in the class
-* the Teaching Asssistants use the same peer review features to grade the porblems, but their responses are inserted into the students answer document as the official grade
+
 
   
