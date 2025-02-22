@@ -12,10 +12,10 @@ and the MAP-style pre-calculus and Calculus courses that are being taught at Bra
 
 There are three versions of MLA courses the instructor can create:
 * MLA1 - this is the full MLA as described below
-* MLA0 - this is a version in which grading is done outside the app and the results are upload via grades.csv files
+* MLA0 - this is a version in which grading is done outside the app and the results are uploaded via grades.csv files
 * PRA - this is a peer review app mean to be used in class, the instructor creates questions, students answer them, then anonymously view all of their peers answers, and anonymously review some of their peers. We don't describe it on this page as it is pretty self-explanatory!
 
-The rest of this document describes the current MLA1 version.
+The rest of this document describes only the MLA1 courses.
 
 
 ## Features
