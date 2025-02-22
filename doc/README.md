@@ -128,5 +128,4 @@ You can read more about converting markdown to pdf in latex at
 * [Installing MLA locally](./installation.md)
 * [MLA Overview](./MLAoverview.md)
 * [MLA architecture](./MLA-architecture.md)
-* [old README](./oldREADME.md)
-* [MLA Feature List (for testing and debugging)](./MLA-features.md)
+
