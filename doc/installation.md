@@ -12,14 +12,30 @@ This is pretty easy.
 
 Same .env file
 ``` bash
+ADMIN_EMAIL=GMAIL OF THE ADMINISTRATOR
 CLIENT_ID=GOOGLE_CLIENT_ID_GOES_HERE
 CLIENT_SECRET=GOOGLE_SECRET_GOES_HERE
 CALLBACK_URL=http://127.0.0.1:5500/login/authorized
 MONGODB_URL=mongodb://localhost:27017/PICK_A_DATABASE_NAME
 UPLOAD_TO = "LOCAL" # "LOCAL" or "AWS"
 ```
+the administrator has special privileges, including being able to add or remove instructors and to see all courses on the app.
 
 ## Deploying to the cloud
-This is a work in progress. You can easily change the MONGODB_URL to a cloud-based database
-and we're working on allowing the app to upload to the AWS S3 storage system.
-Our next step is to deploy it to render.com so it can be fully scalable!
+We currently use render.com to deploy our app from the github repository.
+We use MONGODB Atlas for database access
+and we use AWS S3 for storing images. You can specify an AWS S3 bucket by
+setting UPLOAD_TO to be "AWS" and adding the following fields to your .env file:
+```
+ADMIN_EMAIL=GMAIL OF THE ADMINISTRATOR
+CLIENT_ID=GOOGLE_CLIENT_ID_GOES_HERE
+CLIENT_SECRET=GOOGLE_SECRET_GOES_HERE
+CALLBACK_URL=http://127.0.0.1:5500/login/authorized
+MONGODB_URL=YOUR MONGODB SERVER 
+UPLOAD_TO = "AWS" # "LOCAL" or "AWS"
+AWS_SECRET_ACCESS_KEY = 'YOUR KEY GOES HERE'
+AWS_ACCESS_KEY = 'YOUR KEY GOES HERE'
+AWS_REGION = 'YOUR REGION'
+AWS_BUCKET_NAME = 'YOUR BUCKET NAME'   
+```
+Contact the MLA team if you need some help deploying the app!

@@ -1131,10 +1131,22 @@ app.get("/showCourseToStudent/:courseId",
       let numGskills = 0;
       for (let grade of grades) {
         skillsMastered = skillsMastered.concat(grade.skillsMastered);
-        allSkills = allSkills.concat(grade.skillsMastered).concat(grade.skillsSkipped);       
+        //allSkills = allSkills.concat(grade.skillsMastered).concat(grade.skillsSkipped);       
       }
-      allSkills = [...new Set(allSkills)]; //.sort(compareExams);
-      res.locals.allSkills = allSkills;
+      //I want allSkills to be the list of shortNames of skills that have been
+      // used in an probem in the course
+
+      //allSkills = [...new Set(allSkills)]; //.sort(compareExams);
+      //res.locals.allSkills = allSkills;
+
+      const problems = await Problem.find({courseId}).populate('skills');
+      allSkills = [];
+      for (let p of problems ) {
+        allSkills = allSkills.concat(p.skills.map((x) => x.shortName));
+
+      }
+      res.locals.allSkills = [... new Set(allSkills)];
+      res.locals.problems = problems;
 
       res.locals.skillsMastered = 
         [...new Set(skillsMastered)];//.sort(compareExams);
@@ -1158,6 +1170,7 @@ app.get("/showCourseToStudent/:courseId",
       res.locals.grades = [];
 
     }
+
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  
     } else if (course.courseType=='mla1') {
