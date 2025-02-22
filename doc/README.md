@@ -36,9 +36,11 @@ There are several ways that this app can be used, depending on how much of the c
 
 
 ## Using the MLA to keep track of grades
-Some faculty may already have developed a method for creating personalized exams based on a list of their own skills, and may simply want a way to clearly communicate to the students what their status is, as well as to review the progress of the entire class.  For this approach, faculty can use the Mastery Grading App, which is one component of the MLA.  It requires the faculty to upload 
-1. a roster.csv file of the students in the class with their name, email and section(and to update it as students change sections and add/drop classes)
-2. a gradesN.csv file recording the set of skills that each student has mastered in Exam N with their name, email, and a 0 or 1 for each skill introduced so far. Currently skills also have a letter label (e.g. F1,F2,..., G1,G2, ...) where F is for a fundamental skill and G is for a general skill. Faculty can specify that a certain number of fundamental skills must be met to pass the course! 
+Some faculty may already have developed a method for creating personalized exams based on a list of their own skills, and may simply want a way to clearly communicate to the students what their status is, as well as to review the progress of the entire class.  For this approach, faculty can use the roster and grade upload features of the Mastery Learning App.  It requires the faculty to upload 
+1. a list of learning objectives or skills for the course
+2. a list of the skills being tested on each exam
+3. a roster.csv file of the students in the class with their name, email and section(and to update it as students change sections and add/drop classes)
+4. a gradesN.csv file recording the set of skills that each student has mastered in Exam N with their name, email, and a 0 or 1 for each skill introduced so far. Currently skills also have a letter label (e.g. F1,F2,..., G1,G2, ...) where F is for a fundamental skill and G is for a general skill. Faculty can specify that a certain number of fundamental skills must be met to pass the course! 
 
 This approach requires faculty to create their own list of skills, and questions for each skill, and to create and grade the exams every week. Some faculty may want to have exams every other week, alternating with makeup exams for students who missed the original exam.
 
