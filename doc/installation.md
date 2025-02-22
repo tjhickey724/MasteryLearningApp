@@ -27,6 +27,7 @@ We use MONGODB Atlas for database access
 and we use AWS S3 for storing images. You can specify an AWS S3 bucket by
 setting UPLOAD_TO to be "AWS" and adding the following fields to your .env file:
 ```
+ADMIN_EMAIL=GMAIL OF THE ADMINISTRATOR
 CLIENT_ID=GOOGLE_CLIENT_ID_GOES_HERE
 CLIENT_SECRET=GOOGLE_SECRET_GOES_HERE
 CALLBACK_URL=http://127.0.0.1:5500/login/authorized
