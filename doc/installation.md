@@ -12,12 +12,14 @@ This is pretty easy.
 
 Same .env file
 ``` bash
+ADMIN_EMAIL=GMAIL OF THE ADMINISTRATOR
 CLIENT_ID=GOOGLE_CLIENT_ID_GOES_HERE
 CLIENT_SECRET=GOOGLE_SECRET_GOES_HERE
 CALLBACK_URL=http://127.0.0.1:5500/login/authorized
 MONGODB_URL=mongodb://localhost:27017/PICK_A_DATABASE_NAME
 UPLOAD_TO = "LOCAL" # "LOCAL" or "AWS"
 ```
+the administrator has special privileges, including being able to add or remove instructors and to see all courses on the app.
 
 ## Deploying to the cloud
 We currently use render.com to deploy our app from the github repository.
