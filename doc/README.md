@@ -86,12 +86,27 @@ You can either create a new problem (where you will be prompted for the problem 
 The problems can be written in plain text, or markdown, or LaTeX. When searching for problems for a particular skill, they are ordered chronologically according to their last use in a course you have access to. This allows you to attempt to avoid problems that have been used in the recent past. 
 
 #### Creating and administering a personalized exam
-Once you create an exam, you can release it and then you can press the "create a personalized exam"
-button which will determine the set of skills each student in theclass has mastered and will then
-generate a LaTeX file with one exam for each student (and their name/email is at the top of the first page).
-You can turn this into a pdf by downloading it and running the pdflatex command below. It requires a few additional files: (preamble.tex, title.tex) which provide information about the policies for the exam that are copied into each student's exam.
+Once you create an exam, you can release it and then you can press the "create a personalized exam" button which will determine the set of skills each student in theclass has mastered and will then
+generate a zip file containing a LaTeX file with one exam for each student (and their name/email is at the top of the first page).
+You can turn this into a pdf by downloading and unzipping it and running the following shell script which is included in the zip file. 
+```
+compile.sh
+```
+The creates a folder called "exams" which contains all of the pdfs. Professional printers can easily print double-sided stapled versions of all of the pdfs given the folder. For a large class the teaching staff can lay out the exams in the exam room ahead of time, in alphabetical order and students can move to their assigned seating to take the exam. After they complete, they come to the front of the room and use their phones to upload the exam to the cloud where it can be graded. 
 
-If the personalized exam contains markdown questions you need to use the following command to generate the pdf
+The personalized exams require a few additional files: (preamble.tex, title.tex) which provide information about the policies for the exam that are copied into each student's exam. We supply default versions of these but you might want to customized them by clicking on the "edit" icon next to the course name.
+
+#### Creating a Makeup Exam
+For large class there will often be some students who can not take a given exam. In that case, we can create a problem set corresponding to the makeup exam and specify that it is a makeup of a particular already graded MGA exam. When you generate a personalized exam for a problem set that is a makeup, it will only generate exams for students who missed the specified exam.
+
+## Exam grading and online access to the MLA
+The current version of the MLA allows the instructor to give students access to the MLA course so that they can upload their exam answers directly to the app, and the teaching assistants can grade the answers and have them automatically stored in the app, but these features are somewhat limited for now.
+
+For the present, students can only upload pictures of their exam answers. The grading feature allows instructors to review an answer and specify whether it demonstrates mastery by checking a checkbox. They can also provide plaintext feedback. 
+
+
+### Allowing Markdown problems
+We are considering allowing problems to be written in markdown and then converted to LaTeX. If the personalized exam contained markdown questions we woujld need to use something like the following command to generate the pdf
 ``` bash
 pdflatex -shell-escape FILE.tex
 ```
@@ -108,16 +123,6 @@ Your preamble.tex file must contain the following
 You can read more about converting markdown to pdf in latex at
 [Markdown Package Manual](https://mirror.las.iastate.edu/tex-archive/macros/generic/markdown/markdown.html)
 
-This big pdf can be processed by a printing center so that each exam is printed and stapled independently. (MORE DETAILS TO FOLLOW). For a large class the teaching staff can lay out the exams in the exam room ahead of time, in alphabetical order and students can move to their assigned seating to take the exam. After they complete, they upload the exam to the cloud where it can be graded. For this version, we are assuming the instructor has their own method for uploading and grading exams and the results can then be uploaded to the corresponding MGA course. We are currenlty building a version of the MLA that incorporates this uploading/grading component, but it is not fully operational.
-
-#### Creating a Makeup Exam
-For large class there will often be some students who can not take a given exam. In that case, we can create a problem set corresponding to the makeup exam and specify that it is a makeup of a particular already graded MGA exam. When you generate a personalized exam for a problem set that is a makeup, it will only generate exams for students who missed the specified exam.
-
-## Future Plans - adding exam grading and online access to the MLA
-The current version of the MLA allows the instructor to give students access to the MLA course so that they
-can upload their answers directly to the app, and the teaching assistants can grade the answers and have them automatically stored in the app, but these features are somewhat limited for now.
-
-For the present, students can only upload plain text answers which can include links to photos of their exams on google drive or some other platform. The grading feature allows instructors to review an answer and specify whether it demonstrates mastery by checking a checkbox. They can also provide plaintext feedback. We do not yet have a way of rendering the LaTeX for the problems in a way that students can see the problem, but that is our next step. We also have not integrated the personalized exams with the MLA-grading results, but again we will soon add that feature.
 
 # Other links
 * [Installing MLA locally](./installation.md)
