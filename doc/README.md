@@ -45,8 +45,10 @@ Some faculty may already have developed a method for creating personalized exams
 This approach requires faculty to create their own list of skills, and questions for each skill, and to create and grade the exams every week. Some faculty may want to have exams every other week, alternating with makeup exams for students who missed the original exam.
 
 ### Access to the app
-Faculty can create a class by sending email to tjhickey@brandeis.edu to be added to the whitelist of instructors. The faculty view shows how each student did on each exam, and also shows which skills
-each student has mastered.
+Anyone can download and install the app on their own local servers. You'll need to setup Google OAuth2 authentication and provide access to a MongoDB datbase as well as a place to store images of students exams, if you'll use the grading feature of the MLA.
+
+Faculty can also use our cloud version to create a class by sending email to tjhickey@brandeis.edu to be added to the whitelist of instructors. The faculty view shows how each student did on each exam, and also shows which skills
+each student has mastered. We can accept a limited number of faculty using our cloud deployment as long as the server costs don't get too high!
 
 Students access the app using google authentication on their gmail account.
 The student view shows each skill and the percentage of the class that has mastered that skill, and whether or not the student has mastered the skill.
