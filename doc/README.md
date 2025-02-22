@@ -2,7 +2,8 @@
 The Mastery Learning App has been designed to help faculty teach courses using the 
 Mastery Assessment Pedagogy (M.A.P.) approach which has been used in Brandeis University
 to teach the PreCalculus and Calculus sections and which has been studied and analyzed
-in Dr. Ella Tuson's recent PhD Dissertation, 
+in Dr. Ella Tuson's recent PhD Dissertation:
+
 ["M.A.P. — Mastery Assessment Pedagogy for Learning Computer Science"](https://www.proquest.com/openview/908ec01bbc9600eb77f75795e9966bd5/1.pdf?pq-origsite=gscholar&cbl=18750&diss=y)
 
 This software is open source ([GNU Affero GPLv3.0](https://github.com/tjhickey724/SpecsGradingApp/blob/main/LICENSE)) and you are free to download it and modify it and run it on your own servers and you can use it to teach your classes, or you can ask to use our servers (email to tjhickey@brandeis.edu).
