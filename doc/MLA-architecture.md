@@ -22,7 +22,7 @@ The rest of this document describes only the MLA1 courses.
 The MLA supports this pedadogy by offering the following features.
 
 ## Course Creation
-* instructors (who are whitelisted in app.js) can create a class in the MLA 
+* instructors (who are whitelisted by the administrator) can create a class in the MLA 
 * instructors upload a roster.csv file to enroll students in the course
 * instructors can add Teaching Assistants to a class to help with the grading
 
