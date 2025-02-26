@@ -10,7 +10,7 @@ This is pretty easy.
 4. create a .env file as described below
 5. run nodemon
 
-Same .env file
+Sample .env file
 ``` bash
 ADMIN_EMAIL=GMAIL OF THE ADMINISTRATOR
 CLIENT_ID=GOOGLE_CLIENT_ID_GOES_HERE
