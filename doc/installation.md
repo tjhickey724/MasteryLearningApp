@@ -6,7 +6,7 @@ You run a local version or a cloud-based version (but that requires more setup).
 This is pretty easy.
 1. clone the MLA site
 2. startup mongodb
-3. get google credentials for authentication
+3. get [google credentials for authentication](https://console.cloud.google.com/)
 4. create a .env file as described below
 5. run nodemon
 
