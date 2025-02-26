@@ -67,9 +67,9 @@ and we are working on libraries for some introductory courses on Python programm
 The MLA has many features designed to simplify the creation and administration of personalized skill exams. We describe these features below.
 
 ### Creating a course
-Once you are on the white list, you can create an MGA course and an MLA course and link the two together.
-A course consists of a list of skills, and a list of problem sets (which is our name for the exams),
-and a list of the Teaching Assistants. It still requires the grading to be done on another app and the grades and roster uploaded to the associated MGA course as csv files.
+Once you are on the white list, you can create an MLA course (with grading in the app MLA1 or not MLA0).
+A course consists of a list of skills, and a list of exams,
+and a list of the Teaching Assistants. 
 
 #### Creating the skill list
 For the MLA course you can import a list of skills from another course that you have access to
@@ -77,14 +77,14 @@ For the MLA course you can import a list of skills from another course that you 
 skills but has a link to the original skill. 
 You can also delete or modify any of the skills in your course without changing the original skill (if any).
 
-#### Creating a problem set
-After you create the skills you can create problem sets which is the name we have for the weekly exams.
-A problem set consists of a set of problems, each one associated to a skill. 
+#### Creating an exam
+After you create the skills you can create exams.
+An exam consists of a list of problems, each one associated to a skill. 
 
 #### Creating a problem in a problem set.
 You can either create a new problem (where you will be prompted for the problem text, rubric, skills, name, etc.) or you can search for a problem in the problem library by specifying a skill and finding all problems containing that skill in all courses for which you have been given access. Since skills can be shared, we actually look for all skills that are derived from the current skill (or from its original skill if it is an imported skill). This allows faculty to add to their own problems to the library for a given skill and to see the problems created by any colleagues that have given them access to their course.
 
-The problems can be written in plain text, or markdown, or LaTeX. When searching for problems for a particular skill, they are ordered chronologically according to their last use in a course you have access to. This allows you to attempt to avoid problems that have been used in the recent past. 
+The problems must be written in LaTeX. When searching for problems for a particular skill, they are ordered chronologically according to their last use in a course you have access to. This allows you to attempt to avoid problems that have been used in the recent past. 
 
 #### Creating and administering a personalized exam
 Once you create an exam, you can release it and then you can press the "create a personalized exam" button which will determine the set of skills each student in theclass has mastered and will then
@@ -98,15 +98,15 @@ The creates a folder called "exams" which contains all of the pdfs. Professional
 The personalized exams require a few additional files: (preamble.tex, title.tex) which provide information about the policies for the exam that are copied into each student's exam. We supply default versions of these but you might want to customized them by clicking on the "edit" icon next to the course name.
 
 #### Creating a Makeup Exam
-For large class there will often be some students who can not take a given exam. In that case, we can create a problem set corresponding to the makeup exam and specify that it is a makeup of a particular already graded MGA exam. When you generate a personalized exam for a problem set that is a makeup, it will only generate exams for students who missed the specified exam.
+For large class there will often be some students who can not take a given exam. In that case, you can create a makeup exam corresponding to the specified exam. When you generate a personalized exam for a problem set that is a makeup, it will only generate exams for students who missed the specified exam.
 
 ## Exam grading and online access to the MLA
-The current version of the MLA allows the instructor to give students access to the MLA course so that they can upload their exam answers directly to the app, and the teaching assistants can grade the answers and have them automatically stored in the app, but these features are somewhat limited for now.
+The MLO0 version of an MLA course allows the instructor to give students access to the MLA course so that they can upload their exam answers directly to the app, and the teaching assistants can grade the answers and have them automatically stored in the app, but these features are somewhat limited for now.
 
-For the present, students can only upload pictures of their exam answers. The grading feature allows instructors to review an answer and specify whether it demonstrates mastery by checking a checkbox. They can also provide plaintext feedback. 
+The MLA1 version requires students to use the app to upload pictures of their answers to each exam question. The grading feature allows graders to review an answer and specify whether it demonstrates mastery by checking a checkbox. They can also provide plaintext feedback. 
 
 
-### Allowing Markdown problems
+### Future work ... Allowing Markdown problems
 We are considering allowing problems to be written in markdown and then converted to LaTeX. If the personalized exam contained markdown questions we woujld need to use something like the following command to generate the pdf
 ``` bash
 pdflatex -shell-escape FILE.tex
