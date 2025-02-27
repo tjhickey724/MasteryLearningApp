@@ -27,7 +27,9 @@ Contact us if you want to talk about the MLA and related pedagogies.
 
 
 
-Here are the steps
+# Simple MLA0 Demo
+
+Here are the steps that the tutorial linked above goes through..
 
 0. Start by visiting the app at https://masterylearningapp.onrender.com and logging in
    either with your gmail account or with an email. Currently we only allow emails from the
