@@ -15,6 +15,8 @@ You can see a video going over these steps at
 and here is a pdf showing the individual steps
 [SIGCSE2025 MLA Tutorial Walkthrough](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
 
+![MLA_SIGCSE_DEMO](./QR_CODE_MLA_SIGCSE_DEMO.png)
+
 Here are the steps
 
 0. Start by visiting the app at https://masterylearningapp.onrender.com and logging in
