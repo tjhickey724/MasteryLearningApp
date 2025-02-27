@@ -6,5 +6,7 @@
 ---
 
 ## Link to the MLA app
+<img src="./masterylearningappQRcode.png" width="100">
+
 ![MLA site](masterylearningappQRcode.png)
 <hr>
