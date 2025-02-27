@@ -1135,6 +1135,8 @@ app.get("/showCourseToStudent/:courseId",
       }
       //I want allSkills to be the list of shortNames of skills that have been
       // used in an probem in the course
+      // I should modify this so that it only show skills that have been used
+      // in problems that have appeared in exams that have been graded.
 
       //allSkills = [...new Set(allSkills)]; //.sort(compareExams);
       //res.locals.allSkills = allSkills;
@@ -2057,6 +2059,18 @@ app.post("/uploadGrades/:courseId", authorize, hasStaffAccess,
     next(e);
   }
 });
+
+app.get("/getGradesAsJSON/:courseId", authorize, hasStaffAccess,
+  async (req, res, next) => {
+  try {
+    const courseId = req.params.courseId;
+    const grades = await PostedGrades.find({courseId: courseId}).populate('examId');
+    res.json(grades);
+  } catch (e) {
+    next(e);
+  }
+});
+
 
 app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   async (req, res, next) => {
