@@ -19,6 +19,12 @@ and here is a pdf showing the individual steps
 
 [Link to the MasteryLearning App running on render.com](https://masterylearningapp.onrender.com)
 
+Fill out [this form](https://docs.google.com/forms/d/1Y4rBIQZWcq2Jctvmsae7CVm4SOOBhB7I7V1EtjmCwpg/preview) if you want to be notified of major developments with the Mastery Learning App.
+
+Contact us if you want to talk about the MLA and related pedagogies.
+* Tim Hickey tjhickey@brandeis.edu
+* Ella Tuson ellatuson@brandeis.edu
+
 
 
 Here are the steps
