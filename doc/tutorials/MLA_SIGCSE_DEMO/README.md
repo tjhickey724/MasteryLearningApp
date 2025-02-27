@@ -29,10 +29,11 @@ Contact us if you want to talk about the MLA and related pedagogies.
 
 # Simple MLA0 Demo
 
-Here are the steps that the tutorial linked above goes through..
+Here is a tutorial in Video and PDF form that you can follow.
+You should first ask the administrator (tjhickey@brandeis.edu)
+to add you as an instructor so you can create a class.
 
 [Video](https://dl.acm.org/doi/10.1145/3641555.3705053)
-
 [PDF](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
 
 
