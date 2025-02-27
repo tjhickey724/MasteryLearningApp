@@ -1,5 +1,3 @@
-![MLA_SIGCSE_DEMO](./QR_Code_MLA_SIGCSE_DEMO.png)
-
 # MLA Demo for SIGCSE2025
 
 In this demo we will show you how to 
@@ -16,6 +14,10 @@ You can see a video going over these steps at
 
 and here is a pdf showing the individual steps
 [SIGCSE2025 MLA Tutorial Walkthrough](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
+
+[Link to a QR code for this page](./QR_Code_MLA_SIGCSE_DEMO.png)
+
+[Link to the MasteryLearning App running on render.com](https://masterylearningapp.onrender.com)
 
 
 
