@@ -1,5 +1,14 @@
-We can test MLA0 by creating an initial roster,
-and creating an exam and uploading the grades.
+# MLA Demo for SIGCSE2025
+
+In this demo we will show you how to 
+* create an MLA0 course,
+* upload a roster,
+* import skills from another course,
+* create an exam
+* download personalized exams for each student in the class
+* upload the grades
+* examine the skill mastery of all students in the class
+
 You can see a video going over these steps at
 [SIGCSE2025 MLA Tutorial](https://dl.acm.org/doi/10.1145/3641555.3705053)
 
@@ -8,17 +17,18 @@ and here is a pdf showing the individual steps
 
 Here are the steps
 
-1. Start by creating a new course.
-2. Next go to the Enrollment tab and upload roster1-7.csv 
+1. Start by creating a new course, you'll need to send email to the administrator (tjhickey@brandeis.edu)
+   to get permission to create courses...
+3. Next go to the Enrollment tab and upload roster1-7.csv 
    roster1-7.csv has students 1,2,3,4,5,6,7 in 2 sections
-3. Next import all of the skills from the Discrete Math Problem Bank class
-4. Next create an exam, with problems for F01 and F02.
-5. Next generate personalized exams for your seven students
+4. Next import all of the skills from the Discrete Math Problem Bank class
+5. Next create an exam, with problems for F01 and F02.
+6. Next generate personalized exams for your seven students
    in a downloaded zip file. Run the "compile.sh" file to compiled the
    latex into pdfs, which you could then print.
-6. Next upload the grades using exam1.csv
+7. Next upload the grades using exam1.csv
    exam1.csv has students 1,2,3 taking an exam with two skills, F01,F02
-7. Next look at the Mastery tab to see how they are doing.
+8. Next look at the Mastery tab to see how they are doing.
 
 You can then create makeup exams or new exams and create corresponding CSV files
 to track an entire class.
