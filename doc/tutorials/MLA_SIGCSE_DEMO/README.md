@@ -13,7 +13,7 @@ You can see a video going over these steps at
 [SIGCSE2025 MLA Tutorial](https://dl.acm.org/doi/10.1145/3641555.3705053)
 
 and here is a pdf showing the individual steps
-[SIGCSE2025 MLA Tutorial Walkthrough](./MLA_Walkthrough.pdf)
+[SIGCSE2025 MLA Tutorial Walkthrough](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
 
 Here are the steps
 
