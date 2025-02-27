@@ -1,5 +1,12 @@
 We can test MLA0 by creating an initial roster,
-and creating 3 exams and 3 makeups
+and creating an exam and uploading the grades.
+You can see a video going over these steps at
+[SIGCSE2025 MLA Tutorial](https://dl.acm.org/doi/10.1145/3641555.3705053)
+
+and here is a pdf showing the individual steps
+[SIGCSE2025 MLA Tutorial Walkthrough](./MLA_Walkthrough.pdf)
+
+Here are the steps
 
 1. Start by creating a new course.
 2. Next go to the Enrollment tab and upload roster1-7.csv 
