@@ -31,6 +31,11 @@ Contact us if you want to talk about the MLA and related pedagogies.
 
 Here are the steps that the tutorial linked above goes through..
 
+[Video](https://dl.acm.org/doi/10.1145/3641555.3705053)
+
+[PDF](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
+
+
 0. Start by visiting the app at https://masterylearningapp.onrender.com and logging in
    either with your gmail account or with an email. Currently we only allow emails from the
    domain stemmla.com (which we own) and you can pick any such email, register, and sign in.
