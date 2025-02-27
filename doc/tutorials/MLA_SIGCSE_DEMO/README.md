@@ -34,6 +34,7 @@ You should first ask the administrator (tjhickey@brandeis.edu)
 to add you as an instructor so you can create a class.
 
 [Video](https://dl.acm.org/doi/10.1145/3641555.3705053)
+
 [PDF](https://drive.google.com/drive/u/2/folders/1kWqh8Y2bQRXNw3PW46Ud8EowzAY7Dhbq)
 
 
