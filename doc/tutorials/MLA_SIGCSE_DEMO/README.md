@@ -17,7 +17,11 @@ and here is a pdf showing the individual steps
 
 Here are the steps
 
-1. Start by creating a new course, you'll need to send email to the administrator (tjhickey@brandeis.edu)
+0. Start by visiting the app at https://masterylearningapp.onrender.com and logging in
+   either with your gmail account or with an email. Currently we only allow emails from the
+   domain stemmla.com (which we own) and you can pick any such email, register, and sign in.
+   These are temporary accounts and we delete them every few weeks so don't use it for real work.
+2. Start by creating a new course, you'll need to send email to the administrator (tjhickey@brandeis.edu)
    to get permission to create courses...
 3. Next go to the Enrollment tab and upload roster1-7.csv 
    roster1-7.csv has students 1,2,3,4,5,6,7 in 2 sections
@@ -29,6 +33,7 @@ Here are the steps
 7. Next upload the grades using exam1.csv
    exam1.csv has students 1,2,3 taking an exam with two skills, F01,F02
 8. Next look at the Mastery tab to see how they are doing.
+9. You can logout and log back in as student1@stemmla.com with password abc123 to see the student view...
 
 You can then create makeup exams or new exams and create corresponding CSV files
 to track an entire class.
