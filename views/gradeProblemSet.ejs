@@ -26,8 +26,10 @@
             <th>Student</th>
             <% for(i = 0; i<= problems.length-1; i++){  %>
             <th> <a href="/showProblem/<%= courseId%>/<%= psetId%>/<%= problems[i]._id %>">
-                P<%= i %><br> <%= problems[i].skills.length %>
+                P<%= i %><br> <%= problems[i].skills.length %> <br>
+                <%= problems[i].skills.map(x=>x['shortName']).join(", ") %>
               </a>
+              <br>
               <a href="/reviewAnswers/<%= courseId %>/<%= psetId %>/<%= problems[i]._id %>" >
                 <i class="fa fa-pen-to-square"></i> Grade!
               </a>

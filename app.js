@@ -1147,7 +1147,8 @@ app.get("/showCourseToStudent/:courseId",
         allSkills = allSkills.concat(p.skills.map((x) => x.shortName));
 
       }
-      res.locals.allSkills = [... new Set(allSkills)];
+      res.locals.allSkills = [... new Set(allSkills)].sort();
+      
       res.locals.problems = problems;
 
       res.locals.skillsMastered = 
@@ -2079,8 +2080,8 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   res.locals.psetId = psetId;
   res.locals.courseId = req.params.courseId;
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
-  const problems = await Problem.find({psetId: psetId});
-
+  const problems = await Problem.find({psetId: psetId}).populate('skills');
+  
   res.locals.problems = problems;
   res.locals.answers = await Answer.find({psetId: psetId});
   res.locals.courseInfo = await Course.findOne({_id: res.locals.problemSet.courseId}, "ownerId");
