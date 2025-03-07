@@ -21,14 +21,14 @@
     <% if (skill) { %>
       <h2>Selected Skill: <b><%= skill.shortName %></b>::<%= skill.name %></h2>
       <i><%= skill.description%> </i>
-    <h2>Problems for selected skill</h2>
+    <h2>Problems for selected skill which haven't been used in this class</h2>
     <table class="table table-bordered table-striped">
       <thead>
         <tr><th>problem</th><th>add to pset</th><th>createdAt</th><th>last use</th></tr>
       </thead>
       <tbody>
         <% if (newProblems.length == 0) { %>
-          <tr><td>No problems found for this skill</td></tr>
+          <tr><td>No new problems found for this skill</td></tr>
         <% } else {  newProblems.forEach(problem => { 
           const now = new Date();
           %>
@@ -47,6 +47,33 @@
             </tr>
           <% }); %>  
         <% } %>
+      </tbody>
+    </table>
+
+    <hr>
+    <hr>
+        <h2>Already Used Problems for selected skill</h2>
+        <table class="table table-bordered table-striped table-warning">
+          <thead>
+            <tr><th>problem</th><th>add to pset</th><th>createdAt</th><th>last use</th></tr>
+          </thead>
+          <tbody>
+        <%  usedProblems.forEach(problem => { 
+          const now = new Date();
+          %>
+            <tr>
+                <td><a href="/showProblem/<%= courseId %>/<%= psetId%>/<%= problem._id %>"><%= problem.description %></a> </td>
+                <td>
+                <a href="/addProblemToPset/<%= courseId %>/<%= psetId %>/<%= problem._id %>/<%= skillId %>">Add to Problem Set</a></td>
+                <td><%= problem.createdAt.toISOString() %></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                   <textarea readonly rows="4" cols="80"><%= problem.problemText %></textarea>
+                  <hr>
+                </td>
+            </tr>
+          <% }); %>  
       </tbody>
     </table>
 

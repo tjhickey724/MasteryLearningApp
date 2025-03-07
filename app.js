@@ -12,7 +12,14 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const showdown  = require('showdown');
-const converter = new showdown.Converter();
+const converter = new showdown.Converter({
+  literalMidWordUnderscores: true,  // Prevents underscores in the middle of words from being parsed as emphasis
+  literalMidWordAsterisks: true,    // Same for asterisks (optional)
+  simplifiedAutoLink: true,         // Optional, but useful for other formatting
+  strikethrough: true,              // Optional
+  tables: true,                     // Optional
+  ghCodeBlocks: true                // Optional
+});
 const multer = require("multer");
 const csv = require('csv-parser')
 const streamifier = require("streamifier");
