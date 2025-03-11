@@ -21,7 +21,7 @@ var answerSchema = Schema( {
   // the review, points, skills mastered are
   // copied here. We may need to be careful
   // when a TAs review is deleted to clear these.
-  officialReviewId: Schema.Types.ObjectId,
+  officialReviewId: {type:Schema.Types.ObjectId,ref:'Review'},
   review: String,
   points: Number,
   skills:[{type:ObjectId,ref:'Skill'}], // skills mastered

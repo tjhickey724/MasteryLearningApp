@@ -674,7 +674,14 @@ app.get("/dumpStats/:courseId", authorize, isOwner,
               .populate('skills')
               .populate('studentId')
               .populate('psetId')
+              .populate('officialReviewId')
               .populate('problemId')
+              .populate({
+                path: 'problemId',
+                populate: {
+                  path: 'skills'
+                }
+              })
                 ;
     res.json(grades);
   } catch (e) {
@@ -1051,6 +1058,11 @@ the number of students who have been graded for the course.
 const getClassGrades = async (req,res,next) => {
   const courseId = req.params.courseId;
   const grades = await PostedGrades.find({courseId:courseId});
+  const memberList = await CourseMember.find({courseId},{role:'student'});
+
+  const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
+  const registered_student_emails = sections.map(x => x.studentId.googleemail);
+
 
   /*
     create a dictionary which gives the number of students
@@ -1061,10 +1073,13 @@ const getClassGrades = async (req,res,next) => {
   let studentCount = 0;
   let studentEmails = [];
   for (let grade of grades) {
+    if (!(registered_student_emails.includes(grade.email))) {
+       continue;
+    }
     //if (!enrolledStudents.includes(grade.email)) {
     //  continue;}
     // count all students who have been graded for this course
-    if (!studentEmails.includes(grade.email)) {
+    if (!studentEmails.includes(grade.email)) {      
         studentEmails.push(grade.email);
         studentCount += 1;
       }
@@ -3741,7 +3756,7 @@ const compareSkillShortNames = (a,b) => {
 } 
 
 
-const calculateMastery = (grades) => {
+const calculateMastery = (grades,registered_student_emails) => {
   /* 
   for each student, calculate the set of skills mastered.
   return a dictionary indexed by student emails, 
@@ -3753,6 +3768,9 @@ const calculateMastery = (grades) => {
   let skillSet = new Set();
   for (let grade of grades) {
       const email = grade.email;
+      if (!registered_student_emails.includes(email)) {
+        continue;
+      }
 
       
 
@@ -3771,6 +3789,9 @@ const calculateMastery = (grades) => {
       });
   }
   for (let email in mastery) {
+    if (!registered_student_emails.includes(email)) {
+      continue;
+    }
     /* calculate number of F skills and G skills and
        add these as keys to the mastery dictionary */
     mastery[email]["Fskills"] = 0;
@@ -3894,6 +3915,13 @@ app.get("/showMastery/:courseId",
   res.locals.course = course;
   const grades = await PostedGrades.find({courseId}).sort({email:1});
   const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
+  const registered_student_emails = sections.map(x => x.studentId.googleemail);
+  /*
+  const memberList = 
+  await CourseMember
+        .find({courseId,role:{$ne:"dropped"}})
+        .populate('studentId');
+  */
   const sectionDict = {};
   for (let section of sections) {
     sectionDict[section.studentId.googleemail] = section.section;
@@ -3901,7 +3929,9 @@ app.get("/showMastery/:courseId",
   res.locals.sectionDict = sectionDict;
   res.locals.grades = grades;
   res.locals.exams = exams;
-  [res.locals.skillSet,res.locals.mastery] = calculateMastery(grades);
+  res.locals.registered_student_emails = registered_student_emails;
+  [res.locals.skillSet,res.locals.mastery] 
+      = calculateMastery(grades,registered_student_emails);
   if (csv){ 
     res.set('Content-Type', 'text/csv');
     res.send(ejs.render(masteryCSVtemplate,res.locals));
@@ -3909,7 +3939,7 @@ app.get("/showMastery/:courseId",
     //res.json([res.locals.skillSet,res.locals.mastery])
     res.render('showMastery'); 
   }
-})
+}) 
 
 app.get('/showStudentsMissingSkill/:courseId/:skill',
   authorize, hasStaffAccess,
