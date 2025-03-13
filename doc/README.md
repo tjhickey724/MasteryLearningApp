@@ -25,6 +25,17 @@ which has four key components:
 ## M.A.P. provides the right incentives to enhance student learing
 ![M.A.P. incentives](./MasteryGoalsVersusIncentives.png)
 
+## MLA User Interface
+The MLA interface is designed to allow faculty 
+* to add students to the course in the Enrollments tab,
+* to add TAs in the TA/Graders tab,
+* to view the level of mastery for students in the Mastery tab
+* to create new exams in the Exam section, and
+* to add or import new skills in the Skills section
+
+Here is a screen shot of the instructor's view of a course page:
+![instructorsView](./MLAscreenshot.png)
+
 ## Challenges with teaching a M.A.P. class
 We have used this style of teaching in courses in Discrete Math and it has been used in PreCalculus and Calculus courses. There are a number of bookkeeping challenges that the MLA is designed to simplify.
 
