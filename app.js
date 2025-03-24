@@ -1171,6 +1171,13 @@ app.get("/showCourseToStudent/:courseId",
       }
       res.locals.allSkills = [... new Set(allSkills)].sort();
       
+      const pskills = await Skill.find({courseId});
+      const pskillsMap = pskills.reduce((acc, skill) => {
+        acc[skill.shortName] = skill._id;
+        return acc;
+      }, {});
+      res.locals.pskillsMap = pskillsMap;
+
       res.locals.problems = problems;
 
       res.locals.skillsMastered = 

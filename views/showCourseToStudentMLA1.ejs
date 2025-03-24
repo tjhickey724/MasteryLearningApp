@@ -33,7 +33,7 @@
         <i>The percentage of the class who have mastered each skill
         is in parentheses. </i>
 
-
+        
         
         <div class="p-2">
             <ul>
@@ -47,7 +47,9 @@
                         let b = 255 - cm*2.55;
                         let r = cm*2.55;
                     %>
+                    <a href="/showSkill/<%= course._id %>/<%= pskillsMap[allSkills[i]] %>">
                     <%= allSkills[i] %> 
+                    </a>
                     <% if (skillsMastered.includes(allSkills[i])) { %>
                         <span style="color:green">
                             
