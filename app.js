@@ -1351,6 +1351,23 @@ app.get("/showSkill/:courseId/:skillId", authorize, hasCourseAccess,
     res.locals.courseInfo = await Course.findOne({_id: courseId}, "name ownerId");
     res.locals.isOwner = res.locals.courseInfo.ownerId == req.user.id;
 
+    let markdownText = skill.description;
+      markdownText = converter.makeHtml(markdownText);
+      const mathjaxScript = 
+      `<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    },
+  });
+  </script>
+  <script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>`;
+      markdownText = mathjaxScript + markdownText;
+    res.locals.markdownText = markdownText;
+
     res.render("showSkill");
   } catch (e) {
     console.error("Error in showSkill: " + e);
