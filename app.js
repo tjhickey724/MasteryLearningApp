@@ -1113,8 +1113,8 @@ app.get("/showCourseToStudent/:courseId",
   try {
     let theUser = req.user;
     let userQuery = req.query.studentEmail;
-    if (userQuery && res.locals.isStaff) {
-      theUser = await User({googleemail:userQuery});
+    if (userQuery && (res.locals.isStaff || res.locals.isAdmin)) {
+      theUser = await User.findOne({googleemail:userQuery});
     }
     const courseId = req.params.courseId;
     const course =  await Course.findOne({_id: courseId});
@@ -1201,7 +1201,15 @@ app.get("/showCourseToStudent/:courseId",
       res.locals.allSkills = [];
       res.locals.grades = [];
 
+
     }
+    res.locals.theUser = theUser;
+    res.locals.AllAnswers = await Answer.find({courseId}).count();
+    res.locals.OneAnswer = await Answer.findOne({courseId});
+    res.locals.answers = await Answer.find({courseId,studentId:theUser._id});
+    res.locals.questions = await Problem.find({courseId});
+    res.locals.numAnswered = res.locals.answers.length;
+    res.locals.numQuestions = res.locals.questions.length;
 
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  

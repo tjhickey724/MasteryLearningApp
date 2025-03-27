@@ -9,11 +9,15 @@
 
         Welcome <i><%= name%> (<%= email%>) </i>
        <hr>
-       
         
         </div>
-
-        
+        <p> Proportion of questions answered <%= (numAnswered/numQuestions).toFixed(2) %>/1.0
+        </p>
+        <p>
+        You have answered <%= numAnswered %> questions in this course
+        out of <%= numQuestions %> questions in total for 
+        a percentage of <%= (numAnswered/numQuestions*100).toFixed(1) %>%.
+        </p>
 
         <h3>Problem Sets</h3>
         <ul>
