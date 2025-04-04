@@ -1211,6 +1211,7 @@ app.get("/showCourseToStudent/:courseId",
     res.locals.numAnswered = res.locals.answers.length;
     res.locals.numQuestions = res.locals.questions.length;
 
+    console.log(course.courseType);
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  
     } else if (course.courseType=='mla1') {
@@ -1826,7 +1827,8 @@ app.get("/showProblemSetToStudent_MLA/:courseId/:psetId", authorize, hasCourseAc
   res.locals.problems 
       = await Problem.find({psetId: psetId})
                       .populate('skills')
-                     .sort({'skills.shortName':1});
+                     //.sort({'skills[0].shortName':1});
+  res.locals.problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
 
   res.locals.courseInfo = await Course.findOne({_id: courseId}, "ownerId");
   res.locals.myAnswers = await Answer.find({psetId: psetId, studentId: userId});
