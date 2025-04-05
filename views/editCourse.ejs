@@ -4,6 +4,7 @@
       <div class="container-fluid ">
         <div class="p-2">
             <% if ( isOwner) { %>
+              
                 <h2>Settings</h2>
                 <form method="post" action ="/editCourse/<%= courseInfo._id %>">
                    course name: <input type="text" name="newName" 
@@ -39,7 +40,8 @@
                     
                   
                   <br>
-                    <select name="courseType"> 
+                 
+                    <select disabled name="courseType"> 
                       <option value="mla0" 
                               <%= courseInfo.courseType=="mla0"?"selected":"" %>
                         >

@@ -978,12 +978,12 @@ app.post("/editCourse/:courseId", authorize, isOwner,
     const startDate = req.body.startDate;
     const stopDate = req.body.stopDate;
     const guestAccess = req.body.guestAccess;
-    const courseType = req.body.courseType;
+    //const courseType = req.body.courseType; // we don't allow courseType to change
     const course = await Course.findOne({_id:req.params.courseId});
     course.name = name;
     course.startDate = new Date(startDate);
     course.stopDate = new Date(stopDate);
-    course.courseType = courseType;
+    //course.courseType = courseType; // we don't allow courseType to change
     course.guestAccess = guestAccess;
     await course.save();
     res.redirect("/showCourse/"+req.params.courseId);
@@ -2137,6 +2137,7 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   res.locals.courseId = req.params.courseId;
   res.locals.problemSet = await ProblemSet.findOne({_id: psetId});
   const problems = await Problem.find({psetId: psetId}).populate('skills');
+  problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
   
   res.locals.problems = problems;
   res.locals.answers = await Answer.find({psetId: psetId});
