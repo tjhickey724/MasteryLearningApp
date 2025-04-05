@@ -24,7 +24,8 @@
           <tr>
             <th>N </th>
             <th>Student</th>
-            <% for(i = 0; i<= problems.length-1; i++){  %>
+            <% for(i = 0; i<= problems.length-1; i++){ 
+               %>
             <th> <a href="/showProblem/<%= courseId%>/<%= psetId%>/<%= problems[i]._id %>">
                 P<%= i %><br> <%= problems[i].skills.length %> <br>
                 <%= problems[i].skills.map(x=>x['shortName']).join(", ") %>
@@ -81,13 +82,21 @@
 
                         %>
             <td>
-              
+              <br>
               <% if (studentAnswers.length == 0){
                                     jsonRow.grades.push(-1)
                                     %>
               <!-- No answer to review -->
+               <!-- print a ' ' if the student has mastered the skill and a + otherwise -->
+               
+               <% let z = skillsMastered[studentsInfo[i].googleemail];
+                   if (z && z.includes(problems[j].skills.map(x=>x['shortName']).join(", "))) { %>
+                     <% } else { %> 
               <a href="/gradeProblemWithoutAnswer/<%= problemSet.courseId%>/<%= problems[j]._id %>/<%= studentsInfo[i]._id  %>">+</a>
-
+                   <% } %>
+              <% } else if (studentAnswers.length > 1) {
+                                    jsonRow.grades.push(-2)
+                                    %>
               <% } else if (!answerId) {
                                     jsonRow.grades.push(0)
                                    %>

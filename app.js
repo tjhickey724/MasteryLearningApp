@@ -2139,6 +2139,12 @@ app.get("/gradeProblemSet/:courseId/:psetId", authorize, hasStaffAccess,
   const problems = await Problem.find({psetId: psetId}).populate('skills');
   problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
   
+  const {skillsMastered,skillCounts,enrolledStudents} 
+             = await getSkillsMastered(res.locals.courseId);
+  res.locals.skillsMastered = skillsMastered;
+  res.locals.skillCounts = skillCounts;
+  res.locals.enrolledStudents = enrolledStudents;
+
   res.locals.problems = problems;
   res.locals.answers = await Answer.find({psetId: psetId});
   res.locals.courseInfo = await Course.findOne({_id: res.locals.problemSet.courseId}, "ownerId");
