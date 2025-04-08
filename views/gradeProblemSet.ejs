@@ -92,7 +92,7 @@
                <% let z = skillsMastered[studentsInfo[i].googleemail];
                    if (z && z.includes(problems[j].skills.map(x=>x['shortName']).join(", "))) { %>
                      <% } else { %> 
-              <a href="/gradeProblemWithoutAnswer/<%= problemSet.courseId%>/<%= problems[j]._id %>/<%= studentsInfo[i]._id  %>">+</a>
+              <a href="/gradeProblemWithoutAnswer/<%= courseId%>/<%= problemSet._id%>/<%= problems[j]._id %>/<%= studentsInfo[i]._id  %>">+</a>
                    <% } %>
               <% } else if (studentAnswers.length > 1) {
                                     jsonRow.grades.push(-2)
