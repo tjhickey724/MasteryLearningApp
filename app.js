@@ -3018,7 +3018,7 @@ app.get('/showProblemLibrary/:courseId/:psetId', authorize, hasCourseAccess,
 
 
 app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseAccess,
-  async (req,res,next) => {
+  async (req,res,next) => { 
     /*
       We want to find the list of problems using the specified skill,
       sorted by the last time they were used in any course.
@@ -3054,7 +3054,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     }
     const variantIds = variants.map((x) => x._id);
 
-
     // get the problems for that skill or a variant thereof,
     // which have already been used in this class
     const usedProblems =
@@ -3067,8 +3066,19 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
       .sort({createdAt: -1});
 
     // get the parent Ids of the usedProblems
-    const usedProblemIds = usedProblems.map((x) => x.parentProblemId+"");
+    let get_parent = (x) => {
+       let px = x.parentProblemId;
+       if (px==null) {
+         px = x._id;
+       }
+       return px+"";
+    }
+    // we need the get_parent because for some reason
+    // some of the used problems don't have parents!
+    let usedProblemIds = usedProblems.map(get_parent);
 
+    //let usedProblemIds = usedProblems.map((x) => x.parentProblemId+"");
+    
     // get the problems that have that skill in their list of skills
     // (and eventually, for which the user is the owner or is a TA)
     // and populate the courseId field
@@ -3089,7 +3099,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
               .sort({createdAt: -1});
 
 
-
     
     // get the list of skills for this course
     let courseSkillObjects = 
@@ -3097,7 +3106,6 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
             .find({courseId: courseId})
             .populate('skillId');
     const skills = courseSkillObjects.map((x) => x.skillId);
-
 
 
      /*
