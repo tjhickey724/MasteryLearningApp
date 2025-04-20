@@ -1211,7 +1211,7 @@ app.get("/showCourseToStudent/:courseId",
     res.locals.numAnswered = res.locals.answers.length;
     res.locals.numQuestions = res.locals.questions.length;
 
-    console.log(course.courseType);
+
     if (course.courseType == "mla0") {
       res.render("showCourseToStudentMLA0");  
     } else if (course.courseType=='mla1') {
@@ -3054,6 +3054,7 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     }
     const variantIds = variants.map((x) => x._id);
 
+
     // get the problems for that skill or a variant thereof,
     // which have already been used in this class
     const usedProblems =
@@ -3063,7 +3064,10 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
         courseId
         })
       .populate('courseId')
+      .populate('psetId')
       .sort({createdAt: -1});
+
+
 
     // get the parent Ids of the usedProblems
     let get_parent = (x) => {
@@ -3092,11 +3096,14 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
               .find(
                 {skills: {$elemMatch:{$in:variantIds}},
                  parentProblemId: {$nin: usedProblemIds},
+                 description:{$nin: usedProblems.map((x) => x.description)},
                  _id: {$nin: usedProblemIds},
                 }
               )
               .populate('courseId')
+              .populate('psetId')
               .sort({createdAt: -1});
+
 
 
     
@@ -3121,6 +3128,8 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
       psetMap[originalId] = psetMap[originalId] || [];
       psetMap[originalId].push(p.createdAt);
     }
+
+
 
     // sort the psetMap dates in descending order
     const compDates = (a,b) => {if (a<b){return 1;} else {return -1}};
@@ -3155,7 +3164,8 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
         problems, newProblems, usedProblems,
         psetMap,
         skill, skills};
-
+    
+    //res.json(usedProblems);
     res.render('showProblemsBySkill');
   }
 )

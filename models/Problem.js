@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 var problemSchema = Schema( {
-  courseId: {type:ObjectId,index:true}, // original course, control who gets to edit it
-  psetId: {type:ObjectId,index:true}, // original pset
+  courseId: {type:ObjectId,index:true,ref:'Course'}, // original course, control who gets to edit it
+  psetId: {type:ObjectId,index:true,ref:'ProblemSet'}, // original pset
   description: String,
-  problemText: String,
+  problemText: {type:String,index:true}, // the problem text, in markdown
   mimeType: {
     type: String,
     enum: ['plain',  // skill-based exam generation on paper
