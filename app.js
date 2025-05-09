@@ -3835,7 +3835,6 @@ const calculateMastery = (grades,registered_student_emails) => {
 
       if (!mastery[email]){
         mastery[email] = {name:grade.name};
-        console.log("new mastery for ",email,mastery[email]);
       }
       (grade.skillsMastered).forEach(skill => {
         skillSet.add(skill);
