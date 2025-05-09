@@ -3835,6 +3835,7 @@ const calculateMastery = (grades,registered_student_emails) => {
 
       if (!mastery[email]){
         mastery[email] = {name:grade.name};
+        console.log("new mastery for ",email,mastery[email]);
       }
       (grade.skillsMastered).forEach(skill => {
         skillSet.add(skill);
@@ -3874,10 +3875,10 @@ const calculateMastery = (grades,registered_student_emails) => {
 }
 
 const masteryCSVtemplate =
-`name,email,section,Fskills,Gskills,<% for (let skill in skillSet) { %><%= 
+`lastname,firstname,email,section,Fskills,Gskills,<% for (let skill in skillSet) { %><%= 
     skillSet[skill] %>,<% } %>
 <% for (let email in mastery) { %><%= 
-    mastery[email]['name'] %>,<%= 
+    names[email] %>,<%=
     email %>,<%= 
     sectionDict[email] %>,<%=
     mastery[email]['Fskills'] %>,<%= 
@@ -3974,6 +3975,12 @@ app.get("/showMastery/:courseId",
   res.locals.course = course;
   const grades = await PostedGrades.find({courseId}).sort({email:1});
   const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
+    res.locals.names = sections.reduce((result, x) => {
+    result[x.studentId.googleemail] = x.studentName;
+    return result;
+  }, {});
+
+
   const registered_student_emails = sections.map(x => x.studentId.googleemail);
   /*
   const memberList = 
@@ -3998,6 +4005,68 @@ app.get("/showMastery/:courseId",
     //res.json([res.locals.skillSet,res.locals.mastery])
     res.render('showMastery'); 
   }
+}) 
+
+
+const masteryCSVtemplate_PRA =
+`name,email,section,answers,questions
+
+<% for (let id in mastery) { 
+     %><%= 
+    mastery[id]['name'] %>,<%= 
+    mastery[id]['email'] %>,<%= 
+    mastery[id]['section'] %>,<%=
+    mastery[id]['answers'] %>,<%=
+    questions %>
+<% } %>
+`;
+
+app.get("/showMastery_PRA/:courseId", 
+  authorize, hasStaffAccess, 
+  getClassGrades,
+ async (req,res,next) => {
+  const courseId = req.params.courseId;
+  const course = await Course.findOne({_id:courseId});
+  const exams = await ProblemSet.find({courseId});
+ 
+  res.locals.questions = await Problem.find({courseId}).count();
+  const csv = req.query.csv;
+  res.locals.course = course;
+  const grades = await PostedGrades.find({courseId}).sort({email:1});
+  const sections = await CourseMember.find({courseId,role:'student'}).populate('studentId');
+  const registered_student_emails = sections.map(x => x.studentId.googleemail);
+  const students = sections.map(x => x.studentId._id);
+  // get the answers for all students in the course
+  // create a dictionary of answers for each student
+  const answers = await Answer.find({studentId: {$in: students}, courseId: courseId});
+  const answersDict = {};
+  for (let answer of answers) {
+    if (!answersDict[answer.studentId]) {
+      answersDict[answer.studentId] = 0;
+    }
+    answersDict[answer.studentId]+= 1;
+  }
+  // now we can create the mastery dictionary
+  const mastery = {};
+  for (let studentId of students) { 
+    mastery[studentId] = {};
+    mastery[studentId]['name'] = sections.find(x => x.studentId._id == studentId).studentId.googlename;
+    mastery[studentId]['email'] = sections.find(x => x.studentId._id == studentId).studentId.googleemail;
+    mastery[studentId]['section'] = sections.find(x => x.studentId._id == studentId).section;
+    mastery[studentId]['answers'] = answersDict[studentId];
+  }
+
+  //res.json(mastery);
+  res.locals.mastery = mastery; 
+
+  if (csv){ 
+    res.set('Content-Type', 'text/csv');
+    res.send(ejs.render(masteryCSVtemplate_PRA,res.locals));
+  } else {
+    //res.json(res.locals.mastery)
+    res.render('showMastery_PRA'); 
+  }
+
 }) 
 
 app.get('/showStudentsMissingSkill/:courseId/:skill',

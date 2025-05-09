@@ -1,0 +1,79 @@
+<%- include('./bootheader') -%>
+<%- include('./menubar') -%>
+<script type="text/javascript" src="/js/sort-table.js"></script>
+<style type="text/css">
+  th,
+  td {
+    border: 1px solid black
+  },
+  .header{
+        position:sticky;
+        top: 0 ;
+    }
+</style>
+<div class="p-3 mb-4 bg-light">
+  <div class="container-fluid ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/showCourse/<%= course._id%>">
+            <%= courseInfo.name %>
+          </a></li>
+          <li class="breadcrumb-item active" aria-current="page">Mastery</li>
+      </ol>
+    </nav>
+    <h1 class="pb-2 border-bottom">
+       Participation
+    </h1>
+
+
+
+
+      <table class="table table-bordered table-striped js-sort-table">
+        <thead style="position: sticky;top: 0" >
+            <tr>
+                <th class="header" scope="col">Name</th>
+                <th class="header" scope="col">Email</th>
+                <th class="header js-sort-number" scope="col">Section</th>
+                <th class="header js-sort-number" scope="col">Answers</th>
+                <th class="header js-sort-number" scope="col">Questions</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            <% for (studentId in mastery){
+                let student = mastery[studentId];
+                let name = student['name'];
+                let email = student['email'];
+                let section = student['section'];
+                let answers = student['answers'];
+                console.dir(student);
+              %>
+                <tr>
+                    <td>          
+                         <%= name %>
+                      
+                    </td>
+                    <td>
+                        <a href="/showCourseToStudent/<%= course._id %>/?studentEmail=<%= email %>">
+                          <%= email %>
+                        </a></td>
+                    <td><%= parseInt(section||"0") %></td>
+                    <td><%= parseInt(answers) %></td>
+                    <td><%= (parseFloat(answers)/questions).toFixed(2)%> </td>
+                </tr>
+            <% } %>
+
+           
+                 
+        </tbody>
+      </table>
+      <a href="?csv=1">Download as CSV file</a>
+      <br>
+     
+    </div>
+
+</div>
+
+<%- include('./bootfooter') -%>
+<%- include('./htmlfoot') -%>
