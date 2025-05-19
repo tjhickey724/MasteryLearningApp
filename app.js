@@ -262,6 +262,11 @@ app.get('/', (req, res) => {
   res.redirect('/mla_home');
 });
 
+app.get('/main', (req, res) => {
+  res.render('main');
+}
+);
+
 app.get("/instructors", isAdmin,
   async (req, res, next) => {
     res.locals.instructors 
