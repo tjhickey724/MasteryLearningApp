@@ -1,3 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM MLA - The Future of STEM Education</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e88e5;
+            --secondary-color: #26c6da;
+            --accent-color: #7cb342;
+            --dark-color: #263238;
+            --light-color: #f5f7fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-color);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4f2fd 100%);
+            padding: 100px 0;
+        }
+        
+        .hero-title {
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #1976d2;
+            border-color: #1976d2;
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .testimonial-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+        }
+        
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            color: white;
+        }
+        
+        .stat-box {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .process-card {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .process-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 2px;
+            background-color: var(--primary-color);
+            z-index: -1;
+        }
+        
+        .process-card:last-child::before {
+            display: none;
+        }
+    </style>
+</head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
@@ -42,46 +163,192 @@
     <section class="hero-section">
         <div class="container">
             <div class="row align-items-center">
+                <h1 class="hero-title text-center display-1 mb-5">The Mastery Learning App</h1>
                 <div class="col-lg-6">
-                    <h1 class="hero-title display-4 mb-4">Revolutionizing STEM Education Through Mastery Learning</h1>
-                    <p class="lead mb-4">Our research-based approach helps universities retain STEM students by replacing traditional assessment models with personalized weekly skill-based exams that incentivize true mastery.</p>
+                    <h1 class="display-4 mb-4">Revolutionizing STEM Education Through Mastery Learning</h1>
+                    <p class="lead mb-4">
+                        
+                        Our research-based approach is designed to help 
+                        universities retain STEM students 
+                        by replacing traditional assessment models 
+                        with personalized weekly skill-based exams 
+                        that incentivize true mastery.
+                    </p>
+                    
                     <div class="d-flex flex-wrap gap-2">
                         <a href="#how-it-works" class="btn btn-primary btn-lg">See How It Works</a>
                         <a href="#contact" class="btn btn-outline-primary btn-lg">Schedule a Demo</a>
                     </div>
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0 text-center">
-                    <img src="images/mla-screenshot.png"" alt="STEM MLA Platform Dashboard" class="img-fluid rounded shadow">
+                    <img src="images/mla-screenshot.png" 
+                         alt="STEM MLA Platform Dashboard" 
+                         class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
     </section>
 
+
     <!-- Stats Section -->
     <section class="py-5 bg-light">
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="stat-box h-100">
-                        <div class="stat-number">50%</div>
-                        <p class="mb-0">of college students who start in STEM change majors or drop out before graduating</p>
+                        <div class="stat-number">60%</div>
+                        <p class="mb-0">of college students, nationwide, who start in STEM change majors or drop out before graduating</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="stat-box h-100">
-                        <div class="stat-number">4+ Years</div>
-                        <p class="mb-0">of proven results with our mastery learning approach</p>
+                        <div class="stat-number">4 Years</div>
+                        <p class="mb-0">of proven results with our mastery learning approach in Calculus, PreCalculus, and Integral Calculus courses.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="stat-box h-100">
-                        <div class="stat-number">5-10 min</div>
-                        <p class="mb-0">weekly faculty time to create personalized assessments</p>
+                        <div class="stat-number">20 min</div>
+                        <p class="mb-0">weekly faculty time to create personalized assessments and send to the printer.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box h-100">
+                        <div class="stat-number">2 hr</div>
+                        <p class="mb-0">weekly time to grade exams with 1 grader/15 students</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+
+    <!-- Course Selection Section -->
+    <section class="py-5 bg-light" id="pricing">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-1 fw-bold">Select a Course</h2>
+            
+                <p class="lead">
+                    Choose one of the courses below to get started with our platform.
+                    <br>
+                    or create your own course from scratch.
+                </p>
+                <div class="py-3">
+                                <span class="display-6 fw-bold">$5/student/month</span>
+                                <br>
+                                <span class="fw-bold">free for faculty</span>
+                </div>
+                
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <!--
+                            <h3 class="fw-bold">Basic</h3>
+                            -->
+                            <div class="py-3">
+                                <span class="display-4 fw-bold">PreCalculus</span>
+                                
+                            </div>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>40 customizable skills</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>10-20 customizable problems per skill</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>customizable skill sheets with tutorials and worked-out sample problems</li>
+                            </ul>
+                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <!--
+                            <h3 class="fw-bold">Basic</h3>
+                            -->
+                            <div class="py-3">
+                                <span class="display-4 fw-bold">Differential Calculus</span>
+                                
+                            </div>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>40 customizable skills</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>10-20 customizable problems per skill</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>customizable skill sheets with tutorials and worked-out sample problems</li>
+                            </ul>
+                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <!--
+                            <h3 class="fw-bold">Basic</h3>
+                            -->
+                            <div class="py-3">
+                                <span class="display-4 fw-bold">Integral Calculus</span>
+                                
+                            </div>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>40 customizable skills</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>10-20 customizable problems per skill</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>customizable skill sheets with tutorials and worked-out sample problems</li>
+                            </ul>
+                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4 text-center">
+                            <!--
+                            <h3 class="fw-bold">Basic</h3>
+                            -->
+                            <div class="py-3">
+                                <span class="display-4 fw-bold">Create from scratch</span>            
+                            </div>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Create list of customizable skills</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Create 10-20 customizable problems per skill</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Create customizable skill sheets with tutorials and worked-out sample problems</li>
+                            </ul>
+                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!--
+
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow border border-2 border-primary">
+                        <div class="card-header text-center bg-primary text-white py-3">
+                            <span class="badge bg-white text-primary">Most Popular</span>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <h3 class="fw-bold">Premium</h3>
+                            <div class="py-3">
+                                <span class="display-4 fw-bold">$10</span>
+                                <span class="text-muted">/month/student</span>
+                            </div>
+                            <ul class="list-unstyled text-start mb-4">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Access to all subjects</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Detailed progress tracking</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Advanced assessment tools</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>In app uploading/grading</li>
+                            </ul>
+                            <a href="#" class="btn btn-primary w-100">Get Started</a>
+                        </div>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+    </section>
+
 
     <!-- Problem Section -->
     <section class="py-5" id="problem">
@@ -121,14 +388,15 @@
                                 </div>
                                 <div>
                                     <h5 class="fw-bold">High Administrative Burden</h5>
-                                    <p>Creating and grading personalized assessment alternatives is traditionally time-intensive</p>
+                                    <p>Creating and grading exams and weekly homeworks with partial credit rubrics is both
+                    error prone and time-intensive</p>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0 text-center">
-                    <img src="/api/placeholder/600/500" alt="STEM Education Challenges" class="img-fluid rounded shadow">
+                    <img src="images/math10a-skill-by-attempts.png" alt="STEM Education Challenges" class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
@@ -149,7 +417,7 @@
                                 <i class="bi bi-calendar-check"></i>
                             </div>
                             <h3>Weekly Skill Assessments</h3>
-                            <p>Replace traditional homework/midterm/final model with personalized weekly exams covering all skills introduced so far in the course.</p>
+                            <p>Replace traditional homework/midterm/final model with personalized weekly exams covering all skills introduced so far in the course which the student has not yet mastered.</p>
                         </div>
                     </div>
                 </div>
@@ -204,7 +472,7 @@
                             <div class="card process-card border-0 shadow-sm mb-4">
                                 <div class="card-body p-4">
                                     <h4 class="fw-bold"><span class="badge bg-primary rounded-circle me-2">2</span> Create Weekly Assessments</h4>
-                                    <p class="mb-0">Each week, faculty use our app to generate comprehensive exams covering all skills introduced so far. The app selects challenging questions from the problem bank for each skill, creating personalized exams in just 5-10 minutes of faculty time.</p>
+                                    <p class="mb-0">Each week, faculty use our app to generate comprehensive exams covering all skills introduced so far. The app allows faculty to select challenging questions from the problem bank for each skill (or create new ones), creating personalized exams in just 20 minutes of faculty time.</p>
                                 </div>
                             </div>
                         </div>
@@ -212,7 +480,7 @@
                             <div class="card process-card border-0 shadow-sm mb-4">
                                 <div class="card-body p-4">
                                     <h4 class="fw-bold"><span class="badge bg-primary rounded-circle me-2">3</span> Administer Exams</h4>
-                                    <p class="mb-0">The app creates a zip file with a personalized exam for each student, which is sent to the campus printer. Students take the exams during recitation sessions (typically 1-2 hours).</p>
+                                    <p class="mb-0">The app creates a zip file with a personalized exam for each student, which can be sent to the campus printer. Students take the exams during recitation sessions (typically 2 hours, but many finish in 15 minutes).</p>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +488,10 @@
                             <div class="card process-card border-0 shadow-sm mb-4">
                                 <div class="card-body p-4">
                                     <h4 class="fw-bold"><span class="badge bg-primary rounded-circle me-2">4</span> Efficient Grading</h4>
-                                    <p class="mb-0">Student answers are graded pass/fail with minimal feedback, taking under a minute per answer. With 1 grader for every 10-15 students, the exam grading time is about two hours per week (approximately $3-5 per student per week).</p>
+                                    <p class="mb-0">Student answers are graded pass/fail with minimal feedback, taking 1-2 minutes per answer. With 1 grader for every 10-15 students, the exam grading time is about two hours per week (approximately $3-5 per student per week).
+                                        Student grades can be uploaded as a CSV file to the app, and students can then see
+                                        their grades and feedback on their phones or computers. They can request regrades which
+                                        can be quickly resolved in the app.</p>
                                 </div>
                             </div>
                         </div>
@@ -416,6 +687,7 @@
     </section>
 
     <!-- Research Section -->
+     <!--
     <section class="py-5" id="research">
         <div class="container">
             <div class="row align-items-center">
@@ -441,15 +713,6 @@
                             <p>Greatly reduced stress compared to traditional assessment models</p>
                         </div>
                     </div>
-                    <div class="d-flex">
-                        <div class="me-3 text-primary fs-4">
-                            <i class="bi bi-mortarboard"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold">Higher STEM Retention</h5>
-                            <p>Improved performance in subsequent courses and higher STEM major retention</p>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0">
                     <div class="card border-0 shadow">
@@ -460,516 +723,43 @@
                                     <div class="me-3 fw-bold text-primary">95%</div>
                                     <div class="flex-grow-1">
                                         <div class="progress" style="height: 10px;">
-                                            <div class="progress-bar bg-primary" role="progressbar" style="width<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STEM MLA - The Future of STEM Education</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1e88e5;
-            --secondary-color: #26c6da;
-            --accent-color: #7cb342;
-            --dark-color: #263238;
-            --light-color: #f5f7fa;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--dark-color);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            color: var(--primary-color) !important;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4f2fd 100%);
-            padding: 100px 0;
-        }
-        
-        .hero-title {
-            font-weight: 700;
-            color: var(--dark-color);
-        }
-        
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: #1976d2;
-            border-color: #1976d2;
-        }
-        
-        .btn-outline-primary {
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-        
-        .testimonial-card {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .footer {
-            background-color: var(--dark-color);
-            color: white;
-        }
-        
-        .footer a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-        }
-        
-        .footer a:hover {
-            color: white;
-        }
-        
-        .stat-box {
-            border-radius: 10px;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .process-card {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .process-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            height: 100%;
-            width: 2px;
-            background-color: var(--primary-color);
-            z-index: -1;
-        }
-        
-        .process-card:last-child::before {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">Mastery Learning</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#how-it-works">How It Works</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                </ul>
-                <div class="d-flex">
-                    <a href="#" class="btn btn-outline-primary me-2">Log In</a>
-                    <a href="#" class="btn btn-primary">Sign Up</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="hero-title display-4 mb-4">Master Any Subject at Your Own Pace</h1>
-                    <p class="lead mb-4">Our adaptive learning platform uses proven mastery learning techniques to help students achieve true understanding and long-term retention.</p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="#" class="btn btn-primary btn-lg">Start Learning Now</a>
-                        <a href="#how-it-works" class="btn btn-outline-primary btn-lg">See How It Works</a>
-                    </div>
-                </div>
-                <div class="col-lg-6 mt-5 mt-lg-0 text-center">
-                    <img src="images/mla-screenshot.png" alt="Mastery Learning App Dashboard" class="img-fluid rounded shadow">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-5" id="features">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Why Choose Mastery Learning?</h2>
-                <p class="lead">Our research-backed approach helps learners achieve deeper understanding</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon">
-                                <i class="bi bi-graph-up"></i>
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0">of students who complete our mastery learning program achieve mastery in all learning outcomes</p>
                             </div>
-                            <h3>Adaptive Learning</h3>
-                            <p>Our platform adjusts to your learning pace, focusing on areas where you need more practice while moving quickly through concepts you've mastered.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon">
-                                <i class="bi bi-lightbulb"></i>
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3 fw-bold text-primary">80%</div>
+                                    <div class="flex-grow-1">
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0">of students report reduced stress and anxiety compared to traditional assessment models</p>
                             </div>
-                            <h3>Personalized Feedback</h3>
-                            <p>Receive immediate, targeted feedback that helps you understand mistakes and reinforces correct thinking.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center p-4">
-                            <div class="feature-icon">
-                                <i class="bi bi-trophy"></i>
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3 fw-bold text-primary">90%</div>
+                                    <div class="flex-grow-1">
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0">of faculty report improved student engagement and performance</p>
                             </div>
-                            <h3>Progress Tracking</h3>
-                            <p>Clear visualization of your learning journey with detailed analytics and achievement milestones to celebrate your progress.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- How It Works Section -->
-    <section class="py-5 bg-light" id="how-it-works">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">How Mastery Learning Works</h2>
-                <p class="lead">A simple yet powerful approach to effective learning</p>
-            </div>
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-6">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm mb-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold"><i class="bi bi-1-circle-fill me-2 text-primary"></i> Assessment</h5>
-                                    <p class="mb-0">Begin with a diagnostic assessment to identify your current knowledge level.</p>
-                                </div>
-                            </div>
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold"><i class="bi bi-3-circle-fill me-2 text-primary"></i> Practice</h5>
-                                    <p class="mb-0">Engage with interactive exercises designed to reinforce your understanding.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-md-5">
-                            <div class="card border-0 shadow-sm mb-4">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold"><i class="bi bi-2-circle-fill me-2 text-primary"></i> Learning</h5>
-                                    <p class="mb-0">Study personalized content tailored to your specific learning needs.</p>
-                                </div>
-                            </div>
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <h5 class="fw-bold"><i class="bi bi-4-circle-fill me-2 text-primary"></i> Mastery</h5>
-                                    <p class="mb-0">Demonstrate mastery before moving on to ensure solid foundation.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mt-5 mt-lg-0">
-                    <img src="/api/placeholder/600/500" alt="Mastery Learning Process" class="img-fluid rounded shadow">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- For Who Section -->
-    <section class="py-5" id="for-who">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Who Benefits from Mastery Learning?</h2>
-                <p class="lead">Our platform serves diverse learning needs</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="h4 fw-bold text-primary mb-3"><i class="bi bi-mortarboard me-2"></i>Students</h3>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>K-12 and college students looking to excel in their courses</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Test preparation for standardized exams</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Addressing learning gaps from previous education</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="h4 fw-bold text-primary mb-3"><i class="bi bi-people me-2"></i>Educators</h3>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Teachers implementing flipped classroom models</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Tutors seeking structured learning plans for students</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Schools looking for effective supplementary resources</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <h3 class="h4 fw-bold text-primary mb-3"><i class="bi bi-briefcase me-2"></i>Professionals</h3>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Career changers acquiring new skills</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Businesses implementing employee training programs</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Lifelong learners pursuing personal development</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="py-5 bg-light" id="testimonials">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">What Our Users Say</h2>
-                <p class="lead">Success stories from our learning community</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card testimonial-card h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex mb-4">
-                                <div class="text-warning">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                </div>
-                            </div>
-                            <p class="mb-3">"The adaptive approach really helped me overcome my math anxiety. I'm now confidently tackling calculus concepts that used to terrify me!"</p>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-3">
-                                    <h5 class="mb-0 fw-bold">Sarah Johnson</h5>
-                                    <p class="mb-0 text-muted">College Student</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <h5 class="text-white mb-4">Newsletter</h5>
-                    <p>Subscribe to our newsletter for the latest updates on features, resources, and educational insights.</p>
-                    <form class="mt-4">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="Your email" aria-label="Email" aria-describedby="subscribe-btn">
-                            <button class="btn btn-light" type="submit" id="subscribe-btn">Subscribe</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <hr class="mt-4 mb-4 border-secondary">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-md-0">© 2025 Mastery Learning App. All rights reserved.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <ul class="list-inline mb-0">
-                        <li class="list-inline-item"><a href="#">Terms of Service</a></li>
-                        <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
-                        <li class="list-inline-item"><a href="#">Cookie Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
+    -->
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-                    <div class="card testimonial-card h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex mb-4">
-                                <div class="text-warning">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                </div>
-                            </div>
-                            <p class="mb-3">"As a teacher, I've seen remarkable improvement in student engagement and test scores since implementing Mastery Learning in my classroom."</p>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-3">
-                                    <h5 class="mb-0 fw-bold">Michael Rodriguez</h5>
-                                    <p class="mb-0 text-muted">High School Teacher</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card testimonial-card h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex mb-4">
-                                <div class="text-warning">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i>
-                                </div>
-                            </div>
-                            <p class="mb-3">"Our company has reduced training time by 40% while improving knowledge retention using Mastery Learning for our onboarding process."</p>
-                            <div class="d-flex align-items-center">
-                                <div class="ms-3">
-                                    <h5 class="mb-0 fw-bold">Jennifer Park</h5>
-                                    <p class="mb-0 text-muted">HR Director</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="py-5" id="pricing">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold">Simple, Transparent Pricing</h2>
-                <p class="lead">Choose the plan that fits your learning needs</p>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4 text-center">
-                            <h3 class="fw-bold">Basic</h3>
-                            <div class="py-3">
-                                <span class="display-4 fw-bold">$9</span>
-                                <span class="text-muted">/month</span>
-                            </div>
-                            <ul class="list-unstyled text-start mb-4">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Access to core subjects</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Basic progress tracking</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Standard assessment tools</li>
-                                <li class="mb-2 text-muted"><i class="bi bi-x-circle-fill text-muted me-2"></i>Advanced analytics</li>
-                                <li class="text-muted"><i class="bi bi-x-circle-fill text-muted me-2"></i>Tutor support</li>
-                            </ul>
-                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow border border-2 border-primary">
-                        <div class="card-header text-center bg-primary text-white py-3">
-                            <span class="badge bg-white text-primary">Most Popular</span>
-                        </div>
-                        <div class="card-body p-4 text-center">
-                            <h3 class="fw-bold">Premium</h3>
-                            <div class="py-3">
-                                <span class="display-4 fw-bold">$19</span>
-                                <span class="text-muted">/month</span>
-                            </div>
-                            <ul class="list-unstyled text-start mb-4">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Access to all subjects</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Detailed progress tracking</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Advanced assessment tools</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Learning analytics dashboard</li>
-                                <li class="text-muted"><i class="bi bi-x-circle-fill text-muted me-2"></i>Tutor support</li>
-                            </ul>
-                            <a href="#" class="btn btn-primary w-100">Get Started</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4 text-center">
-                            <h3 class="fw-bold">Ultimate</h3>
-                            <div class="py-3">
-                                <span class="display-4 fw-bold">$39</span>
-                                <span class="text-muted">/month</span>
-                            </div>
-                            <ul class="list-unstyled text-start mb-4">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Everything in Premium</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Custom learning paths</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Priority support</li>
-                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Advanced analytics</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>1-on-1 tutor sessions</li>
-                            </ul>
-                            <a href="#" class="btn btn-outline-primary w-100">Get Started</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8 text-center text-lg-start">
-                    <h2 class="display-5 fw-bold mb-3">Ready to Transform Your Learning Experience?</h2>
-                    <p class="lead mb-lg-0">Join thousands of successful learners using Mastery Learning today.</p>
-                </div>
-                <div class="col-lg-4 text-center text-lg-end">
-                    <a href="#" class="btn btn-light btn-lg px-4">Start Free Trial</a>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- About Section -->
     <section class="py-5" id="about">
@@ -982,87 +772,13 @@
                     <p>Our team of experienced educators, instructional designers, and software engineers works tirelessly to create content and features that make learning more effective and engaging for everyone.</p>
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0">
-                    <img src="images/mla-screenshot.png" alt="About Mastery Learning" class="img-fluid rounded shadow">
+                    <img src="images/MLA-team.png" alt="MLA team" class="img-fluid rounded shadow">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section class="py-5 bg-light" id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h2 class="display-5 fw-bold mb-4">Get in Touch</h2>
-                    <p class="lead mb-4">Have questions? We're here to help!</p>
-                    <form>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" placeholder="Your name">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="Your email">
-                            </div>
-                            <div class="col-12">
-                                <label for="subject" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="subject" placeholder="What's this about?">
-                            </div>
-                            <div class="col-12">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="5" placeholder="Your message..."></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Send Message</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-6 mt-5 mt-lg-0">
-                    <div class="bg-white p-4 rounded shadow h-100">
-                        <h3 class="fw-bold mb-4">Contact Information</h3>
-                        <div class="d-flex mb-4">
-                            <div class="me-3 text-primary fs-4">
-                                <i class="bi bi-geo-alt-fill"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold">Address</h5>
-                                <p>123 Learning Avenue, Education City, CA 90210</p>
-                            </div>
-                        </div>
-                        <div class="d-flex mb-4">
-                            <div class="me-3 text-primary fs-4">
-                                <i class="bi bi-envelope-fill"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold">Email</h5>
-                                <p>info@masterylearningapp.com</p>
-                            </div>
-                        </div>
-                        <div class="d-flex mb-4">
-                            <div class="me-3 text-primary fs-4">
-                                <i class="bi bi-telephone-fill"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold">Phone</h5>
-                                <p>(555) 123-4567</p>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div class="me-3 text-primary fs-4">
-                                <i class="bi bi-clock-fill"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold">Support Hours</h5>
-                                <p>Monday - Friday: 9:00 AM - 5:00 PM PST</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <!-- Footer -->
     <footer class="footer py-5">
@@ -1071,6 +787,9 @@
                 <div class="col-lg-4">
                     <h4 class="fw-bold text-white mb-4">Mastery Learning</h4>
                     <p>Transforming education through personalized, adaptive learning experiences that empower students to truly master every subject.</p>
+                    <p>For more information contact 
+                        <a href="https://www.cs.brandeis.edu/~tim">Tim Hickey</a>
+                        at <a href="mailto:tjhickey@brandeis.edu">tjhickey@brandeis.edu</a></p>
                     <div class="d-flex mt-4">
                         <a href="#" class="me-3 fs-5"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="me-3 fs-5"><i class="bi bi-twitter"></i></a>
@@ -1099,5 +818,12 @@
                         <li><a href="#">Community</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-4">
+            </div>
+        </div>
+        </footer>
+        <div class="text-center py-4">
+            <p class="mb-0">&copy; 2023 Mastery Learning. All rights reserved.</p>
+
                 
+        </body>
+</html>
