@@ -3045,6 +3045,7 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
     const courseId = req.params.courseId;
     const psetId = req.params.psetId;
     const skillId = req.params.skillId;
+    const userId = req.user._id;
 
     // get the skill object we are interested in
     const skill = await Skill.findOne({_id:  skillId});
@@ -3062,17 +3063,17 @@ app.get('/showProblemsBySkill/:courseId/:psetId/:skillId', authorize, hasCourseA
 
     // get the problems for that skill or a variant thereof,
     // which have already been used in this class
-    const usedProblems =
+    let usedProblems =
       await Problem
       .find(
         {skills: {$elemMatch:{$in:variantIds}},
-        courseId
+        courseId,
         })
       .populate('courseId')
       .populate('psetId')
       .sort({createdAt: -1});
 
-
+    //usedProblems = usedProblems.filter((x) => (x.courseId.ownerId == userId))
 
     // get the parent Ids of the usedProblems
     let get_parent = (x) => {
