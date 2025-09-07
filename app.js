@@ -10,8 +10,8 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const showdown  = require('showdown');
+const logger = require("morgan"); // to log requests to the console
+const showdown  = require('showdown'); // to convert markdown to HTML
 const converter = new showdown.Converter({
   literalMidWordUnderscores: true,  // Prevents underscores in the middle of words from being parsed as emphasis
   literalMidWordAsterisks: true,    // Same for asterisks (optional)
@@ -20,21 +20,29 @@ const converter = new showdown.Converter({
   tables: true,                     // Optional
   ghCodeBlocks: true                // Optional
 });
-const multer = require("multer");
-const csv = require('csv-parser')
-const streamifier = require("streamifier");
 
-const fsPromises = require('fs').promises;
+const multer = require("multer"); // to handle file uploads
+const csv = require('csv-parser')
+const streamifier = require("streamifier"); // to convert a buffer to a stream for file uploads
+
+const fsPromises = require('fs').promises; // to read files asynchronously
 
 const archiver = require('archiver'); // to create zip files of personalized exams
 
-const aws = require('aws-sdk'); //"^2.2.41"
-const multerS3 = require("multer-s3");
-const cors = require("cors")();
-const ejs = require('ejs');
+const aws = require('aws-sdk'); //"^2.2.41" to interact with AWS S3 for file uploads
+const multerS3 = require("multer-s3"); // to handle file uploads to AWS S3
+const cors = require("cors")(); // to allow cross-origin requests
+const ejs = require('ejs'); // to render ejs templates
 
 
 require("dotenv").config();
+
+/* ***********************************************
+This section sets up the AWS S3 storage and the local storage for file uploads.
+ *********************************************** */
+
+const upload_to = process.env.UPLOAD_TO; // AWS or LOCAL
+
 
 let storageAWS = null;
 
@@ -109,10 +117,11 @@ const { promisify } = require('util')
 const unlinkAsync = promisify(fs.unlink)
 
 
-
+/* ***********************************************
+Routes and Models
+ *********************************************** */
 
 // Routes
-//const reviews = require('./routes/reviews');
 const auth = require('./routes/authRouter');
 const similarity = require('./routes/similarity');
 const updates = require('./routes/updatesARCHIVED.js');
@@ -135,13 +144,11 @@ const Instructor = require("./models/Instructor");
 //const ejsLint = require("ejs-lint");
 
 
-const upload_to = process.env.UPLOAD_TO; // AWS or LOCAL
-
-if (process.env.UPLOAD_TO == "AWS") {
-  // ...
-}
 
 
+/* ***********************************************
+Setting up the MongoDB database connection
+ *********************************************** */
 
 // AUTHENTICATION MODULES
 // TJH - why are these not defined with "CONST" declarations??
@@ -167,19 +174,7 @@ db.once("open", function () {
   console.error(`db.name=${db.name}`);
 });
 
-/*
-  Whitelist of instructors who are able to create courses on the MLA.
-  For now it is just me, but we can add more instructors as needed.
-*/
-const instructors = [
-  "tjhickey@brandeis.edu",
-  "tjhickey724@gmail.com",
-  "timhickey@me.com",
-  "jamespetullo@brandeis.edu",
-  "rtorrey@brandeis.edu",
-  "merrill2@brandeis.edu",
-  "ellatuson@brandeis.edu",
-];
+
 
 var app = express();
 
@@ -187,8 +182,6 @@ var app = express();
 
 var http = require("http").Server(app);
 
-// TJH - I don't think we need this any more
-var io = require("socket.io")(http);
 
 /*
 Authentication middleware:
@@ -267,6 +260,11 @@ app.get('/main', (req, res) => {
 }
 );
 
+/* ***************************************************
+  Routes for managing instructors
+  These routes are only accessible to admins
+**************************************************** */
+
 app.get("/instructors", isAdmin,
   async (req, res, next) => {
     res.locals.instructors 
@@ -333,6 +331,12 @@ app.post("/addInstructor", isAdmin,
     }
   }
 )
+
+/* ***************************************************
+  Routes for delete courses and student content
+  These routes are only accessible to admins
+**************************************************** */
+
 app.get("/deleteCourse/:courseId", isAdmin,
   async (req, res, next) => {
     try {
@@ -429,13 +433,10 @@ app.get("/deleteStudentData/:courseId", isAdmin,
 )
 
 
-//const approvedLogins = ["tjhickey724@gmail.com", "csjbs2018@gmail.com"];
-
-/* 
-  this handles all routes dealing with reviews
-  the user must have proper authentication to access these routes
-*/
-
+/* ***************************************************
+  Routes for the main page and profile and other top level pages
+  These routes are accessible to all logged in users
+**************************************************** */
 
 
 app.get("/mla_home", isLoggedIn, (req,res) => {
@@ -523,6 +524,10 @@ app.get("/stats", isLoggedIn,
 });
 
 
+/* ***************************************************
+  Routes for creating a new course
+  These routes are accessible to logged in users who are instructors
+**************************************************** */
 
 
 app.get("/createCourse", isLoggedIn, isInstructor,
@@ -634,7 +639,11 @@ app.get("/setActive/:courseId/:value", authorize, isOwner,
  }
 )
 
-// app.use(reviews);
+
+/* ***************************************************
+  Routes for showing the course roster
+  These routes are accessible to logged in users who are instructors or TAs
+**************************************************** */
 
 
 
@@ -861,6 +870,14 @@ app.post("/uploadRoster/:courseId",
  //res.json({message:"grades uploaded"});
  //res.redirect(`/showRoster/${courseId}`);
 });
+
+
+/* ***************************************************
+  Routes for showing a course
+  These routes are accessible to logged in users who are enrolled in the course
+  or are TAs or the owner of the course.
+  The courseId parameter is required in the URL.
+**************************************************** */
 
 /*
   showCourse is the main page for a course

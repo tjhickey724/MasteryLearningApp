@@ -138,7 +138,7 @@
       <li><i>Fundamental Skills</i></li>
 
       <% for(i = 0; i< allSkills.length; i++){
-        if (allSkills[i].shortName[0]=='F') { %>
+        if (allSkills[i].level=='F') { %>
       <li>
         <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
           <%= allSkills[i].shortName %>: <%= allSkills[i].name %> 
@@ -149,7 +149,7 @@
       <hr>
       <li>General Skills</li>
       <% for(i = 0; i< allSkills.length; i++){
-        if (allSkills[i].shortName[0]=='G') {
+        if (allSkills[i].level=='G') {
         %>
         <li>
           <a href="/showSkill/<%=courseInfo._id%>/<%= allSkills[i]._id %>">
