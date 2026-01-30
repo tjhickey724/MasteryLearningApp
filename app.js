@@ -2340,7 +2340,7 @@ const generateTex = (problems) => {
          each student in the course. Also each exam has questions only for those skills
          that that particular students has not yet mastered at this point in the course.
     
-         The list of mastered skills is obtained from the MGA database!
+         The list of mastered skills is obtained from the MLA database!
   
          Currently the latex file requires a few additional tex files:
          preamble.tex  - a latex file importing all necessary packages 
@@ -2361,6 +2361,32 @@ const generateTex = (problems) => {
           */
           const {skillsMastered,skillCounts,enrolledStudents} 
              = await getSkillsMastered(courseId);
+          /* skillsMastered is a dictionary indexed by student emails of the list of
+             shortNames of skills the student has mastered
+  
+           {
+    'onegkg@brandeis.edu': [ 'F01', 'F02', 'F03' ],
+    'tigerwang@brandeis.edu': [ 'F01', 'F03' ],
+    'gina22jin@brandeis.edu': [ 'F01', 'F02' ], ...}
+
+            skillCounts is a dictionary indexed by skill names of the number of students who have mastered that skill.
+            {
+              'F01': 3,
+              'F02': 2,
+              'F03': 2,
+              ...
+            }
+
+            enrolledStudents is a list of all students enrolled in the course.
+            {
+              'onegkg@brandeis.edu',
+              'tigerwang@brandeis.edu',
+              'gina22jin@brandeis.edu',
+              ...
+            }
+          */
+
+          //console.dir([skillsMastered,skillCounts,enrolledStudents]);
 
           /*
           We want to use the student's full name,
@@ -2380,34 +2406,9 @@ const generateTex = (problems) => {
             studentEmailToFileName[student.studentId.googleemail] = student.studentName.replace(/ /g,'_');
 
           }
+
+  
          
-
-          const students = await User.find({googleemail: {$in: enrolledStudents}});
-
-          
-          for (let student of students) {
-
-          }
-
-  
-          /*
-          Now we create a dictionary skillIdsMastered: studentEmail -> [skillId]
-          which maps each student to a list of skillIds that the student has mastered
-          We will use this to create the personalized exams.
-          */
-          let allSkills = await Skill.find({courseId});
-   
-          let skillIdMap = {}
-          for (let skillName in skillCounts) {
-            let skill = await Skill.findOne({courseId,shortName: skillName});
-            if (skill) skillIdMap[skillName] = skill._id+"";
-          }
-  
-          let skillIdsMastered = {}
-          for (let student in skillsMastered) {
-            skillIdsMastered[student] 
-              = skillsMastered[student].map((x) => skillIdMap[x]);
-          }
   
           /*
           Next we get the problems for this problem set
@@ -2420,8 +2421,29 @@ const generateTex = (problems) => {
                     .populate('skills');
           problems.sort((a,b) => compareSkills(a.skills[0],b.skills[0]));
        
-         
-      
+          let allSkills = problems.flatMap((p) => p.skills);
+
+          let skillIdMap = {}
+          for (let skillId of allSkills) {
+            let skill = await Skill.findOne({psetId,_id:skillId})
+            console.log(`skillId: ${skillId._id} skill: ${skill} skillId.original: ${skill.original}`);
+            skillIdMap[skill._id] = skill.original? skill.original:skill._id;
+          }
+          console.dir("Skills in this problem set:");
+          for (let skillId in skillIdMap) {
+            console.log(skillIdMap[skillId]);
+          }
+          
+
+          let skillShortNamesMastered = {}
+          for (let student in skillsMastered) {
+            console.log(`Student: ${student} skillsMastered[student]: ${skillsMastered[student]}`);
+            skillShortNamesMastered[student] 
+              = skillsMastered[student];
+          }
+          console.log(`skillShortNamesMastered: ${JSON.stringify(skillShortNamesMastered)}`);
+          console.dir(skillShortNamesMastered);
+  
   
       
           /* Next, we create a dictionary problemDict indexed by skills which
@@ -2486,19 +2508,29 @@ const generateTex = (problems) => {
             */
            
            let studentSkills = 
-               skillIdsMastered[studentEmail];
+               skillShortNamesMastered[studentEmail];
            if (!studentSkills) {
              studentSkills = [];
            }
       
            let testProblems = [];
            for (let p of problems){
-            if (studentSkills.includes(p.skills[0]['_id']+"")) {
+            let pskill = p.skills[0];
+            console.log(`pskill short name: ${JSON.stringify(pskill.shortName)}`);
+            pskillId = pskill.original ?? pskill._id;
+
+  
+            console.log(`studentSkills: ${JSON.stringify(studentSkills)}`);
+            if (studentSkills.includes(pskill.shortName)) {
+              console.log(`Student ${studentEmail} has mastered skill ${pskillId}`);
               // skip the problem if they have mastered it
             } else {
               testProblems = testProblems.concat(p);
+              console.log(`Student ${studentEmail} has NOT mastered skill ${pskillId}, included in problem ${p._id}`);
             }
           }
+
+          console.log(`length of testProblems: ${testProblems.length}`);
         
     
          const startTex = '\\input{preamble.tex}\n\\begin{document}\n';
@@ -2519,9 +2551,9 @@ const generateTex = (problems) => {
          if (testProblems.length>0) {
             const emailfilename = studentEmail.replace(/@/g,'_').replace(/\./g,'_');
             const filename 
-               = (studentEmailToSection[studentEmail]||"") + "_"
+               = ((studentEmailToSection[studentEmail]||"") + "_"
                   + (studentEmailToFileName[studentEmail]||"")+ "_"
-                  + emailfilename +'.tex';
+                  + emailfilename +'.tex');
             const filecontents = startTex + exam + endTex;
             const fileObject = {filename,filecontents};
             result = result.concat(fileObject);
@@ -2552,6 +2584,7 @@ const generateTex = (problems) => {
     
         // Add each file to the archive
         result.forEach(file => {
+          console.log(file.filename);
             archive.append(file.filecontents, { name: "exam_"+file.filename });
         });
 
