@@ -2411,7 +2411,9 @@ const generateTex = (problems) => {
          
   
           /*
-          Next we get the problems for this problem set
+          Next we get the problems for this problem set and their skills
+          We assume each problem has exactly one skill and all skills in a course
+          have unique shortNames.
           */
           const psetId = req.params.psetId;
           const pset = await ProblemSet.findOne({_id: psetId});
@@ -2423,6 +2425,8 @@ const generateTex = (problems) => {
        
           let allSkills = problems.flatMap((p) => p.skills);
 
+          /* 
+          //create a mapping from skillIds to original skillIds 
           let skillIdMap = {}
           for (let skillId of allSkills) {
             let skill = await Skill.findOne({psetId,_id:skillId})
@@ -2433,6 +2437,7 @@ const generateTex = (problems) => {
           for (let skillId in skillIdMap) {
             console.log(skillIdMap[skillId]);
           }
+            */
           
 
           let skillShortNamesMastered = {}
@@ -2508,7 +2513,7 @@ const generateTex = (problems) => {
             */
            
            let studentSkills = 
-               skillShortNamesMastered[studentEmail];
+               skillsMastered[studentEmail];
            if (!studentSkills) {
              studentSkills = [];
            }
@@ -2813,6 +2818,15 @@ app.get("/addProblem/:courseId/:psetId", authorize, isOwner,
     res.locals.psetSkillIds = problems.map((x) => x.skills[0]._id.toString());
     res.locals.problems = [];
     let skills = await CourseSkill.find({courseId: req.params.courseId}).populate('skillId');
+
+
+    // Sort in JavaScript after populating
+    skills.sort((a, b) => {
+     const nameA = a.skillId.shortName || '';
+     const nameB = b.skillId.shortName || '';
+      return nameA.localeCompare(nameB);
+    });
+
     res.locals.skillIds = skills.map((x) => x.skillId);
     res.locals.skill = null;
     res.locals.newProblems=[];

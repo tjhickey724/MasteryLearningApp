@@ -90,6 +90,13 @@
                       <hr>
                       <h2>Skill being tested by this problem.</h2>
                       <hr>
+                      <%
+                       skills.sort((a, b) => {
+                         const nameA = a.shortName || '';
+                         const nameB = b.shortName || '';
+                         return nameA.localeCompare(nameB);
+                       });
+                      %>
                       <% for(let i=0; i<skills.length; i++){ %>
 
                         <% if (true || !psetSkillIds.includes(skills[i]._id.toString())) { %>
