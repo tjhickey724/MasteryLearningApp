@@ -37,3 +37,25 @@ const ejs = require('ejs'); // to render ejs templates
 
 require("dotenv").config();
 ```
+
+# Authorization
+When a user connects to the app, we authenticate using google authentication since most people have a gmail account and it is free.
+We then run the authorization code in ```routes/authFunctions.js``` to determine what permissions they have.
+
+## Authentication middleware:
+*  isLoggedIn - checks if the user is logged in
+*  isAdmin - checks if the user is an admin
+The rest of these middleware function assume that the user is logged in
+and that there is a request parameter named :courseId
+and that the authorize middleware has been invoked first.
+*  hasCourseAccess - checks if the user is enrolled in the course
+*  hasStaffAccess - checks if the user is a TA or the owner of the course
+*  isOwner - checks if the user is the owner of the course
+This middleware function assumes that the user is logged in
+and that there is a courseId parameter in the request
+and it sets the local variables in res.locals for
+isEnrolled, isTA, isOwner, isStaff, is Admin
+*  authorize - checks if the user is logged in and has access to the course
+Every route that requires authentication for access to a course
+should start with the authorize middleware and then will have those
+functions available in res.locals.
