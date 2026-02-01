@@ -4,7 +4,7 @@ Most of the controller code is in the file app.js consisting of about 5000 lines
 We use the Mongoose package for accessing the models in the mongodb database. Most of the code is designed to handle
 calls to app (i.e. routes) that get their input from an EJS view and that return their results in an EJS view.
 
-Here is the preamble to the app which loads in all of the packages that are used (with a brief explanation of their purpose).
+Here is the preamble to the app which loads in many of the packages that are used (with a brief explanation of their purpose).
 ``` javascript
 const createError = require("http-errors");
 const express = require("express");
