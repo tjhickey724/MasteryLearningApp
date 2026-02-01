@@ -20,4 +20,34 @@ We use a hierarchy of models shown below:
 * Answer (the student's answer the problem, usually stored as an image in an AWS S3 bucket)
 * Review (the teaching assistant's grade for the answer (mastered/not-mastered)
 * RegradeRequest (a student's request to have their answer regraded, with a reason for the request
-* 
+
+# Hierarchical Properties
+Each model contains a reference id to all of the models that it relies on (the ones above it)
+For example here is the model for a RegradeRequest:
+
+``` mongodb
+'use strict';
+const mongoose = require( 'mongoose' );
+const Schema = mongoose.Schema;
+const ObjectId = mongoose.Schema.Types.ObjectId;
+
+var regradeRequestSchema = Schema( {
+  reviewId: {type:ObjectId,index:true}, // also track problemId!
+  courseId: {type:ObjectId,index:true},
+  answerId: {type:ObjectId,index:true},
+  problemId: {type:ObjectId,index:true}, // should also track reviwerId!
+  psetId: ObjectId,
+  studentId: {type:ObjectId,index:true},
+  reason: String,
+  reply: String,
+  completed: {type:Boolean, index:true},
+  createdAt: Date,
+} );
+/*
+upvoters and downvoters are the lists of users who
+upvoted or downvoted that review.
+*/
+
+module.exports = mongoose.model( 'RegradeRequest', regradeRequestSchema );
+
+```
