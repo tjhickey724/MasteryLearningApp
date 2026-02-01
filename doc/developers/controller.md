@@ -122,3 +122,40 @@ app.get("/showCourse/:courseId", authorize, hasCourseAccess,
 });
 ```
 
+## Form handling
+We use ```app.get``` to generate forms and ```app.post``` to process the results,
+as this example shows:
+```'
+app.get("/editCourse/:courseId", authorize, isOwner,
+  async (req, res, next) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.find({_id: courseId});
+      res.render("editCourse", {course});
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+app.post("/editCourse/:courseId", authorize, isOwner,
+  async (req, res) => {
+    // better to use Course.findOneAndUpdate ...
+    const name = req.body.newName;
+    const startDate = req.body.startDate;
+    const stopDate = req.body.stopDate;
+    const guestAccess = req.body.guestAccess;
+    //const courseType = req.body.courseType; // we don't allow courseType to change
+    const course = await Course.findOne({_id:req.params.courseId});
+    course.name = name;
+    course.startDate = new Date(startDate);
+    course.stopDate = new Date(stopDate);
+    //course.courseType = courseType; // we don't allow courseType to change
+    course.guestAccess = guestAccess;
+    await course.save();
+    res.redirect("/showCourse/"+req.params.courseId);
+});
+
+```
+
+
