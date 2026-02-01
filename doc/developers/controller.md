@@ -1,6 +1,6 @@
 # Structure of the Controller code
 
-All of the controller code is in the file app.js consisting of about 5000 lines of nodejs/javascript code.
+Most of the controller code is in the file app.js consisting of about 5000 lines of nodejs/javascript code.
 We use the Mongoose package for accessing the models in the mongodb database. Most of the code is designed to handle
 calls to app (i.e. routes) that get their input from an EJS view and that return their results in an EJS view.
 
