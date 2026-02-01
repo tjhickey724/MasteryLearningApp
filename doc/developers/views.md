@@ -6,7 +6,7 @@ To maintain a consistent look on most pages we import 4 files:
 * ```bootheader.ejs``` a header to include bootstrap code
 * ```menubar.ejs```  a menubar
 * ```footer.ejs```  a footer to include bootstrap code
-* ``` htmlfoot.ejs``` a footer to end the body and html tags
+* ```htmlfoot.ejs``` a footer to end the body and html tags
 
 and when appropriate we add breadcrumbs to the top of the page so the user can navigate to previous pages easily.
 
