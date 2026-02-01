@@ -23,7 +23,9 @@ We use a hierarchy of models shown below:
 
 # Hierarchical Properties
 Each model contains a reference id to all of the models that it relies on (the ones above it)
-For example here is the model for a RegradeRequest:
+For example here is the schema for the model for a RegradeRequest. It allows one to easily access the
+course,problemset, problem, answer, review, and id of the reviewer (studentId), in addition to other data
+needed for the regrade request itself.  
 
 ``` mongodb
 'use strict';
@@ -32,10 +34,10 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 var regradeRequestSchema = Schema( {
-  reviewId: {type:ObjectId,index:true}, // also track problemId!
+  reviewId: {type:ObjectId,index:true}, 
   courseId: {type:ObjectId,index:true},
   answerId: {type:ObjectId,index:true},
-  problemId: {type:ObjectId,index:true}, // should also track reviwerId!
+  problemId: {type:ObjectId,index:true}, 
   psetId: ObjectId,
   studentId: {type:ObjectId,index:true},
   reason: String,
@@ -43,10 +45,7 @@ var regradeRequestSchema = Schema( {
   completed: {type:Boolean, index:true},
   createdAt: Date,
 } );
-/*
-upvoters and downvoters are the lists of users who
-upvoted or downvoted that review.
-*/
+
 
 module.exports = mongoose.model( 'RegradeRequest', regradeRequestSchema );
 
