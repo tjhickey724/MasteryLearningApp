@@ -67,7 +67,7 @@ app.get("/mla_home", isLoggedIn, (req,res) => {
 });
 ```
 
-and here is how we use ```isAdmin```
+and here is how we use ```isAdmin```. We use the async/await protocol for accessing the database.
 ```
 app.get("/instructors", isAdmin,
   async (req, res, next) => {
