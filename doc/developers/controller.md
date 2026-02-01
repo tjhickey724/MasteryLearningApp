@@ -59,3 +59,12 @@ isEnrolled, isTA, isOwner, isStaff, is Admin
 Every route that requires authentication for access to a course
 should start with the authorize middleware and then will have those
 functions available in res.locals.
+
+Here is an example of using ```isLoggedIn```
+```
+app.get("/mla_home", isLoggedIn, (req,res) => {
+  res.redirect("/mla_home/showCurrent");
+});
+```
+
+
