@@ -1,7 +1,7 @@
 # MasteryLearningApp
 This is a highly opinionated version of the older SpecsGradingApp
 
-See the [documentation](./doc/README.md) or look into the [developer's notes][./doc/developers]
+See the [documentation](./doc/README.md) or look into the [developer's notes](./doc/developers]
 
 The key idea is that the MasteryLearningApp makes it relatively easy for faculty to teach using the Mastery Assessment Pedagogy which consists of the following four practices:
 
