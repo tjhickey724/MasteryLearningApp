@@ -80,4 +80,19 @@ app.get("/instructors", isAdmin,
 );
 ```
 
+Here is how we use ```isOwner``` which requires a ```:courseId``` parameter and the ```authorize``` middleware
+```
+app.get("/setActive/:courseId/:value", authorize, isOwner,
+  async (req, res, next) => {
+  try {
+    const courseId = req.params.courseId;
+    const value = req.params.value;
+    await Course.findOneAndUpdate({_id: courseId}, {active: value=='true'});
+    res.redirect("/mla_home");
+  } catch (e) {
+    next(e);
+  }
+ }
+)
+```
 
