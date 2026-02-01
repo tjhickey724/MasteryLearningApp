@@ -67,4 +67,17 @@ app.get("/mla_home", isLoggedIn, (req,res) => {
 });
 ```
 
+and here is how we use ```isAdmin```
+```
+app.get("/instructors", isAdmin,
+  async (req, res, next) => {
+    res.locals.instructors 
+       = await Instructor
+              .find({})
+              .populate('userId');
+    res.render("showInstructors");
+  }
+);
+```
+
 
