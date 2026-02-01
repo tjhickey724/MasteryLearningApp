@@ -4,6 +4,6 @@ This folder is designed to help you understand how the MLA is implemented so you
 
 * [Design Principles](./design_principles)
 * [Models](./models)
-* [Controller](./controller]
+* [Controller](./controller)
 * [Views](./views)
 
