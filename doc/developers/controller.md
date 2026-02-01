@@ -96,3 +96,29 @@ app.get("/setActive/:courseId/:value", authorize, isOwner,
 )
 ```
 
+and here is how we use ```hasCourseAccess```
+```
+app.get("/showCourse/:courseId", authorize, hasCourseAccess,
+  // redirect to student view or staff view, depending on user role
+  async (req, res, next) => {
+  try {
+    const courseId = req.params.courseId;
+    const studentId = req.user._id;
+    const courseMember 
+        = await CourseMember
+               .findOne({studentId, courseId});
+
+    if (res.locals.isAdmin || ["ta","instructor","owner"].includes(courseMember.role)) {
+      res.redirect("/showCourseToStaff/" + courseId);
+    } else if (["student","guest","audit"].includes(courseMember.role)) {
+      res.redirect("/showCourseToStudent/" + courseId);
+    } else {
+      res.send("You do not have access to this course.");
+    }
+
+  } catch (e) {
+    next(e);
+  }
+});
+```
+
